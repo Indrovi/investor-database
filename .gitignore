@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.ipynb_checkpoints/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Prostředí a tajné údaje (API klíče apod.)
+.env
+.env.*
+!.env.example
+
+# Lokální cache stažených zdrojů
+.cache/
+
+# Editory a OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Claude Code – lokální nastavení
+.claude/settings.local.json
