@@ -10,25 +10,31 @@ Projekt vychází ze [zadání](docs/zadani.md) a pracuje výhradně s veřejně
 |---|---|---|
 | Výsledný plán: inclusion/exclusion criteria, verification, odhad rozsahu a spolehlivosti, odhad nákladů | [docs/plan.md](docs/plan.md) | rozpracováno: krok 2 hotový, u kroku 1 zbývá potvrdit hraniční případy a GDPR |
 | Datový model a validátor | [docs/datovy-model.md](docs/datovy-model.md), `scripts/validate.py` | hotovo |
+| Agenti pro hledání a ověřování zdrojů | [docs/agenti.md](docs/agenti.md), `.claude/`, `scripts/agents.py`, `scripts/check_quotes.py` | hotovo: vyzkoušeno na testech Credo a Presto Ventures, opravy ověřené; API klíč Firecrawl doplní autor do `.env` |
 | Data ze vzorku (sample) se zdrojem u každého údaje | `data/sample/` | připravuje se (krok 5) |
 | Výsledky měření přesnosti (accuracy) | `results/` | připravuje se (krok 6) |
 
 ## Struktura repozitáře
 
 ```
-docs/            zadání, plán, datový model
+.claude/         projektoví subagenti Claude Code (agents/), hook pro Firecrawl (hooks/), oprávnění (settings.json)
+docs/            zadání, plán, datový model, agenti
 data/sample/     data z pilotního vzorku včetně zdrojů
 data/examples/   fiktivní ukázková data pro datový model a testy
 results/         měření přesnosti, odhad nákladů
-scripts/         skripty (validate.py: validace dat)
+scripts/         skripty: validate.py (validace dat), check_quotes.py (kontrola citací),
+                 agents.py (spouštění agentů a předání souborem), firecrawl_mcp.py (Firecrawl s klíčem z .env)
 tests/           testy skriptů
-ai-log/          exporty konverzací s AI
+ai-log/          exporty konverzací s AI (zatím jen lokálně)
+.env.example     vzor pro .env s API klíčem (.env je v .gitignore)
 ```
 
 Validace dat a testy (jen standardní knihovna Pythonu, vyzkoušeno na verzích 3.12.13 a 3.14.4):
 
 ```bash
 python3 scripts/validate.py data/examples/valid --today 2026-10-14
+python3 scripts/check_quotes.py --markdown VYSTUP_AGENTA.md
+python3 scripts/firecrawl_mcp.py --check        # ověří klíč v .env, klíč nevypisuje
 python3 -m unittest discover -s tests -v
 ```
 
@@ -38,6 +44,11 @@ Projekt vzniká ve spolupráci s AI asistentem. Tato část dokumentuje, k čemu
 
 - **Nástroj:** Claude Code (model Claude Opus 5.5)
 - **Workflow:** postupuje se po krocích. Každý krok se nejdřív naplánuje a prodiskutuje, implementuje se až po odsouhlasení.
+- **Agenti:** hlavní relace Claude Code je koordinátor. Práci rozděluje mezi dva projektové subagenty:
+  - `investor-source-scout` (průzkumník) hledá kandidáty, investice a zdroje a vytahuje z nich údaje s citacemi,
+  - `investor-evidence-auditor` (kritický kontrolor) se tvrzení snaží vyvrátit, hledá další nezávislé důkazy a rozpory a posuzuje K1–K3.
+
+  Oba čtou stránky přes Firecrawl a nic nezapisují. Tvrzení si předávají souborem (`scripts/agents.py`). Parametry Firecrawlu hlídá hook. Doslovnost a úplnost citací ověřuje koordinátor skriptem. Podrobnosti jsou v [docs/agenti.md](docs/agenti.md).
 - **Exporty konverzací:** textové soubory z příkazu `/export` v Claude Code, název začíná datem a časem exportu. Ukládají se do adresáře `ai-log/`, ale do veřejného repozitáře se zatím nepřidávají (rozhodnutí autora).
 
 ### Kontroly výstupů
@@ -55,6 +66,15 @@ Jak se ověřovaly výstupy AI (ruční kontrola, validační skripty, kontrola 
 | 2026-10-15 | Validátor a datový model | 56 testů (`unittest`) na Pythonu 3.12.13 a 3.14.4 | 56/56 OK na obou verzích |
 | 2026-10-15 | Že nové testy opravdu hlídají nová pravidla | každé pravidlo zvlášť vypnuto v kopii kódu (mutation check) | při vypnutí kteréhokoli z 5 pravidel testy selžou |
 | 2026-10-15 | Fiktivní ukázková data | `validate.py` | platná sada 0 chyb a 0 varování; neplatná přesně 38 vložených chyb a 3 varování |
+| 2026-10-15 | Podpora projektových subagentů v Claude Code | oficiální dokumentace (sub-agents, tools-reference), `claude plugin validate .claude/agents` | podporováno (`.claude/agents/`); WebFetch vrací text zpracovaný modelem; hlavičky agentů platné |
+| 2026-10-15 | Funkčnost agentů (test Credo Ventures) | scout → auditor (jen tvrzení) → kontrola doslovnosti skriptem (curl) | 6 tvrzení: 5 citací doslovně, 1 ne (auditor ji chybně potvrdil); podrobně v [docs/agenti.md](docs/agenti.md#5-testy) |
+| 2026-10-15 | WebFetch vs. Firecrawl na stejných zdrojích | přímé volání Firecrawl MCP bez klíče, porovnání se záznamy WebFetch a se skriptem | Firecrawl vrací skutečný text; WebFetch adresu přeformuloval a větu C4 nevrátil celou ani jednou |
+| 2026-10-15 | Firecrawl jen u agentů | nová relace `claude -p`: seznam nástrojů hlavní relace, volání ze subagenta | hlavní relace Firecrawl nevidí, auditor ho volá správně; v už běžící relaci se server nepřipojil (nutný restart) |
+| 2026-10-15 | Zákaz `firecrawl_search` (`disallowedTools`) | nová relace, oprávnění nástroj povolují, agent ho má zkusit použít | agent nástroj nemá („No such tool available“) |
+| 2026-10-15 | Skript `check_quotes.py` | 8 nových testů bez sítě a ostrý běh na výstupu auditora z testu Credo | 64/64 testů OK na Pythonu 3.12.13 a 3.14.4; 21/21 citací, 3 stránky přes zálohu Firecrawl |
+| 2026-10-15 | Opravy před uzavřením architektury | cílené technické běhy agentů přes `scripts/agents.py`, bez testu investora | předání souborem beze změny znaků; neúplné záznamy odmítnuty (6/6); hook zablokoval 2 volání se špatnými parametry; čtení `.env` zablokováno |
+| 2026-10-15 | Python testy po opravách | `python3 -m unittest discover -s tests` | 77/77 OK na Pythonu 3.12.13 a 3.14.4 |
+| 2026-10-15 | Test agentů na Presto Ventures | scout → auditor (předání skriptem) → `check_quotes.py`; výpis všech 43 volání Firecrawlu | auditor odhalil záměnu investorů (investice odděleného fondu), 22 nových důkazů; citace 19/20 a 21/22 doslovně; podrobně v [docs/agenti.md](docs/agenti.md#54-test-presto-ventures-2026-10-15-nové-instrukce-firecrawl) |
 
 ### Nalezené chyby
 
@@ -71,6 +91,13 @@ Chyby ve výstupech AI nebo v datech a způsob jejich opravy.
 | 2026-10-15 | K2 se nijak neevidovala a validátor ji nekontroloval. Investor tak mohl být zařazený a dostat hodnocení A/B bez posouzení K2, přestože ji plán (kap. 6.3) vyžaduje. (Zjištěno revizí autora.) | Rozpor mezi plánem a validátorem | Citace `decision_authority`, chyba `K2_NOT_MET`, sloupec K2 v přehledu |
 | 2026-10-15 | U `investment_unspecified` validátor nijak nekontroloval, že zdroj investici výslovně oznamuje. Stačila i věta „poskytl financování“. (Zjištěno revizí autora.) | Půjčka mohla projít jako doklad investování | Hrubá kontrola výrazů, varování `INVESTMENT_NOT_EXPLICIT`, investice se nepočítá |
 | 2026-10-15 | Kap. 4.3 sice označovala 500 tis. EUR za orientační hranici, ale formulace „je Large Private Investor, pokud splní alespoň jedno“ z ní dělala automatické pravidlo. E9 i po dřívější opravě vyřazovalo jen na základě varovných signálů (např. anonymní tým). (Zjištěno revizí autora.) | Pravidla v plánu odporovala zamýšlenému výkladu | 4.3 a E9 přeformulovány; E9 vyžaduje výsledek prověření (`E9_REVIEW_MISSING`) |
+| 2026-10-15 | Auditor (AI) potvrdil citaci z webu Credo Ventures jako doslovnou, ačkoli se od textu stránky liší interpunkcí. WebFetch vrací text zpracovaný modelem. | Riziko nedoslovných citací v datech | Doslovnost rozhoduje kontrola skriptem u koordinátora; instrukce auditora upřesněna |
+| 2026-10-15 | Koordinátor (AI) při předání tvrzení auditorovi zapsal do sloupce pole `instrument` a `is_follow_on`, které nejsou citovatelná pole. Scout je uvedl jen v poznámce. Auditor chybu zachytil. | Chyba vnesená při předání mezi agenty | Tvrzení se předávají beze změn (docs/agenti.md, kap. 2) |
+| 2026-10-15 | Seznam `tools` v definici agenta neomezil nástroje MCP serveru definovaného v agentovi. Oba agenti zkusili `firecrawl_search`, zastavila je jen oprávnění testovací relace. | V interaktivní relaci by agenti používali nepovolený nástroj | Zákaz v `disallowedTools`, ověřeno testem |
+| 2026-10-15 | Kontrolní skript koordinátora (AI): hlásil neshodu kvůli mezeře před čárkou (spojení prvků HTML), řádky bez URL potichu přeskočil a chybu Firecrawlu vypsal nesrozumitelně | Falešné neshody, neúplná kontrola | Opraveno v `check_quotes.py`. Neúplný záznam (bez ID, úplné URL nebo citace) se odmítne, testy doplněny. |
+| 2026-10-15 | Spouštěcí relace (AI) při předání tvrzení auditorovi nahradila typografické apostrofy a uvozovky rovnými | Změna znaků citací při předání | Předání souborem JSON (`scripts/agents.py`), agent ho čte nástrojem Read. Ověřeno: citace dorazí beze změny. |
+| 2026-10-15 | Průzkumník (AI) přiřadil Presto Ventures investice fondu, který byl od skupiny Presto oddělen v dubnu 2025. Auditor záměnu odhalil. | Do dat by šly investice jiného investora | Tvrzení `NOT_SUPPORTED`, K3 doloženo jinými doklady |
+| 2026-10-15 | Auditor (AI) převzal do dvou citací citlivé údaje o fyzické osobě | Rozpor s plan.md, kap. 6.5 | Do dat ani dokumentace se nepřebírají; navrženo doplnit pravidlo do instrukcí auditora |
 | 2026-10-15 | AI v souhrnu kroku 2 uvedla jako zbývající ke schválení jen tiers, A/B/C a E1–E10. Vynechala hraniční případy (kap. 9) a GDPR (kap. 6.5), které plán vedl jako neschválené. | Neúplná informace o stavu schválení | Doplněno do plánu (kap. 12) a do souhrnu pro autora |
 
 ### Rozhodnutí (decision log)
@@ -93,3 +120,7 @@ Chyby ve výstupech AI nebo v datech a způsob jejich opravy.
 | D-012 | 2026-10-15 | 500 tis. EUR jen orientační vodítko, ne automatické pravidlo. E9 až po prověření, samotné varovné signály nevyřazují. | Revize plánu autorem |
 | D-013 | 2026-10-15 | Schváleny úrovně zdrojů Tier 1–4, hodnocení A/B/C a pravidla vyřazení E1–E8 a E10 | Výslovné schválení autorem |
 | D-014 | 2026-10-15 | Exporty konverzací se zatím nepřidávají do veřejného repozitáře | Obsahují celé konverzace, rozhodnutí autora |
+| D-015 | 2026-10-15 | Dva projektoví subagenti Claude Code (scout, auditor) bez dalších frameworků, jen v `.claude/agents/` tohoto repozitáře. Koordinuje hlavní relace a jen ta zapisuje data. | Oddělit hledání od nezávislé kontroly; agenti bez zápisových nástrojů |
+| D-016 | 2026-10-15 | Role: průzkumník vyhledává a vytěžuje, auditor je kritický kontrolor (kontext, vlastní nezávislé důkazy, rozpory, K1–K3). Oba používají Firecrawl bez klíče, definovaný jen v hlavičce agentů. Finální kontrola citací skriptem zůstává. Pravidla zařazení beze změny. | Agenti se mají doplňovat, ne opakovat stejnou práci; WebFetch přeformulovával citace |
+| D-017 | 2026-10-15 | Ostatní nástroje Firecrawlu zakázané v `disallowedTools`. Auditor dává verdikt ke každému klíčovému tvrzení a uvádí všechny rozpory. Kontrola citací je skript `scripts/check_quotes.py` se zálohou přes Firecrawl. | Opravy po testu Credo, schválené autorem |
+| D-018 | 2026-10-15 | Uzavření architektury agentů. Tvrzení se předávají souborem JSON (`scripts/agents.py`). Neúplný záznam bez úplné URL se odmítne. Parametry Firecrawlu vynucuje hook `PreToolUse`. API klíč je v `.env`, čte ho jen `headersHelper` a agenti mají čtení `.env` zakázané. | Požadavek autora: žádné změny znaků v citacích, žádné tiché přeskočení, kontrola mimo prompt, klíč mimo repozitář a konverzaci |
