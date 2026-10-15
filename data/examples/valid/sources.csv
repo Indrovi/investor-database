@@ -1,0 +1,14 @@
+source_id,url,publisher,title,tier,published_date,accessed_date,archive_url
+SRC-0001,https://or.example/subjekt/99999994,Obchodní rejstřík (fiktivní ukázka),Výpis: Fiktivní Ventures s.r.o.,1,,2026-10-14,https://archive.example/20261014/or.example/subjekt/99999994
+SRC-0002,https://ukazkova-robotika.example/novinky/seed-kolo,Ukázková Robotika s.r.o. (portfoliová firma),Získali jsme seed investici,2,2025-03-12,2026-10-14,https://archive.example/20261014/ukazkova-robotika.example/novinky/seed-kolo
+SRC-0003,https://zpravy.example/2024/02/demo-health,Zprávy.example (fiktivní médium),Demo Health získal první investory,2,2024-02-05,2026-10-14,https://archive.example/20261014/zpravy.example/2024/02/demo-health
+SRC-0004,https://zpravy.example/2025/09/fiktivni-ventures-fond-ii,Zprávy.example (fiktivní médium),Fiktivní Ventures chystá druhý fond,2,2025-09-22,2026-10-14,https://archive.example/20261014/zpravy.example/2025/09/fiktivni-ventures-fond-ii
+SRC-0005,https://fiktivni-ventures.example/o-nas,Fiktivní Ventures s.r.o.,O nás,3,,2026-10-14,https://archive.example/20261014/fiktivni-ventures.example/o-nas
+SRC-0006,https://zpravy.example/2022/03/profil-jana-prikladova,Zprávy.example (fiktivní médium),Andělská investorka Jana Příkladová,2,2022-03-08,2026-10-14,https://archive.example/20261014/zpravy.example/2022/03/profil-jana-prikladova
+SRC-0007,https://vzorova-akademie.example/blog/nasi-investori,Vzorová Akademie s.r.o. (portfoliová firma),Naši investoři,2,2022-05-17,2026-10-14,https://archive.example/20261014/vzorova-akademie.example/blog/nasi-investori
+SRC-0008,https://vzorova-poradenska.example/sluzby,Vzorová Poradenská a.s.,Služby,3,,2026-10-14,https://archive.example/20261014/vzorova-poradenska.example/sluzby
+SRC-0009,https://priklad-growth.example/portfolio,Příklad Growth Partners,Portfolio,3,,2026-10-14,https://archive.example/20261014/priklad-growth.example/portfolio
+SRC-0010,https://or.example/subjekt/99999901,Obchodní rejstřík (fiktivní ukázka),"Výpis: Fiktivní Ventures Fund I SICAV, a.s.",1,,2026-10-14,https://archive.example/20261014/or.example/subjekt/99999901
+SRC-0011,https://zpravy.example/2021/06/fiktivni-ventures-fond-i,Zprávy.example (fiktivní médium),Fiktivní Ventures uzavřel první fond,2,2021-06-30,2026-10-14,https://archive.example/20261014/zpravy.example/2021/06/fiktivni-ventures-fond-i
+SRC-0012,https://or.example/subjekt/99999986,Obchodní rejstřík (fiktivní ukázka),Výpis: Ukázková Energetika s.r.o.,1,,2026-10-14,https://archive.example/20261014/or.example/subjekt/99999986
+SRC-0013,https://zpravy.example/2024/11/ukazkova-logistika,Zprávy.example (fiktivní médium),Ukázková Logistika má peníze na rozvoj,2,2024-11-05,2026-10-14,https://archive.example/20261014/zpravy.example/2024/11/ukazkova-logistika

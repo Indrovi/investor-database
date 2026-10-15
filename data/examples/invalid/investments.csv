@@ -1,0 +1,11 @@
+deal_id,investor_id,fund_id,company_name,company_country,company_registry_type,company_registry_id,investment_date,date_basis,instrument,round_stage,is_follow_on,round_amount,round_currency,investor_amount,investor_currency,registry_entry_date,registry_contribution_amount,registry_contribution_currency,notes
+DEAL-0001,INV-0001,FND-0001,Ukázková Robotika s.r.o.,CZ,,,2025-03-12,announcement,equity,seed,false,1500000,,600000,EUR,,,,CHYBA: chybí měna u velikosti kola.
+DEAL-0002,INV-0001,FND-0001,Demo Health a.s.,CZ,,,2023-01-01,stated_in_source,convertible_loan,pre_seed,unknown,,,,,,,,"CHYBA: zdroj uvádí jen rok 2023, den a měsíc byly domyšleny (varování)."
+DEAL-0003,INV-0002,FND-0001,Vzorová Akademie s.r.o.,CZ,,,,,unclear,unknown,unknown,,,,,,,,"CHYBA: fond patří jinému investorovi; instrument=unclear (nejasné, zda nejde o půjčku)."
+DEAL-0004,INV-0003,,Vzorová Strojírna a.s.,CZ,,,2024-06,,investment_unspecified,unknown,unknown,,,,,,,,CHYBA: datum bez date_basis.
+DEAL-0005,INV-0001,,Ukázková Energetika s.r.o.,CZ,cz_ico,99999986,,,equity,unknown,unknown,,,,,2025-11-20,20000,CZK,"FIKTIVNÍ UKÁZKA. Případ „vklad v Kč“: z obchodního rejstříku známe jen datum zápisu společníka a vklad 20 000 Kč. Nejsou to datum ani výše investice, proto investment_date a částky investice zůstávají prázdné. Samotný zápis dokládá vlastnictví podílu, ne investiční transakci: investice je evidovaná, ale nesplňuje K3 ani nezakládá aktivitu, dokud ji nedoloží listina nebo oznámení."
+DEAL-0006,INV-0001,,Ukázková Logistika s.r.o.,CZ,,,2024-11-05,announcement,investment_unspecified,unknown,unknown,,,,,,,,"CHYBA: zdroj mluví jen obecně o poskytnutí financování, přesto instrument=investment_unspecified (varování, investice se nepočítá)."
+DEAL-0007,INV-9999,,Neznámá Firma s.r.o.,CZ,,,,,equity,unknown,unknown,,,,,,,,CHYBA: neexistující investor.
+DEAL-0008,INV-0006,,Vzorová Pekárna s.r.o.,CZ,,,,,debt,unknown,unknown,"1,5 mil.",CZK,,,,,,CHYBA: dluh není investice; částka zapsaná textem místo čísla.
+DEAL-0009,INV-0001,,Budoucí Firma s.r.o.,CZ,,,2027-01-15,announcement,equity,seed,false,,,,,,,,CHYBA: datum v budoucnosti.
+DEAL-0010,INV-0001,,Vzorový Software s.r.o.,CZ,,,2025-11-20,announcement,equity,unknown,unknown,,,20000,CZK,2025-11-20,20000,CZK,CHYBA: datum zápisu společníka a vklad 20 000 Kč z rejstříku převzaté jako datum a výše investice.

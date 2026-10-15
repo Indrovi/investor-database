@@ -1,7 +1,7 @@
 # Plán: Spolehlivá databáze investorů
 
-> **Stav:** pracovní verze, krok 1 (pravidla zařazení a vyřazení), čeká na schválení
-> **Poslední úprava:** 2026-10-14
+> **Stav:** pracovní verze. Krok 2 ([datový model](datovy-model.md)) je hotový. U kroku 1 (pravidla zařazení a vyřazení) zbývá potvrdit hraniční případy (kap. 9) a GDPR (kap. 6.5).
+> **Poslední úprava:** 2026-10-15
 > **Zadání:** [docs/zadani.md](zadani.md)
 
 ## 1. Účel databáze
@@ -21,8 +21,8 @@ Metodika je navržená tak, aby šla použít **celosvětově**. Pilotně se ov�
 | Krok | Obsah | Výstup | Stav |
 |---|---|---|---|
 | 0 | Struktura repozitáře a konvence | README, `.gitignore`, adresáře | hotovo |
-| 1 | Kdo je a kdo není investor | kapitoly 3–11 tohoto dokumentu | **rozpracováno**, zbývají body v kapitole 12 |
-| 2 | Datový model s doložením původu každého údaje (data provenance) | schéma dat a validační skript | plánováno |
+| 1 | Kdo je a kdo není investor | kapitoly 3–11 tohoto dokumentu | **téměř hotovo**, zbývá potvrdit kap. 9 a 6.5 (viz kap. 12) |
+| 2 | Datový model s doložením původu každého údaje (data provenance) | [datovy-model.md](datovy-model.md), `scripts/validate.py`, testy a fiktivní příklady | **hotovo** |
 | 3 | Mapa veřejných zdrojů, odhad počtu investorů a spolehlivosti dat | kapitola plánu | plánováno |
 | 4 | Ověřovací postup (verification protocol) | kapitola plánu a checklist | plánováno |
 | 5 | Pilot: české VC | `data/sample/` | plánováno |
@@ -101,16 +101,21 @@ Atribut `subtype` popisuje **formu subjektu** (korporátní, veřejný, akceler�
 
 ### 4.3 Hranice mezi Business Angel a Large Private Investor
 
-Typ popisuje **investiční chování**, ne velikost majetku. Osoba je **Large Private Investor**, pokud splní **alespoň jedno**:
+Typ popisuje **investiční chování**, ne velikost majetku. Osoba je **Large Private Investor**, pokud z jejích doložených investic plyne, že investuje spíš jako institucionální investor než jako angel. Typicky:
 
-1. její **typický ticket** (medián doložených vlastních investic) dosahuje zhruba **500 000 EUR a více** (orientační ukazatel, viz níže),
-2. kupuje **většinové nebo kontrolní podíly**, nebo investuje do **zavedených firem** (ne startupů).
+- kupuje **většinové nebo kontrolní podíly**,
+- investuje do **zavedených firem**, ne do startupů,
+- sama pokrývá **celá kola** nebo jejich velkou část.
 
-Pokud osoba investuje přes holding s vlastním investičním týmem, nejde o fyzickou osobu, ale o Family Office (4.1, krok 2).
+Jinak jde o **Business Angel**. Pokud osoba investuje přes holding s vlastním investičním týmem, nejde o fyzickou osobu, ale o Family Office (4.1, krok 2).
 
-Jinak jde o **Business Angel**.
+**Ticket kolem 500 000 EUR je jen orientační vodítko, ne automatické rozhodovací pravidlo.** *(Rozhodnuto.)*
 
-**Proč 500 000 EUR:** hranice vznikla jako odhad řádu. Následně se porovnala s veřejnými statistikami evropských angel asociací:
+- Typický ticket (medián doložených vlastních investic) zhruba od 500 000 EUR je **signál k posouzení**, ne rozhodnutí. Typ se nikdy neurčuje jen podle částky (4.1: žádný typ se nepřiřazuje automaticky).
+- O typu rozhoduje člověk podle celkového obrazu doložených investic.
+- Validátor typ podle ticketu neurčuje ani nekontroluje.
+
+**Proč zrovna 500 000 EUR:** hranice vznikla jako odhad řádu. Následně se porovnala s veřejnými statistikami evropských angel asociací:
 
 | Ukazatel | Hodnota | Zdroj |
 |---|---|---|
@@ -130,9 +135,8 @@ Taková osoba tedy sama pokryje celé typické angel kolo a chová se spíš jak
 
 **Omezení:**
 
-- Hranice 500 000 EUR je **orientační ukazatel (indicative threshold)**, ne pevné pravidlo. *(Rozhodnuto.)*
 - EBAN pracuje jen s viditelnou částí trhu (visible market) a sám uvádí, že data nejsou reprezentativní (s. 2–3). Stránka BAE neuvádí datum aktualizace (v patičce je jen © 2013). Hranici lze proto po pilotu upravit podle skutečně doložených ticketů.
-- Pokud ticket není známý, rozhoduje kritérium 2.
+- Pokud ticket není známý, rozhoduje se jen podle charakteru investic (podíly, fáze firem).
 - Pro účel databáze je hranice méně důležitá, než se zdá. **Ticket size je samostatný údaj** a uživatel podle něj filtruje bez ohledu na typ.
 
 ---
@@ -165,6 +169,12 @@ Záznamy se **párují podle registračního čísla**, pokud existuje. Jinak po
 
 Subjekt sám rozhoduje, do čeho investuje (viz kapitola 3). Typicky to dokládá vlastní prezentace subjektu, úřední registr (subjekt je zapsaný jako správce či obhospodařovatel) nebo charakter doložených investic.
 
+**K2 je povinná a eviduje se.** *(Rozhodnuto.)*
+
+- Posouzení K2 se zapisuje jako citace `decision_authority`: zdroj (tier 1–3) a úryvek, ze kterého rozhodovací pravomoc plyne. U posouzení podle charakteru investic se postup popíše v poznámce citace.
+- Dokud K2 posouzená není, investor se **nezařadí** a zůstává kandidátem. Validátor to kontroluje.
+- Pokud posouzení ukáže, že subjekt sám nerozhoduje (LP, platforma, poradce), vyřadí se podle kapitoly 8.
+
 ### K3: Alespoň jeden kvalitní nezávislý důkaz investice
 
 *(Rozhodnuto: stačí jeden kvalitní nezávislý důkaz. Počet investic není podmínkou zařazení.)*
@@ -172,7 +182,7 @@ Subjekt sám rozhoduje, do čeho investuje (viz kapitola 3). Typicky to doklád�
 **Nezávislý** zdroj je zdroj, který investor nemá pod kontrolou: úřední registr, portfoliová firma, co-investor, LP nebo médium s redakční prací. **Kvalitní** je, pokud splňuje vše z následujícího:
 
 1. jednoznačně jmenuje **investora** i **firmu**, do které investoval,
-2. popisuje **vložení kapitálu**, tedy ne partnerství, službu, úvěr ani grant,
+2. popisuje **vložení kapitálu**, tedy ne partnerství, službu, úvěr ani grant. Pokud zdroj neuvádí formu investice, musí **výslovně** mluvit o investici, investorovi nebo podílu. Obecná zmínka o „poskytnutí financování“ nestačí *(rozhodnuto)*,
 3. má **datum** (datum dealu nebo publikace),
 4. má **dohledatelného vydavatele**,
 5. je **veřejně dostupný bez přihlášení** a dá se archivovat.
@@ -181,7 +191,9 @@ Subjekt sám rozhoduje, do čeho investuje (viz kapitola 3). Typicky to doklád�
 
 - **zakladatel investuje do vlastní firmy** (to je založení, ne investice),
 - investice do firem **vlastní skupiny**,
-- čistě **dluhové** financování.
+- čistě **dluhové** financování,
+- investice, u které **není jasné, zda jde o kapitálovou investici, nebo o půjčku** (např. zdroj píše jen „poskytl finance“). Eviduje se, ale jako důkaz investování se nepočítá. *(Rozhodnuto.)*
+- investice doložená **jen zápisem společníka v obchodním rejstříku**. Zápis dokazuje vlastnictví podílu, ne investiční transakci (podíl mohl vzniknout třeba založením firmy nebo darem). Potřebný je další doklad transakce: související listina ze sbírky listin, nebo důvěryhodné oznámení (viz 6.4). *(Rozhodnuto.)*
 
 **Vlastní zdroje investora** (web, portfolio stránka, tisková zpráva, rozhovor) jsou **doplňkové**. Slouží k popisu sektorů, fází, ticketu a AUM, ale **samy k zařazení nestačí**.
 
@@ -201,14 +213,16 @@ Počet doložených investic se ukládá do atributu `documented_deals_count`. U
 
 | Tier | Druh zdroje | Příklady | Použití |
 |---|---|---|---|
-| **Tier 1: úřední** | rejstříky, regulátoři, úřední listiny | obchodní rejstřík a sbírka listin (justice.cz), ARES, seznamy ČNB, Companies House, Handelsregister, SEC Form ADV a Form D, ESMA, GLEIF | identita, rozhodovací pravomoc, **důkaz investice** |
+| **Tier 1: úřední** | rejstříky, regulátoři, úřední listiny | obchodní rejstřík a sbírka listin (justice.cz), ARES, seznamy ČNB, Companies House, Handelsregister, SEC Form ADV a Form D, ESMA, GLEIF | identita, rozhodovací pravomoc, **důkaz investice** (samotný zápis společníka ale nestačí, viz 6.4) |
 | **Tier 2: nezávislé** | strana dealu jiná než investor, redakční média | tisková zpráva portfoliové firmy, oznámení co-investora nebo LP (např. EIF), CzechCrunch, Hospodářské noviny, Forbes, TechCrunch, FT | **důkaz investice**, ticket, velikost fondů, AUM |
 | **Tier 3: vlastní tvrzení** | zdroje kontrolované investorem | web, portfolio, investment thesis, výroční zpráva, rozhovor | sektory, fáze, ticket, velikost fondů, AUM (doplňkově) |
 | **Tier 4: agregátory** | databáze a seznamy | Crunchbase, Dealroom, OpenVC, Wikipedia, **členské seznamy asociací (např. CVCA)**. Samotné členství má váhu Tier 4, profil dodaný členem má váhu Tier 3. | **jen pro hledání kandidátů**, nikdy jako důkaz |
 
 ### 6.2 Co se u každého důkazu zaznamenává
 
-URL, vydavatel, tier, datum publikace, datum dealu (pokud se liší), datum přístupu, doslovná citace podporující údaj a archivní kopie (Wayback Machine). Podrobné schéma bude součástí kroku 2.
+URL, vydavatel, tier, datum publikace, datum dealu (pokud se liší), datum přístupu, doslovná citace podporující údaj a archivní kopie (Wayback Machine). Podrobné schéma je v [datovy-model.md](datovy-model.md).
+
+Zda citace na uvedené stránce opravdu je, se zatím automaticky neověřuje. Řeší se v dalších krocích (ověřovací postup, krok 4).
 
 ### 6.3 Hodnocení spolehlivosti záznamu (confidence grade)
 
@@ -221,7 +235,10 @@ URL, vydavatel, tier, datum publikace, datum dealu (pokud se liší), datum př�
 ### 6.4 Specifika zemí
 
 - **ČR:**
-  - Obchodní rejstřík ukazuje **společníky s.r.o. včetně data zápisu**, což je silný Tier 1 důkaz investice, a to i u fyzických osob.
+  - Obchodní rejstřík ukazuje **společníky s.r.o. včetně data zápisu**, a to i u fyzických osob. Zápis ale dokazuje **vlastnictví podílu, ne samotnou investici**. *(Rozhodnuto.)*
+    - K3 vyžaduje **další doklad investiční transakce**, například související listinu ze sbírky listin (rozhodnutí o zvýšení základního kapitálu, smlouva o převodu podílu) nebo důvěryhodné oznámení (Tier 2).
+    - Samotný zápis nezakládá ani stav `active` (7.1).
+    - Rejstřík tak slouží hlavně k hledání kandidátů, k identitě (K1) a jako doplňkový doklad k investici, kterou dokládá jiný zdroj.
   - Akcionáři a.s. veřejní nejsou (kromě jediného akcionáře).
   - Investice přes convertible loan nebo SAFE se v rejstříku objeví až po konverzi.
   - Startupy se zahraničním holdingem (Delaware, UK) vyžadují Tier 2 zdroj nebo zahraniční registr.
@@ -244,11 +261,17 @@ Aktivita **není podmínkou zařazení**, ale **stavovým atributem** záznamu. 
 
 - **`inactive` neznamená, že investor přestal investovat.** Znamená jen, že **nemáme doloženou novější investici**.
 - Stav se **počítá z data poslední doložené investice** (`last_investment_date`) k aktuálnímu dni, takže je vždy aktuální. Záznam se nikdy automaticky nemaže a nový důkaz ho vrátí do stavu `active`.
+- **Doložená investice** je stejná jako v K3: kapitálová investice doložená **nezávislým zdrojem** (tier 1 nebo 2). Investice doložená jen vlastním zdrojem investora (tier 3) stav `active` nezakládá. *(Rozhodnuto.)*
 - Oznámení nového fondu stav nemění. Eviduje se jen jako nový fond s jeho velikostí (viz 10.1).
 
 ### 7.1 Datum investice a jeho přesnost
 
-- **Datum investice** je datum oznámení dealu (announcement) nebo datum zápisu do rejstříku. Pokud jsou k dispozici obě, použije se dřívější.
+- **Datum investice** je datum oznámení dealu (announcement), nebo datum investice, které zdroj výslovně uvádí.
+- **Datum zápisu společníka do obchodního rejstříku není datum investice** a **zapsaný vklad není výše investice**. *(Rozhodnuto.)*
+  - Zápis bývá až po investici.
+  - Vklad do základního kapitálu bývá jen zlomek skutečné investice, zbytek tvoří ážio. Například vklad 20 000 Kč při investici v řádu milionů.
+  - Oba údaje se proto ukládají zvlášť (`registry_entry_date`, `registry_contribution`) a do data a výše investice se nepřebírají.
+  - **Samotný zápis nestačí pro K3 ani pro stav `active`** (6.4). *(Rozhodnuto.)*
 - Datum se ukládá **jen s takovou přesností, jakou zdroj skutečně uvádí** (ISO 8601): `YYYY-MM-DD`, `YYYY-MM` nebo `YYYY`.
 - **Neznámé části data se nedoplňují.** Například investice známá jen rokem 2024 se uloží jako `2024`, nikdy ne jako `2024-01-01`.
 - Datum publikace zdroje, který se o investici zmiňuje jen zpětně (např. rozhovor nebo přehled portfolia), **není datem investice**.
@@ -271,10 +294,10 @@ Aktivita **není podmínkou zařazení**, ale **stavovým atributem** záznamu. 
 | E6 | Strategické a vnitroskupinové transakce | Firma kupuje podíly kvůli začlenění do vlastní skupiny nebo investuje do vlastních dceřiných společností. |
 | E7 | Jen LP / fund of funds | Investuje jen do fondů a o investicích do firem nerozhoduje. Lze ho ale použít jako zdroj při hledání kandidátů. |
 | E8 | Nefinanční podpora | Granty, dotační agentury, soutěže, inkubátory bez vlastního kapitálu. |
-| E9 | Podezřelé subjekty | Varovné signály: požaduje poplatky od zakladatelů, tvrdí investice, které zdroje vyvracejí, tým je anonymní. |
+| E9 | Podezřelé subjekty (až po prověření) | Vyřadí se teprve tehdy, když **prověření potvrdí**, že subjekt nejedná jako investor. Například vybírá od zakladatelů poplatky místo investování, nebo jeho tvrzené investice vyvracejí nezávislé zdroje. **Samotné varovné signály** (poplatky, nedoložené investice, anonymní tým) k vyřazení **nestačí**: záznam zůstává kandidátem, dokud se neprověří. Výsledek prověření se zapíše k citaci důvodu vyřazení. *(Rozhodnuto.)* |
 | E10 | Investiční vehikula a duplicity | Fondy, SPV, feedery a přejmenované subjekty se **sloučí** pod nadřazený záznam, nejsou samostatné. |
 
-Pravidla vyřazení se týkají jen toho, **čím subjekt je** (E1–E8, E10), nebo **varovných signálů** (E9). **Neaktivita ani chybějící údaje nejsou důvodem k vyřazení:**
+Pravidla vyřazení se týkají jen toho, **čím subjekt je** (E1–E8, E10), nebo **prověřeného podezření** (E9). **Neaktivita, chybějící údaje ani neprověřené varovné signály nejsou důvodem k vyřazení:**
 
 - subjekt bez novější investice zůstává se stavem `inactive` (kapitola 7),
 - subjekt, který zatím nesplňuje K1–K3, zůstává v seznamu kandidátů (kapitola 10).
@@ -304,13 +327,19 @@ Zadání říká, že u každého investora „musí být uvedeno“, v jakém s
 | Skupina polí | Pole | Když chybí |
 |---|---|---|
 | **Pole nutná pro zařazení** (inclusion fields) | identita, primary type, země (u subjektů sídlo HQ, u fyzických osob země působení), ≥1 nezávislý důkaz investice | záznam **se nezařadí** a zůstává v seznamu kandidátů |
-| **Popisná pole** (descriptive fields) | sektory, fáze a typ investic, geografie, ticket size, AUM, velikost fondů | záznam **zůstává**, hodnota je `null` a v `missing_reason` je důvod: `not_public`, `conflicting` nebo `not_applicable` |
+| **Popisná pole** (descriptive fields) | sektory, fáze a typ investic, geografie, ticket size, AUM, velikost fondů | záznam **zůstává**, hodnota je `null` a v `missing_reason` je důvod: `not_public`, `conflicting`, `not_applicable` nebo `ambiguous` |
+
+**Důvod `ambiguous`** se použije, když zdroj údaj uvádí, ale **není jasné, co představuje**. Typicky jde o větu „disponuje kapitálem X“, ze které neplyne, zda jde o AUM, velikost fondu, nebo vlastní kapitál. Nejasný údaj se nezapisuje jako hodnota, ale zůstane dohledatelný v citaci. *(Rozhodnuto.)*
 
 **Původ hodnoty** (atribut `value_origin`, podle spolehlivosti):
 
 1. `reported`: hodnotu zveřejnil zdroj,
 2. `derived`: hodnota je odvozená z doložených investic s popsanou metodou. Například sektory podle portfolia nebo ticket podle velikosti kol, ve kterých investor byl.
 3. `estimate`: odhad, jen s výslovným označením a zdůvodněním. Jeho přesnost se měří zvlášť.
+
+U hodnot `derived` a `estimate` **nestačí popis výpočtu**. Musí být dohledatelné i **původní zdroje**, ze kterých výpočet vychází (URL, datum, citace). *(Rozhodnuto.)*
+
+**Sektory** se zařazují do číselníku 18 kategorií ([datovy-model.md](datovy-model.md), kap. 7). Vedle toho se **doslovně uchovává původní označení ze zdroje**. *(Rozhodnuto.)*
 
 **Stárnutí:** každá hodnota má datum `as_of`. Údaj o AUM starší než 3 roky dostane příznak `stale`.
 
@@ -321,11 +350,12 @@ Velikost jednotlivého fondu a celkové AUM investora jsou **dva samostatné úd
 | Údaj | Úroveň | Význam |
 |---|---|---|
 | **Velikost fondu** (`fund_size`) | jeden konkrétní fond | Kapitál, který investoři do fondu upsali (committed capital). Eviduje se s názvem fondu, vintage, měnou, datem a typem velikosti: `target` (cílová), `first_close` (první uzavření) nebo `final_close` (konečné uzavření). |
-| **AUM investora** (`aum`) | celý investiční subjekt | Celkový kapitál, který investor spravuje napříč všemi fondy a vehikuly, **jak ho uvádí zdroj**, k datu `as_of`. Ukládá se i definice, kterou zdroj používá (např. regulatory AUM ve Form ADV, committed capital). |
+| **AUM investora** (`aum`) | celý investiční subjekt | Celkový kapitál, který investor spravuje napříč všemi fondy a vehikuly, **jak ho uvádí zdroj**, k datu `as_of`. Ukládá se i druh údaje: AUM výslovně uvedené zdrojem, nebo regulatorní AUM (např. Form ADV). |
 
 **Pravidla:**
 
 - Velikost jednoho fondu se **nikdy nezapisuje jako AUM** a naopak. Typická chyba médií je zaměnit „fond o velikosti X“ a „spravuje X“, proto se vždy čte přesná formulace ve zdroji.
+- **Celkový upsaný kapitál fondů (committed capital) není AUM** a do AUM se nezapisuje, ani když ho zdroj uvede jako jedno číslo. Zapisují se jednotlivé fondy. *(Rozhodnuto.)* Validátor varuje, když se AUM shoduje s velikostí některého fondu nebo se součtem fondů.
 - **AUM se z velikostí fondů automaticky nedopočítává.** Součet fondů se od AUM liší kvůli vráceným prostředkům, změnám hodnoty portfolia, neznámým fondům a co-investment vehiklům.
 - Pokud AUM není zveřejněné, zůstane `null` s důvodem `not_public`, **i když známe velikosti fondů**.
 - Cílová velikost (`target`) a první uzavření (`first_close`) se nikdy neprezentují jako konečná velikost fondu.
@@ -375,9 +405,12 @@ Investiční tým nebo správce **doložitelně sídlí v ČR**, bez ohledu na d
 | Základní typ se nikdy nepřiřazuje automaticky. Když ho nejde doložit, záznam zůstává v seznamu kandidátů. | 4.1 | rozhodnuto |
 | Ostatní subjekty přes `subtype` (accelerator, public, institutional, angel fund, multi-family). Subtype neurčuje základní typ, ten se určuje podle 4.1. | 4.2 | rozhodnuto |
 | Corporate VC → VC / `corporate` | 4.2 | rozhodnuto |
-| Hranice Business Angel / Large Private Investor: 500 000 EUR jako orientační ukazatel (EBAN + BAE) + kvalitativní kritéria | 4.3 | rozhodnuto (lze upravit po pilotu) |
+| Business Angel / Large Private Investor: rozhoduje investiční chování. 500 000 EUR je jen orientační vodítko (EBAN + BAE), ne automatické pravidlo. | 4.3 | rozhodnuto (lze upravit po pilotu) |
 | Úřední registr není povinný, úrovně identity I1/I2/I3 | 5 (K1) | rozhodnuto |
+| K2 je povinná, posouzení se eviduje citací `decision_authority`. Bez posouzení se investor nezařadí. | 5 (K2) | rozhodnuto |
 | K zařazení stačí 1 kvalitní nezávislý důkaz, bez požadavku na počet investic | 5 (K3) | rozhodnuto |
+| Investice bez uvedené formy (`investment_unspecified`) se počítá jen při výslovném oznámení investice, obecné „financování“ nestačí | 5 (K3) | rozhodnuto |
+| Samotný zápis společníka v rejstříku nesplní K3 ani nezakládá `active`. Potřebný je další doklad transakce (listina, oznámení). | 5 (K3), 6.4, 7.1 | rozhodnuto |
 | Aktivita jako stav `active` / `inactive` (24 měsíců, včetně follow-on), bez automatického vyřazení | 7 | rozhodnuto |
 | Datum investice jen se známou přesností, nic se nedomýšlí | 7.1 | rozhodnuto |
 | Konzervativní vyhodnocení neúplného data vůči hranici 24 měsíců | 7.1 | rozhodnuto |
@@ -385,7 +418,22 @@ Investiční tým nebo správce **doložitelně sídlí v ČR**, bez ohledu na d
 | Součet velikostí fondů se nepočítá, evidují se jen jednotlivé fondy | 10.1 | rozhodnuto |
 | Neaktivita ani chybějící údaje nejsou důvodem k vyřazení | 7, 8, 10 | rozhodnuto |
 | Definice „českého VC“ pro pilot: investiční tým nebo správce sídlí v ČR | 11.1 | rozhodnuto |
-| Úrovně zdrojů Tier 1–4, hodnocení A/B/C, pravidla vyřazení E1–E10, hraniční případy, chybějící údaje (`null` + důvod), GDPR | 6, 8, 9, 10 | **návrh bez připomínek, zatím výslovně neschválený** |
+| Investice s nejasným nástrojem (kapitálová investice, nebo půjčka?) se nepočítá jako důkaz investování | 5 (K3) | rozhodnuto |
+| Aktivita se počítá jen z investic doložených nezávislým zdrojem (tier 1 nebo 2) | 7 | rozhodnuto |
+| Datum zápisu a vklad v obchodním rejstříku nejsou datum a výše investice | 7.1 | rozhodnuto |
+| Důvod chybějící hodnoty `ambiguous` | 10 | rozhodnuto |
+| Odvozené a odhadnuté hodnoty musí mít dohledatelné původní zdroje, ne jen popis výpočtu | 10 | rozhodnuto |
+| Číselník 18 sektorů + doslovné původní označení ze zdroje | 10 | rozhodnuto |
+| Celkový upsaný kapitál fondů není AUM | 10.1 | rozhodnuto |
+| Fáze a regiony podle návrhu v datovém modelu | [datovy-model.md](datovy-model.md), kap. 7 | rozhodnuto |
+| Přepočet měn se zatím neřeší | [datovy-model.md](datovy-model.md), kap. 5 | rozhodnuto (zatím) |
+| Automatická kontrola, že citace na uvedeném webu opravdu je | 6.2 | odloženo do dalších kroků (krok 4) |
+| Úrovně zdrojů Tier 1–4 | 6.1 | rozhodnuto |
+| Hodnocení spolehlivosti A/B/C | 6.3 | rozhodnuto |
+| Pravidla vyřazení E1–E8 a E10 | 8 | rozhodnuto |
+| E9 jen po prověření, samotné varovné signály nevyřazují | 8 | rozhodnuto |
+| Chybějící údaje: prázdná hodnota + důvod | 10 | rozhodnuto (s datovým modelem) |
+| Hraniční případy, GDPR | 9, 6.5 | **návrh bez připomínek, zatím výslovně neschválený** |
 
 ---
 

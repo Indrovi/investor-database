@@ -1,0 +1,3 @@
+fund_id,investor_id,name,vintage_year,domicile_country,size_amount,size_currency,size_type,size_as_of,size_status,notes
+FND-0001,INV-0001,Fiktivní Ventures Fund I,2021,CZ,40000000,EUR,final_close,2021-06,reported,FIKTIVNÍ UKÁZKA. Konečná velikost fondu.
+FND-0002,INV-0001,Fiktivní Ventures Fund II,,CZ,80000000,EUR,target,2025-09-22,reported,"FIKTIVNÍ UKÁZKA. Jen cílová velikost (target), fond ještě není uzavřený."
