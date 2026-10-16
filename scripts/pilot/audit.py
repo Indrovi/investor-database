@@ -14,6 +14,9 @@ Výstupy:
 - results/presnost.csv: počty a podíly; přesnost jen z ručně ověřených položek.
 
 Použití: python3 scripts/pilot/audit.py [--online]   (--online ověří citace vzorku triáže přímým stažením)
+
+Audit se vztahuje k datům z commitu c96c21e. Po opravách v kroku 8 se nad aktuálními daty znovu
+nespouští (hodnoty i ID citací se změnily); pro reprodukci vraťte data/sample na commit c96c21e.
 """
 from __future__ import annotations
 

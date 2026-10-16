@@ -1,6 +1,6 @@
 # Plán: Spolehlivá databáze investorů
 
-> **Stav:** pracovní verze. Krok 2 ([datový model](datovy-model.md)), krok 3 ([mapa zdrojů ČR](zdroje-cr.md)) a krok 4 ([ověřovací postup](overovaci-postup.md)) jsou hotové, stejně jako pilot (krok 5), měření přesnosti (krok 6) a odhad pro celý svět (krok 7, kap. 13). U kroku 1 (pravidla zařazení a vyřazení) zbývá potvrdit hraniční případy (kap. 9) a GDPR (kap. 6.5).
+> **Stav:** výsledná verze k odevzdání (2026-10-16). Kroky 0–8 jsou hotové. Hraniční případy (kap. 9) a GDPR (kap. 6.5) zůstávají návrhem pro ostrý provoz. Stav k odevzdání a omezení shrnuje kap. 14.
 > **Poslední úprava:** 2026-10-16
 > **Zadání:** [docs/zadani.md](zadani.md)
 
@@ -21,14 +21,14 @@ Metodika je navržená tak, aby šla použít **celosvětově**. Pilotně se ov�
 | Krok | Obsah | Výstup | Stav |
 |---|---|---|---|
 | 0 | Struktura repozitáře a konvence | README, `.gitignore`, adresáře | hotovo |
-| 1 | Kdo je a kdo není investor | kapitoly 3–11 tohoto dokumentu | **téměř hotovo**, zbývá potvrdit kap. 9 a 6.5 (viz kap. 12) |
+| 1 | Kdo je a kdo není investor | kapitoly 3–11 tohoto dokumentu | **hotovo** pro pilot; hraniční případy (kap. 9) a GDPR (6.5) zůstávají návrhem pro ostrý provoz (kap. 14) |
 | 2 | Datový model s doložením původu každého údaje (data provenance) | [datovy-model.md](datovy-model.md), `scripts/validate.py`, testy a fiktivní příklady | **hotovo** |
 | 3 | Mapa veřejných zdrojů a spolehlivosti dat (pro ČR) | [zdroje-cr.md](zdroje-cr.md), katalog `data/sources/` | **hotovo** (celosvětový odhad počtu investorů přesunut do kroku 7) |
 | 4 | Ověřovací postup (verification protocol) | kap. 6.6 a [checklist](overovaci-postup.md) | **hotovo** |
 | 5 | Pilot: české VC | `data/sample/`, přehled `investori_prehled.csv`, skripty `scripts/pilot/` | **hotovo**: 5 unikátních investorů, všichni zařazení; otevřené otázky pro krok 6 v [data/sample/README.md](../data/sample/README.md) |
-| 6 | Ruční ověření a měření přesnosti | [results/](../results/README.md) | **hotovo**: autor ručně zkontroloval 10 údajů (8/10 správně, kontrola AI se shoduje 10/10); 6 chyb a 1 nejistota, opravy dat odložené do kroku 8 |
+| 6 | Ruční ověření a měření přesnosti | [results/](../results/README.md) | **hotovo**: autor ručně zkontroloval 10 údajů (8/10 správně, kontrola AI se shoduje 10/10); 6 chyb a 1 nejistota, opravy dat zapracované v kroku 8 |
 | 7 | Závěrečná analýza: odhad počtu investorů a nákladů na rozšíření na celý svět | kap. 13 a [results/odhad_svet.csv](../results/odhad_svet.csv) | **hotovo** (revidováno): ověřitelných asi 14 600 organizací (8 600–20 500) a 29 500 fyzických osob (velmi nejisté); prvotní ověření asi 0,41 mil. USD za organizace, 1,7 mil. USD za vše |
-| 8 | Revize plánu podle pilotu a finalizace | finální `docs/plan.md` | plánováno; zapracovat opravy dat a podněty z auditu ([results/](../results/README.md#souhrn-chyby-nejistoty-a-doporučené-opravy)) |
+| 8 | Revize plánu podle pilotu a finalizace | finální `docs/plan.md`, opravená data `data/sample/` | **hotovo**: opravy z auditu zapracované do dat (Vistag označen jako nejistý a nepočítá se), pravidlo nezávislosti důkazů (6.3), stav k odevzdání a omezení (kap. 14) |
 
 ---
 
@@ -231,6 +231,8 @@ URL, vydavatel, tier, datum publikace, datum dealu (pokud se liší), datum př�
 | **A** | K1 + K2 + **≥2** kvalitní nezávislé důkazy investice | zařazen |
 | **B** | K1 + K2 + **1** kvalitní nezávislý důkaz | zařazen (minimum) |
 | **C** | nesplní některé z K1–K3, typicky existují jen vlastní tvrzení nebo agregátory | **nezařazen**, zůstává v seznamu kandidátů (candidate queue) |
+
+**Nezávislost důkazů:** více publikací téhož prohlášení (například převzatá zpráva ČTK nebo tisková zpráva firmy v několika médiích) je **jeden** důkaz. *(Rozhodnuto v kroku 8 podle auditu: NRI.)* Validátor počítá odlišné zdroje, převzetí proto zapisuje koordinátor: druhou publikaci uvede jen v poznámce investice.
 
 ### 6.4 Specifika zemí
 
@@ -439,7 +441,7 @@ Investiční tým nebo správce **doložitelně sídlí v ČR**, bez ohledu na d
 | Pravidla vyřazení E1–E8 a E10 | 8 | rozhodnuto |
 | E9 jen po prověření, samotné varovné signály nevyřazují | 8 | rozhodnuto |
 | Chybějící údaje: prázdná hodnota + důvod | 10 | rozhodnuto (s datovým modelem) |
-| Hraniční případy, GDPR | 9, 6.5 | **návrh bez připomínek, zatím výslovně neschválený** |
+| Hraniční případy, GDPR | 9, 6.5 | návrh bez připomínek, pro ostrý provoz výslovně potvrdit (kap. 14) |
 | Krok 3 jen pro ČR, celosvětový odhad počtu investorů až v závěrečné analýze (krok 7) | 2 | rozhodnuto |
 | Katalog zdrojů ve třech tabulkách: zdroje, použití se spolehlivostí, důkazy | [zdroje-cr.md](zdroje-cr.md) | rozhodnuto |
 | Zdroje s omezujícími podmínkami (Dealroom, OpenVC, CEE Funding Map, CC+) jen ručně a interně, data se nepřebírají v rozporu s podmínkami | [zdroje-cr.md](zdroje-cr.md) | rozhodnuto |
@@ -449,6 +451,8 @@ Investiční tým nebo správce **doložitelně sídlí v ČR**, bez ohledu na d
 | Stejné IČO = stejný subjekt (žádný nový záznam). U značky s více právnickými osobami rozhoduje skutečná investiční pravomoc: jako E10 se slučují jen osoby bez ní (vehikula, feedery, SPV, GP). Duplicitní IČO hlásí validátor, párování dělá koordinátor ručně. | 3.1, K1, 8 (E10), [ověřovací postup](overovaci-postup.md) | rozhodnuto (automatizace v pilotu) |
 | Sankční seznamy EU a OFAC | 9 | otevřené |
 | Ruční audit pilotu (krok 6): nezávislost důkazů a hodnocení A u NRI, K2 u Rockaway, právnické struktury Tilie a Orbitu, zda Vistag je skutečně uskutečněná investice StartupYardu | [results/README.md](../results/README.md) | rozhodnuto v kroku 6 (AI podle metodiky), nejistoty zapsané |
+| Opravy dat podle auditu zapracované v kroku 8; nejistý Vistag ponechán s poznámkou a mezi doložené investice se nepočítá, audit se vztahuje k datům před opravami (commit `c96c21e`) | [data/sample/README.md](../data/sample/README.md) | rozhodnuto (krok 8) |
+| Více publikací téhož prohlášení je jeden důkaz | 6.3 | rozhodnuto (krok 8) |
 | Město sídla investičního týmu jako samostatný doložený údaj; přehled zařazených investorů pro čtení generovaný z dat | [datovy-model.md](datovy-model.md), kap. 3.1 a 9.1 | rozhodnuto |
 | Pilot nejdřív na 5 různorodých českých VC, rozšíření až po osvědčení postupu. Kandidáti jen ze zmapovaných zdrojů, zdroje s omezeným přístupem vynechány, současný tarif Firecrawl. | 11, [data/sample/README.md](../data/sample/README.md) | rozhodnuto |
 | Původ kandidátů v `candidates.csv`, `investor_id` až po ověření | [datovy-model.md](datovy-model.md), kap. 3.6 | rozhodnuto |
@@ -711,6 +715,39 @@ Při kontrole proti zadání a zdrojům jsem opravil:
 | Hlavní výsledek | jedno číslo za všechny typy (~50 000) | organizace a fyzické osoby zvlášť | angelové mají velmi nízkou jistotu a přebíjeli součet |
 
 Ověřený výsledek se tím snížil z asi 50 000 na asi 44 000 investorů, z toho organizace z 19 000 na 14 600. Náklady na AI a nástroje klesly z 1,76 na 1,65 mil. USD, ale přibyla lidská práce.
+
+---
+
+## 14. Stav k odevzdání a omezení (krok 8)
+
+**Splnění zadání A:**
+
+| Požadavek zadání | Kde |
+|---|---|
+| Kdo v databázi bude a kdo ne (pravidla zařazení a vyřazení) | kap. 3–5, 8–10 |
+| Jak se ověří pravost a správné zařazení záznamů | kap. 5, 6, [ověřovací postup](overovaci-postup.md), [agenti](agenti.md) |
+| Jaký okruh investorů lze získat z veřejných zdrojů, kolik jich bude, jaká bude spolehlivost a z čeho odhad vychází | kap. 13.1–13.5, [results/odhad_svet.csv](../results/odhad_svet.csv) |
+| Ověření na menším vzorku (české VC), u každého záznamu zdroj a datum investice | kap. 11, [data/sample/](../data/sample/README.md) |
+| Přesnost změřená na ručně ověřeném vzorku | [results/README.md](../results/README.md) |
+| Náklady na rozšíření na celý svět | kap. 13.6 |
+| Jen veřejně dostupná data | kap. 1, [mapa zdrojů](zdroje-cr.md) |
+
+**Omezení** (vědomě nerozšiřováno, zdokumentováno):
+
+- **Pilot je malý:** 5 českých VC.
+  - PE, family offices, angelové a LPI nejsou vyzkoušené. Jejich čísla v kap. 13 jsou předpoklady.
+- **Ruční kontrola pokrývá 10 údajů** (ověřil jeden člověk).
+  - Ostatní údaje, K1–K3 a vzorek vyřazených kandidátů ověřila jen AI (results/README.md).
+- **Vistag (StartupYard)** zůstává nejistý: nejde určit, zda investice proběhla. Záznam je v datech s poznámkou, ale mezi doložené investice se nepočítá (K3, bod 2).
+- **Právní struktury lucemburských fondů** (GP, AIFM) u Rockaway, Tilie a Orbitu nejsou ověřené v registru. K2 je doložené na úrovni týmu.
+- **Validátor nehlídá** nezávislost publikací (6.3) ani to, zda je přiřazení investice k fondu doložené. Obojí kontroluje koordinátor a audit.
+- **Datový model nemá** příznak přibližné hodnoty (např. „necelých“ 55 mil. EUR). Přehled `investori_prehled.csv` neuvádí, že datum investice je datum oznámení.
+- **Otevřené pro ostrý provoz:**
+  - archivace zdrojů (varování `MISSING_ARCHIVE`),
+  - sankční seznamy EU a OFAC,
+  - GDPR: informační povinnost u fyzických osob (6.5),
+  - výslovné potvrzení hraničních případů (kap. 9),
+  - otevřené otázky ke zdrojům v ČR (zdroje-cr.md, kap. 8).
 
 ---
 

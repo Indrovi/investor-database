@@ -719,3 +719,66 @@ CANDIDATES["CAN-0019"] = {"investor_id": "INV-0011"}
 by_id["INV-0001"]["ticket_scope"] = "počáteční investici"                          # „initial ticket“ (tilia.vc)
 by_id["INV-0003"]["ticket_scope"] = "hotovostní investici v programu akcelerátoru"  # €25,000 in cash (FAQ)
 next(r for r in INVESTORS if r["investor_id"] == "INV-0011")["ticket_scope"] = "growth equity"  # CVCA: Growth Equity
+
+# =====================================================================================
+# Opravy podle auditu kroku 6 (results/README.md, kap. Souhrn), zapracované v kroku 8, 2026-10-16.
+# Audit a měření přesnosti se vztahují k datům před opravami (commit c96c21e).
+# Citace „KOORD“ převzal koordinátor při auditu přímo ze stránky; doslovnost ověřuje verify_quotes.py.
+# =====================================================================================
+ACI = "https://alternativecreditinvestor.com/2026/07/02/orbit-inks-more-than-e100m-for-venture-debt-fund/"
+SY15 = "https://startupyard.com/the-next-wave-begins-startupyard-announces-batch-15/"
+KOORD_CLAIMS = {
+    "G1": {"_url": ACI, "_quote": "Founded in 2019, Orbit Capital is a growth-stage investor focused on supporting "
+                                  "technology scale-ups across the CEE region as well as Germany, Austria and Switzerland."},
+    "S1": {"_url": SY15, "_quote": "We're industry-agnostic, but we look for solutions that are hard to replicate."},
+}
+TIER[SY15] = "3"
+SOURCE_OVERRIDES[SY15] = {"publisher": "StartupYard", "title": "The Next Wave Begins: StartupYard Announces Batch 15",
+                          "accessed_date": "2026-10-16"}
+inv = {row["investor_id"]: row for row in INVESTORS}
+deal_by_id = {d["deal_id"]: d for d in DEALS}
+
+# INV-0011/geografie: novější zdroj tier 2 (2026) uvádí vedle CEE i DACH, má přednost před CVCA (plan.md 9).
+inv["INV-0011"]["geographies"] = "CEE;DACH"
+inv["INV-0011"]["cites"].append(("KOORD:G1", "geographies",
+    "Novější zdroj tier 2 (2026) uvádí vedle CEE i Německo, Rakousko a Švýcarsko; má přednost před profilem CVCA "
+    "(plan.md 9). Oprava podle auditu kroku 6."))
+
+# DEAL-0017, DEAL-0018: přiřazení k fondu Orbit Growth SCSp žádný zdroj neuvádí.
+for deal_id in ("DEAL-0017", "DEAL-0018"):
+    deal_by_id[deal_id]["fund_id"] = ""
+deal_by_id["DEAL-0017"]["notes"] = ("Series C; dluhovou část kola poskytl jiný věřitel. Fond zdroj neuvádí, proto není "
+                                    "přiřazen (oprava podle auditu kroku 6).")
+deal_by_id["DEAL-0018"]["notes"] = ("Series C, Orbit jako nový investor; pořídil podíl. Fond zdroj neuvádí, proto není "
+                                    "přiřazen (oprava podle auditu kroku 6).")
+
+# INV-0003/sektory: dva vlastní zdroje si odporují a novější nejde určit (úvodní stránka bez data) → conflicting.
+inv["INV-0003"].update({"sectors": "", "sectors_original": "", "sectors_status": "conflicting"})
+inv["INV-0003"]["cites"].append(("KOORD:S1", "sectors",
+    "Stránka o 15. kole (2025) uvádí „industry-agnostic“, úvodní stránka (bez data) deep tech: AI, kyberbezpečnost, IoT. "
+    "Novější zdroj nejde určit (plan.md 9). Oprava podle auditu kroku 6."))
+
+# DEAL-0009 Spotawheel: dluh dodaly banky a úvěrové instituce, Rockaway je jmenován mezi investory kola.
+deal_by_id["DEAL-0009"]["instrument"] = "investment_unspecified"
+deal_by_id["DEAL-0009"]["notes"] = ("Kolo kombinovalo equity a asset-backed dluh (100–110 mil. EUR podle zdroje). Zdroje "
+                                    "jmenují Rockaway mezi investory kola a formu neuvádějí; dluh podle tiskové zprávy dodaly "
+                                    "banky a úvěrové instituce. Proto investment_unspecified (oprava podle auditu kroku 6, "
+                                    "dříve unclear).")
+
+# DEAL-0014 Hardwario: Forbes (ČTK) přebírá totéž prohlášení jako Lupa, jako samostatný důkaz se nepočítá (plan.md 6.3).
+deal_by_id["DEAL-0014"]["cites"] = [c for c in deal_by_id["DEAL-0014"]["cites"] if c[0] != f"{N}:A:A1"]
+deal_by_id["DEAL-0014"]["notes"] = ("Úpis nových akcií při IPO na trhu START. Totéž prohlášení Hardwaria přebírá i ČTK "
+                                    "(https://forbes.cz/hardwario-vstoupilo-na-burzu-a-upsalo-vsechny-nabizene-akcie-ziska-tak-48-milionu-korun/); "
+                                    "jako samostatný důkaz se nepočítá (plan.md 6.3, oprava podle auditu kroku 6).")
+
+# DEAL-0012 Vistag: nejisté, ponecháno jako záznam, ale ne jako doložená investice (plan.md 5, K3, bod 2:
+# zdroj musí popisovat vložení kapitálu). Citace v budoucím čase („získají investici“) proto dokládá jen datum
+# oznámení, ne transakci; jako „deal“ zůstává jen citace o účasti v 10. kole, která investici nezmiňuje.
+deal_by_id["DEAL-0012"]["cites"] = [
+    (f"{Y}:S:T29", "investment_date", "Oznámení výběru do 10. kola; investice je v budoucím čase, vložení kapitálu "
+                                      "nedokládá (K3, bod 2)."),
+    (f"{Y}:S:T30", "deal", "Účast v 10. kole akcelerátoru; investici nezmiňuje, jako doklad K3 se nepočítá."),
+]
+deal_by_id["DEAL-0012"]["notes"] = ("10. kolo akcelerátoru (7 firem). NEJISTÉ: nelze spolehlivě určit, zda investice "
+                                    "proběhla (citace v budoucím čase, titulek v minulém), proto se nepočítá mezi doložené "
+                                    "investice (audit kroku 6, oprava v kroku 8).")

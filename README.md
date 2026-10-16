@@ -8,14 +8,14 @@ Projekt vychází ze [zadání](docs/zadani.md) a pracuje výhradně s veřejně
 
 | Výstup | Umístění | Stav |
 |---|---|---|
-| Výsledný plán: inclusion/exclusion criteria, verification, odhad rozsahu a spolehlivosti, odhad nákladů | [docs/plan.md](docs/plan.md) | rozpracováno: kroky 2–7 hotové, odhad pro celý svět v kap. 13; u kroku 1 zbývá potvrdit hraniční případy a GDPR |
+| Výsledný plán: inclusion/exclusion criteria, verification, odhad rozsahu a spolehlivosti, odhad nákladů | [docs/plan.md](docs/plan.md) | **hotovo** (krok 8): výsledná verze; odhad pro celý svět v kap. 13, stav k odevzdání a omezení v kap. 14 |
 | Datový model a validátor | [docs/datovy-model.md](docs/datovy-model.md), `scripts/validate.py` | hotovo |
 | Agenti pro hledání a ověřování zdrojů | [docs/agenti.md](docs/agenti.md), `.claude/`, `scripts/agents.py`, `scripts/check_quotes.py` | hotovo: vyzkoušeno na testech Credo a Presto Ventures, opravy ověřené; API klíč Firecrawl doplní autor do `.env` |
 | Mapa veřejných zdrojů pro české VC (krok 3) | [docs/zdroje-cr.md](docs/zdroje-cr.md), [data/sources/](data/sources/) | hotovo: 20 zdrojů a 5 typů zdrojů, 289 doložených zjištění |
 | Ověřovací postup (krok 4) | [docs/overovaci-postup.md](docs/overovaci-postup.md) | hotovo: checklist pro pilot nad existujícími postupy |
-| Data ze vzorku (sample) se zdrojem u každého údaje | [data/sample/](data/sample/) | hotovo (krok 5): 5 unikátních investorů, všech 5 zařazených (`included`); otevřené otázky pro krok 6 v [data/sample/README.md](data/sample/README.md) |
+| Data ze vzorku (sample) se zdrojem u každého údaje | [data/sample/](data/sample/) | **hotovo**: 5 unikátních českých VC, všech 5 zařazených (`included`); chyby z auditu opravené v kroku 8, nejistý Vistag označený a nepočítaný mezi doložené investice ([data/sample/README.md](data/sample/README.md)) |
 | Přehled zařazených investorů pro čtení | [data/sample/investori_prehled.csv](data/sample/investori_prehled.csv) | generuje se z dat (`scripts/export_overview.py`) |
-| Výsledky měření přesnosti (accuracy) | [results/](results/README.md) | hotovo (krok 6): autor ručně zkontroloval 10 údajů, 8/10 správně; kontrola AI se s ruční shoduje 10/10; 6 chyb a 1 nejistota, opravy odložené do kroku 8 |
+| Výsledky měření přesnosti (accuracy) | [results/](results/README.md) | **hotovo** (krok 6): autor ručně zkontroloval 10 údajů, 8/10 správně; kontrola AI se s ruční shoduje 10/10; 6 chyb a 1 nejistota. Měření se vztahuje k datům před opravami (commit `c96c21e`) |
 
 ## Struktura repozitáře
 
@@ -99,6 +99,7 @@ Jak se ověřovaly výstupy AI (ruční kontrola, validační skripty, kontrola 
 | 2026-10-16 | Přehled: doložené investice a deklarovaný ticket | `export_overview.py data/sample --today 2026-10-16`, `validate.py`, `python3 -m unittest discover -s tests` | 5 řádků; u každého investora firmy s doloženými investicemi; ticket označen jako deklarovaný, u Orbitu pro growth equity; 0 chyb; 105/105 testů OK |
 | 2026-10-16 | Reprodukovatelnost dat pilotu | `scripts/pilot/build_candidates.py`, `build_sample.py`, `export_overview.py` z uložených výstupů agentů; porovnání s daty v repozitáři | všechny soubory v `data/sample/` bajt po bajtu shodné; výběr shodný |
 | 2026-10-16 | Python testy po pilotu (`select_sample.py`) | `python3 -m unittest discover -s tests` | 96/96 OK |
+| 2026-10-16 | Data pilotu po opravách z auditu (krok 8) | `build_sample.py` (dvakrát, bajtově shodně), `validate.py data/sample --today 2026-10-16`, `verify_quotes.py --data data/sample`, `export_overview.py`, `python3 -m unittest discover -s tests` | 0 chyb (74× `MISSING_ARCHIVE`, 1× `INVESTMENT_NOT_EXPLICIT` záměrně u Vistagu); citace 143/143 doslovně (CIT-0021: Unquote napoprvé vrátil 429, při opakování přímo OK); 105/105 testů OK |
 
 ### Nalezené chyby
 

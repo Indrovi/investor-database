@@ -3,7 +3,7 @@
 > **Stav:** hotovo (2026-10-16).
 > - **Ruční kontrola:** autor osobně zkontroloval 10 údajů ve dvou kolech. **Podle ruční kontroly bylo správných 8 z 10.** Kontrola AI se s ruční kontrolou shodla v 10 z 10.
 > - **Audit celkem:** našel 6 chyb a 1 nejistotu (kap. Souhrn).
-> - **Data:** pilotní data se nemění, aby zůstal skutečný výsledek kontroly. Opravy se zapracují při závěrečné revizi projektu (krok 8).
+> - **Data:** audit a měření se vztahují k datům před opravami (commit `c96c21e`). Chyby jsou v `data/sample/` opravené v kroku 8, nejistý Vistag zůstává označený a mezi doložené investice se nepočítá (kap. Stav oprav).
 > **Data:** [data/sample/](../data/sample/) · **Otevřené otázky z kroku 5:** [data/sample/README.md](../data/sample/README.md) · **Pravidla:** [plan.md](../docs/plan.md)
 
 ## Soubory
@@ -17,7 +17,7 @@
 | [kontrola_citaci.txt](kontrola_citaci.txt) | záznam automatické kontroly doslovnosti všech citací |
 | [odhad_svet.csv](odhad_svet.csv) | **krok 7:** vstupy odhadu pro celý svět (zdroje s citacemi, měření pilotu, předpoklady), výsledek v [plan.md, kap. 13](../docs/plan.md#13-odhad-pro-celý-svět-krok-7) |
 
-Vše generuje `python3 scripts/pilot/audit.py --online`. Už vyplněné odpovědi autora se při opakovaném spuštění zachovají. Data v `data/sample/` se **nemění**: přesnost se měří na původním výstupu pilotu a opravy se zapracují při závěrečné revizi (krok 8).
+Vše vygeneroval `python3 scripts/pilot/audit.py --online` nad daty z commitu `c96c21e`; odpovědi autora se při opakovaném spuštění zachovají. **Po opravách v kroku 8 se audit nad aktuálními daty znovu nespouští:** výsledky by se míchaly s opravenými hodnotami a ID citací se posunula. Pro reprodukci je potřeba vrátit `data/sample/` na commit `c96c21e`.
 
 ## Úrovně ověření
 
@@ -224,16 +224,22 @@ Autor (člověk) ručně zkontroloval **10 údajů ze 122** (12 otázek) 2026-10
   - Tilia: impact zaměření číselník nevyjádří.
 - **Datum investice je datum oznámení** (`date_basis = announcement`), ne datum uskutečnění. Přehled `investori_prehled.csv` to zatím neuvádí.
 
-### Kdy se opravy provedou
+### Stav oprav (krok 8, 2026-10-16)
 
-Pilotní data (`data/sample/` včetně `investori_prehled.csv`) se zatím nemění, aby zůstal zachovaný skutečný výsledek kontroly. Do té doby platí upozornění v [data/sample/README.md](../data/sample/README.md).
+Opravy jsou zapsané v oddílu „Opravy podle auditu“ v `scripts/pilot/decisions.py`. Data jsou znovu sestavená, validace a kontrola citací prošly (143/143) a přehled je znovu vygenerovaný.
 
-Opravy se zapracují při závěrečné revizi projektu (krok 8):
-1. zápis do `scripts/pilot/decisions.py`,
-2. nové sestavení dat,
-3. validace, export přehledu a testy.
+| Řádek auditu | Stav |
+|---|---|
+| INV-0011/geografie | opraveno: CEE a DACH, nová citace Alternative Credit Investor |
+| DEAL-0017, DEAL-0018 | opraveno: bez přiřazení k fondu |
+| INV-0003/sektory | opraveno: `conflicting`, nová citace stránky o 15. kole |
+| DEAL-0009 (Spotawheel) | opraveno: `investment_unspecified`, Rockaway 4 doložené investice |
+| INV-0004/hodnocení | opraveno: ČTK jako převzetí jen v poznámce, NRI hodnocení B |
+| DEAL-0012 (Vistag) | **nejisté:** záznam ponechán s poznámkou „NEJISTÉ“, mezi doložené investice se nepočítá (citace v budoucím čase dokládá jen datum oznámení). StartupYard má 2 doložené investice a hodnocení A |
 
-**Podněty pro revizi plánu (krok 8):**
+**Upřesnění:** u nálezu INV-0003/sektory je jako zdroj „AI, cybersecurity, IoT“ uvedeno FAQ. Citace je ve skutečnosti z úvodní stránky startupyard.com. Výsledek nálezu se tím nemění.
+
+**Podněty pro revizi plánu (krok 8):** pravidlo nezávislosti publikací je doplněné do plan.md 6.3, ostatní jsou zapsané jako omezení v plan.md, kap. 14.
 
 - **Příznak přibližné hodnoty** u velikosti fondu a částek (K4).
 - **Druh data v přehledu:** oznámení vs. uskutečnění investice (K5).

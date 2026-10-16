@@ -2,7 +2,8 @@
 """Sestaví data pilotu (data/sample/*.csv) z rozhodnutí koordinátora v decisions.py.
 
 Citace, URL a údaje o zdrojích se berou strojově z výstupů agentů (agentdata.py),
-takže se při zápisu nezmění žádný znak. Tier zdroje určuje koordinátor (TIER v decisions.py).
+takže se při zápisu nezmění žádný znak. Výjimkou jsou dvě citace koordinátora z auditu
+(KOORD_CLAIMS v decisions.py), jejichž doslovnost ověřuje verify_quotes.py. Tier zdroje určuje koordinátor (TIER v decisions.py).
 candidates.csv vzniká ze snímku candidates_vyber.csv (build_candidates.py) s opravami párování
 (SPLITS) a s výsledky ověření (CANDIDATES).
 
@@ -25,6 +26,9 @@ claims_cache, meta_cache = {}, {}
 
 def resolve(ref):
     cid, rest = ref.split(":", 1)
+    if cid == "KOORD":  # citace převzatá koordinátorem přímo ze stránky (decisions.KOORD_CLAIMS)
+        meta_cache.setdefault(cid, {})
+        return cid, D.KOORD_CLAIMS[rest]
     if cid not in claims_cache:
         claims_cache[cid] = agentdata.claims(cid)
         meta_cache[cid] = agentdata.source_meta(cid)

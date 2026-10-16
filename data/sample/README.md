@@ -1,6 +1,6 @@
 # Pilot: české VC (krok 5)
 
-> **Stav:** krok 5 uzavřen 2026-10-16. Po opravě duplicity ve výběru je ověřeno 5 unikátních investorů, všech 5 je zařazených (`included`). Audit v kroku 6 našel 6 chyb a 1 nejistotu; **data obsahují původní, neopravené hodnoty** (opravy v kroku 8, viz kap. Otevřené otázky pro krok 6).
+> **Stav:** krok 5 uzavřen 2026-10-16. Po opravě duplicity ve výběru je ověřeno 5 unikátních investorů, všech 5 je zařazených (`included`). Audit v kroku 6 našel 6 chyb a 1 nejistotu. **Chyby jsou opravené v kroku 8**, nejistá investice Vistag zůstává v datech označená a mezi doložené se nepočítá (kap. Opravy podle auditu). Výsledky auditu se vztahují k datům před opravami (commit `c96c21e`).
 > **Postup:** [ověřovací postup](../../docs/overovaci-postup.md) · **Pravidla:** [plan.md](../../docs/plan.md) · **Data:** [datový model](../../docs/datovy-model.md) · **Zdroje:** [katalog](../sources/)
 
 ## Rozsah
@@ -107,9 +107,9 @@ Triáž o zařazení nerozhoduje. To dělá až ověření podle checklistu.
 |---|---|---|---|---|---|---|
 | CAN-0025 Tilia Impact Ventures | INV-0001 | **I2:** shodný název, sídlo a osoby v rejstříku (tier 1), seznamu EIF (tier 2) a na webu | investiční výbor Tilie schvaluje investice fondu II; tým kola vede (Vestbee); formálním správcem je GP téhož týmu | 5 investic, 4 nezávisle doložené za 24 měsíců; **active** (2026-05-19) | VC | **included** (A) |
 | CAN-0028 Tila Impact Partners | INV-0001 | – | – | – | – | **oprava duplicity:** tentýž subjekt jako CAN-0025 (překlep v seznamu EIF), ve výběru nahrazen dalším unikátním kandidátem |
-| CAN-0055 Rockaway Ventures | INV-0002 | **I2:** značka ve skupině Rockaway Capital, General Partners (tech.eu, Lupa), Praha | fond vedou General Partners z Rockaway, investiční výbor z lidí Rockaway (Unquote 2023, CzechCrunch 2021); AMISTA obhospodařuje jen český feeder, který investuje do lucemburského fondu (KID AMISTA) | Filuta AI, Remix, AdSpawn; **active** (2026-04-22) | VC | **included** (A) |
-| CAN-0074 StartupYard | INV-0003 | **I2:** provozovatel Startup Yard Limited (Companies House, Lupa), sídlo vehiklů v Praze | investice kol jdou přes vehikla, jejichž jediným jednatelem je ředitel StartupYardu (Lupa 2020, rejstřík); follow-on rozhoduje DEPO | Fungies.io 2023, Qoobus 2020, Vistag 2018; **inactive** (2023-07-26) | VC, subtype accelerator (investuje vlastní hotovost) | **included** (A) |
-| CAN-0030 Národní rozvojová investiční | INV-0004 | **I1:** IČO 08465797 | zapsaná správa fondu fondů; NRI spravuje IPO fond a sama vybírá a kupuje akcie (MPO, Seznam Zprávy) | Hardwario 2022 (Lupa, ČTK); **inactive** (2022-10-18) | VC, subtype public (úřední název „osoba rizikového kapitálu“, menšinové podíly v růstových úpisech) | **included** (A) |
+| CAN-0055 Rockaway Ventures | INV-0002 | **I2:** značka ve skupině Rockaway Capital, General Partners (tech.eu, Lupa), Praha | fond vedou General Partners z Rockaway, investiční výbor z lidí Rockaway (Unquote 2023, CzechCrunch 2021); AMISTA obhospodařuje jen český feeder, který investuje do lucemburského fondu (KID AMISTA) | Filuta AI, Remix, AdSpawn, Spotawheel (po opravě v kroku 8); **active** (2026-04-22) | VC | **included** (A) |
+| CAN-0074 StartupYard | INV-0003 | **I2:** provozovatel Startup Yard Limited (Companies House, Lupa), sídlo vehiklů v Praze | investice kol jdou přes vehikla, jejichž jediným jednatelem je ředitel StartupYardu (Lupa 2020, rejstřík); follow-on rozhoduje DEPO | Fungies.io 2023, Qoobus 2020 (Vistag 2018 nejistý, nepočítá se); **inactive** (2023-07-26) | VC, subtype accelerator (investuje vlastní hotovost) | **included** (A) |
+| CAN-0030 Národní rozvojová investiční | INV-0004 | **I1:** IČO 08465797 | zapsaná správa fondu fondů; NRI spravuje IPO fond a sama vybírá a kupuje akcie (MPO, Seznam Zprávy) | Hardwario 2022 (Lupa; ČTK přebírá totéž prohlášení); **inactive** (2022-10-18) | VC, subtype public (úřední název „osoba rizikového kapitálu“, menšinové podíly v růstových úpisech) | **included** (B po opravě v kroku 8) |
 | CAN-0019 Orbit Capital | INV-0011 | **I2:** tým a značka (Praha a Varšava, partneři) podle EIF, Mews, CzechCrunch a Unquote | tým má investiční výbor, partneři fond vedou (CzechCrunch); kapitálový fond je vlastní lucemburský Orbit Growth SCSp | Mews a Preply (Series C, 2022); novější financování je dluh a nepočítá se; **inactive** (2022-12-15) | VC (podle kapitálových investic, plan.md 9) | **included** (A) |
 
 **Nejtěsnější rozhodnutí:**
@@ -133,22 +133,40 @@ Triáž o zařazení nerozhoduje. To dělá až ověření podle checklistu.
 | Investor | Typ | Web | Sektory | Fáze | Geografie | Ticket | AUM | Fondy | Investice |
 |---|---|---|---|---|---|---|---|---|---|
 | Tilia | vc | ano | generalist (`reported`) | pre-seed až Series A (`derived`) | CEE | 0,3–1,2 mil. EUR | `ambiguous` (nedatovaný údaj CVCA) | 2 (first close 26 mil. EUR, 43 mil. Kč) | 5 |
-| Rockaway | vc | ano | 8 odvětví (`reported`) | seed, Series A | CEE, Evropa | `not_public` | `not_public` | 1 (final close ~55 mil. EUR) | 4 (1× `unclear`) |
-| StartupYard | vc / accelerator | ano | AI, kyberbezpečnost, IoT | pre-seed, seed | CEE | 25 000 EUR (hotovost) | `not_public` | 0 (velikosti nezveřejněny) | 4 (1× `unclear`) |
+| Rockaway | vc | ano | 8 odvětví (`reported`) | seed, Series A | CEE, Evropa | `not_public` | `not_public` | 1 (final close ~55 mil. EUR) | 4 |
+| StartupYard | vc / accelerator | ano | `conflicting` (deep tech vs. „industry-agnostic“) | pre-seed, seed | CEE | 25 000 EUR (hotovost) | `not_public` | 0 (velikosti nezveřejněny) | 4 (1× `unclear`, 1× nejistá) |
 | NRI | vc / public | ano | `not_public` (zaměření neuvedeno) | growth (`derived`) | CZ | `not_public` (80 mil. Kč je jen limit programu) | `not_public` (500 mil. EUR je zákonný strop) | 2 (velikost `not_public` / `conflicting`) | 3 (2 jen z vlastního zdroje) |
-| Orbit | vc | ano | software a SaaS (podle „Technology and technology-enabled“) | growth | CEE | 6–15 mil. EUR (growth equity) | `ambiguous` (jen dolní mez „more than €200m“) | 3 (kapitálový: first close 42 mil. EUR; 2 dluhové) | 2 (dluhové financování se nezapisuje) |
+| Orbit | vc | ano | software a SaaS (podle „Technology and technology-enabled“) | growth | CEE, DACH | 6–15 mil. EUR (growth equity) | `ambiguous` (jen dolní mez „more than €200m“) | 3 (kapitálový: first close 42 mil. EUR; 2 dluhové) | 2 (dluhové financování se nezapisuje) |
 
 **Data celkem:**
 
 - **Záznamy:** 13 záznamů v `investors.csv` (5 `included`, 8 sloučených E10), 8 fondů a 18 investic.
-- **Zdroje a citace:** 75 zdrojů a 142 citací. Validátor hlásí 0 chyb a jen varování `MISSING_ARCHIVE`.
-- **Doslovnost citací:** 142 ze 142. Při poslední kontrole prošlo 141 živě nebo proti kopii Firecrawlu. Citace z Unquote (CIT-0021) se teď nedá stáhnout, protože server vrací 429. V této relaci ji ale jednou ověřil Firecrawl a od té doby se nezměnila.
+- **Zdroje a citace:** 74 zdrojů a 143 citací (po opravách v kroku 8). Validátor hlásí 0 chyb a 75 varování: 74× `MISSING_ARCHIVE` a 1× `INVESTMENT_NOT_EXPLICIT` (záměrně u nejistého Vistagu).
+- **Doslovnost citací:** 143 ze 143 (kontrola 2026-10-16 po opravách, přímo nebo proti uložené kopii Firecrawlu).
 
 ## Otevřené otázky pro krok 6 (ruční audit)
 
-**Vyhodnoceno v kroku 6** ([results/README.md](../../results/README.md)): otázky rozhodla AI podle metodiky, nejistoty jsou zapsané. NRI má hodnocení B, Vistag se do K3 nepočítá, K2 u Rockaway, Tilie a Orbitu je doložené na úrovni týmu. Audit našel 6 chyb a 1 nejistotu. **Data zatím obsahují původní, neopravené hodnoty**, aby zůstal skutečný výsledek kontroly. Opravy se zapracují v kroku 8, seznam je v [results/README.md](../../results/README.md#souhrn-chyby-nejistoty-a-doporučené-opravy).
+**Vyhodnoceno v kroku 6** ([results/README.md](../../results/README.md)): otázky rozhodla AI podle metodiky, nejistoty jsou zapsané. K2 u Rockaway, Tilie a Orbitu je doložené na úrovni týmu; právní struktury lucemburských fondů zůstávají neověřené.
 
-Původní znění otázek z kroku 5 (rozhodnutí v datech byla podle metodiky, ale hraniční):
+### Opravy podle auditu (krok 8, 2026-10-16)
+
+Zapsané v oddílu „Opravy podle auditu“ v `scripts/pilot/decisions.py`, data jsou znovu sestavená.
+
+| Oprava | Dopad |
+|---|---|
+| Orbit: geografie CEE a DACH (novější zdroj tier 2) | – |
+| Orbit: Mews a Preply bez přiřazení k fondu (zdroj fond neuvádí) | – |
+| StartupYard: sektory `conflicting` s citací obou vlastních zdrojů | – |
+| Rockaway: Spotawheel jako `investment_unspecified` | 4 doložené investice místo 3 |
+| NRI: ČTK přebírá totéž prohlášení jako Lupa, jako druhý důkaz se nepočítá | hodnocení B místo A |
+| **Vistag: nejisté**, záznam ponechán s poznámkou „NEJISTÉ“ | nepočítá se mezi doložené investice (K3, bod 2): citace v budoucím čase dokládá jen datum oznámení. StartupYard má 2 doložené investice a hodnocení A; validátor u záznamu záměrně hlásí varování `INVESTMENT_NOT_EXPLICIT` |
+
+- **Dvě nové citace** (geografie Orbitu, sektory StartupYardu) převzal koordinátor při auditu přímo ze stránky, protože je agenti ve výstupech neměli. Jejich doslovnost ověřil `verify_quotes.py`.
+- **ID zdrojů a citací se posunula.** Odkazy na CIT a SRC v `results/` platí pro data z commitu `c96c21e`.
+
+### Původní otázky z kroku 5
+
+Rozhodnutí v datech byla podle metodiky, ale hraniční:
 
 1. **NRI, nezávislost důkazů a hodnocení A.** Jediná doložená investice (Hardwario, 2022) má dva vydavatele, Lupu a ČTK (Forbes). Oba ale přebírají totéž prohlášení firmy.
    - **Ověřit:** jde o dva nezávislé důkazy podle plan.md 6.3?
