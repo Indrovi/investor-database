@@ -1,0 +1,6 @@
+candidate_id,name,found_via,found_url,found_date,how,investor_id,note
+CAN-0001,Fiktivní Ventures,TYP-03,https://media.example/fiktivni-ventures-vede-kolo,2026-10-01,deal_report,INV-0001,FIKTIVNÍ UKÁZKA. Kandidát nalezený ve dvou zdrojích má dva řádky se stejným candidate_id.
+CAN-0001,Fiktivní Ventures Fund I,TYP-04,https://lp.example/spravci-fondu,2026-10-02,list,INV-0001,"FIKTIVNÍ UKÁZKA. Ve zdroji je název fondu; fond patří správci INV-0001 (FND-0001), vehikl je sloučený jako INV-0005 (E10)."
+CAN-0002,Příklad Growth Partners,TYP-04,https://lp.example/spravci-fondu,2026-10-02,list,INV-0003,FIKTIVNÍ UKÁZKA. Kandidát se záznamem record_status=candidate: K1–K3 zatím nesplněno.
+CAN-0003,Neověřený Kapitál,TYP-03,https://media.example/neovereny-kapital-investoval,2026-10-04,deal_report,,FIKTIVNÍ UKÁZKA. Zatím neověřený kandidát: investor_id je prázdné.
+CAN-0004,Zahraniční Fond Example,TYP-03,https://media.example/zahranicni-fond-v-praze,2026-10-05,deal_report,,"FIKTIVNÍ UKÁZKA. Mimo pilot: investiční tým sídlí mimo ČR (plan.md, kap. 11.1)."

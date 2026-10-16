@@ -1,0 +1,23 @@
+Krok 5 projektu, pilot českých VC: doplňující ověření K2. Investor: Rockaway Ventures. Nic nezapisuj.
+
+Uložené kopie stránek: .cache/pages/index.tsv (url, soubor, stazeno). Kopie je výstup
+Firecrawlu z dřívějšího běhu a platí jako otevřená stránka: čti ji nástrojem Read, ve sloupci
+`text z` uveď `firecrawl` a jako accessed_date datum ze sloupce stazeno. Firecrawlem otevírej
+jen stránky, které v indexu nejsou.
+
+Otázka: kdo skutečně rozhoduje o investicích fondu Rockaway Ventures (druhý fond, uzavřený 2025 na „necelých“ 55 mil. EUR)?
+
+Už doloženo, znovu nehledej:
+- Rockaway Ventures Fund SICAV a.s. (IČO 14235781) má jako jediného člena představenstva AMISTA investiční společnost, a.s.
+- Rockaway Venture Partners (GP) S.à r.l. se v dokumentu SFDR (https://rockawayventures.com/app/uploads/sfdr-rv-partners-sfdr-article-3-and-4-disclosure.pdf) označuje za správce fondu registrovaného u CSSF.
+- Tým uvádí dva General Partners.
+
+Najdi, vždy s úplnou URL a doslovnou citací:
+1. Zda AMISTA u tohoto fondu o investicích rozhoduje sama, nebo o nich rozhoduje investiční výbor či poradce z týmu Rockaway (stránka fondu na webu AMISTA, sdělení klíčových informací, informace pro investory).
+2. Zápis Rockaway Venture Partners (GP) S.à r.l. v registru CSSF nebo RCS (registrační číslo).
+3. Vztah lucemburského fondu a české SICAV (paralelní fondy, feeder, nebo jeden fond).
+
+Omezení:
+- Firecrawlem otevři nejvýš 6 stránek. Velká PDF (statut, výroční zpráva) neotevírej, uveď je ve Stopách.
+- Nepoužívej Czechia Dealroom, OpenVC, CEE Funding Map ani databázi CC+.
+- U fyzických osob jen jméno a role. Nejvýš 12 tvrzení.

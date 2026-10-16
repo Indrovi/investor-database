@@ -1,0 +1,97 @@
+candidate_id,name,found_via,found_url,found_date,how,investor_id,note
+CAN-0001,Abris Capital,ZDR-09,https://cvca.cz/clenstvi/radni-clenove/,2026-10-16,list,,mimo pilot: typ podle zdroje (Růstové a buyout akvizice)
+CAN-0002,ARX Equity Partners,ZDR-09,https://cvca.cz/clenstvi/radni-clenove/,2026-10-16,list,,"mimo pilot: typ podle zdroje (akvizice společností, MBO & MBI; ARX CE V Cooperatief U.A. | ARX Equity Partners B.V. | Czech Republic | 3SIIF-EIF/IEU - Equity - PP/RCR | Growth and )"
+CAN-0002,ARX Equity Partners B.V.,ZDR-10,https://www.eif.org/files/attachments/czechia-equity-fundmanagers.pdf,2026-10-16,list,,"mimo pilot: typ podle zdroje (akvizice společností, MBO & MBI; ARX CE V Cooperatief U.A. | ARX Equity Partners B.V. | Czech Republic | 3SIIF-EIF/IEU - Equity - PP/RCR | Growth and )"
+CAN-0003,Credo Ventures a.s.,ZDR-09,https://cvca.cz/clenstvi/radni-clenove/,2026-10-16,list,,"mimo pilot: testováno dříve (docs/agenti.md, kap. 5)"
+CAN-0003,Credo Ventures,ZDR-13,https://cc.cz/zmapovali-jsme-vsechny-investice-ktere-loni-oznamily-ceske-startupy-neseme-tri-dobre-a-tri-spatne-zpravy/,2026-10-16,deal_report,,"mimo pilot: testováno dříve (docs/agenti.md, kap. 5)"
+CAN-0003,Credo Ventures,ZDR-17,https://startupyard.com/,2026-10-16,list,,"mimo pilot: testováno dříve (docs/agenti.md, kap. 5)"
+CAN-0004,CVI,ZDR-09,https://cvca.cz/clenstvi/radni-clenove/,2026-10-16,list,,"mimo pilot: typ podle zdroje (Direct Lending, Senior Debt, Mezzanine)"
+CAN-0005,Depo Ventures,ZDR-09,https://cvca.cz/clenstvi/radni-clenove/,2026-10-16,list,,
+CAN-0005,Depo Ventures,ZDR-13,https://cc.cz/startupy-letos-nabiraji-mene-penez-bez-umele-inteligence-by-bylo-jen-malo-prilezitosti-pro-investice/,2026-10-16,deal_report,,
+CAN-0005,DEPO Ventures,ZDR-17,https://startupyard.com/faq,2026-10-16,list,,
+CAN-0006,Enterprise Investors,ZDR-09,https://cvca.cz/clenstvi/radni-clenove/,2026-10-16,list,,"mimo pilot: typ podle zdroje (buyout, expansion capital)"
+CAN-0007,Espira Investments s.r.o.,ZDR-09,https://cvca.cz/clenstvi/radni-clenove/,2026-10-16,list,,"mimo pilot: typ podle zdroje (financování růstu, podpora akvizic)"
+CAN-0008,EVERITA Capital,ZDR-09,https://cvca.cz/clenstvi/radni-clenove/,2026-10-16,list,,mimo pilot: typ podle zdroje (Private Equity – growth capital; EVERITA Fund I Cooperatief U.A. | EVERITA Capital sro | Czech Republic | 3SIIF-EIF/IEU - Equity - PP/RCR | Growth and)
+CAN-0008,EVERITA Capital sro,ZDR-10,https://www.eif.org/files/attachments/czechia-equity-fundmanagers.pdf,2026-10-16,list,,mimo pilot: typ podle zdroje (Private Equity – growth capital; EVERITA Fund I Cooperatief U.A. | EVERITA Capital sro | Czech Republic | 3SIIF-EIF/IEU - Equity - PP/RCR | Growth and)
+CAN-0009,Genesis Capital Equity s.r.o.,ZDR-09,https://cvca.cz/clenstvi/radni-clenove/,2026-10-16,list,,"mimo pilot: typ podle zdroje (akvizice firem, manažerské odkupy; Genesis Private Equity Fund V SCSp | Genesis Capital Equity s.r.o. | Czech Republic | EIF/RCR | Growth and expansio)"
+CAN-0009,Genesis Capital Equity s.r.o.,ZDR-10,https://www.eif.org/files/attachments/czechia-equity-fundmanagers.pdf,2026-10-16,list,,"mimo pilot: typ podle zdroje (akvizice firem, manažerské odkupy; Genesis Private Equity Fund V SCSp | Genesis Capital Equity s.r.o. | Czech Republic | EIF/RCR | Growth and expansio)"
+CAN-0010,i&i Biotech Investments,ZDR-09,https://cvca.cz/clenstvi/radni-clenove/,2026-10-16,list,,
+CAN-0011,Innova Capital,ZDR-09,https://cvca.cz/clenstvi/radni-clenove/,2026-10-16,list,,"mimo pilot: typ podle zdroje (růstový & rozvojový kapitál, Buyout)"
+CAN-0012,Integral Capital Group,ZDR-09,https://cvca.cz/clenstvi/radni-clenove/,2026-10-16,list,,mimo pilot: typ podle zdroje (Private Equity)
+CAN-0013,Inven Capital,ZDR-09,https://cvca.cz/clenstvi/radni-clenove/,2026-10-16,list,,
+CAN-0013,Inven Capital,ZDR-13,https://cc.cz/startupy-letos-nabiraji-mene-penez-bez-umele-inteligence-by-bylo-jen-malo-prilezitosti-pro-investice/,2026-10-16,deal_report,,
+CAN-0014,Jet Investment,ZDR-09,https://cvca.cz/clenstvi/radni-clenove/,2026-10-16,list,,
+CAN-0014,Jet Investment,ZDR-13,https://cc.cz/zmapovali-jsme-vsechny-investice-ktere-loni-oznamily-ceske-startupy-neseme-tri-dobre-a-tri-spatne-zpravy/,2026-10-16,deal_report,,
+CAN-0015,KAYA VC,ZDR-09,https://cvca.cz/clenstvi/radni-clenove/,2026-10-16,list,,
+CAN-0015,KAYA Advisory s.r.o.,ZDR-10,https://www.eif.org/files/attachments/czechia-equity-fundmanagers.pdf,2026-10-16,list,,
+CAN-0015,Kaya VC,ZDR-13,https://cc.cz/zmapovali-jsme-vsechny-investice-ktere-loni-oznamily-ceske-startupy-neseme-tri-dobre-a-tri-spatne-zpravy/,2026-10-16,deal_report,,
+CAN-0015,Kaya VC,ZDR-13,https://cc.cz/startupy-letos-nabiraji-mene-penez-bez-umele-inteligence-by-bylo-jen-malo-prilezitosti-pro-investice/,2026-10-16,deal_report,,
+CAN-0016,MAM Private Equity Fund SICAV a.s.,ZDR-09,https://cvca.cz/clenstvi/radni-clenove/,2026-10-16,list,,"mimo pilot: typ podle zdroje (MBO, MBI, LBO, růstový kapitál)"
+CAN-0017,Mid Europa Partners,ZDR-09,https://cvca.cz/clenstvi/radni-clenove/,2026-10-16,list,,"mimo pilot: typ podle zdroje (acquisitions, management buyouts)"
+CAN-0018,Nation1,ZDR-09,https://cvca.cz/clenstvi/radni-clenove/,2026-10-16,list,,
+CAN-0019,Orbit Capital,ZDR-09,https://cvca.cz/clenstvi/radni-clenove/,2026-10-16,list,INV-0011,EIF uvádí správce OGD Advisory s.r.o. u fondu Orbit Growth Debt II s webem orbitcapital.com.
+CAN-0019,OGD Advisory s.r.o.,ZDR-10,https://www.eif.org/files/attachments/czechia-equity-fundmanagers.pdf,2026-10-16,list,INV-0011,EIF uvádí správce OGD Advisory s.r.o. u fondu Orbit Growth Debt II s webem orbitcapital.com.
+CAN-0019,Orbit Capital,ZDR-13,https://cc.cz/zmapovali-jsme-vsechny-investice-ktere-loni-oznamily-ceske-startupy-neseme-tri-dobre-a-tri-spatne-zpravy/,2026-10-16,deal_report,INV-0011,EIF uvádí správce OGD Advisory s.r.o. u fondu Orbit Growth Debt II s webem orbitcapital.com.
+CAN-0020,Sandberg Capital,ZDR-09,https://cvca.cz/clenstvi/radni-clenove/,2026-10-16,list,,"mimo pilot: typ podle zdroje (Buy-and-build, Growth)"
+CAN-0021,SkyLimit Investments,ZDR-09,https://cvca.cz/clenstvi/radni-clenove/,2026-10-16,list,,"mimo pilot: typ podle zdroje (manažerské odkupy, konsolidace odvětví)"
+CAN-0022,Stratum Partners,ZDR-09,https://cvca.cz/clenstvi/radni-clenove/,2026-10-16,list,,"mimo pilot: typ podle zdroje (Růstové investice, odkupy firem)"
+CAN-0023,Tensor Ventures,ZDR-09,https://cvca.cz/clenstvi/radni-clenove/,2026-10-16,list,,EIF u fondu Tensor Co-Investment Fund SCSp uvádí web kaya.vc; spárováno podle názvu.
+CAN-0023,Tensor Advisory s.r.o.,ZDR-10,https://www.eif.org/files/attachments/czechia-equity-fundmanagers.pdf,2026-10-16,list,,EIF u fondu Tensor Co-Investment Fund SCSp uvádí web kaya.vc; spárováno podle názvu.
+CAN-0023,Tensor Ventures,ZDR-13,https://cc.cz/zmapovali-jsme-vsechny-investice-ktere-loni-oznamily-ceske-startupy-neseme-tri-dobre-a-tri-spatne-zpravy/,2026-10-16,deal_report,,EIF u fondu Tensor Co-Investment Fund SCSp uvádí web kaya.vc; spárováno podle názvu.
+CAN-0024,Thein,ZDR-09,https://cvca.cz/clenstvi/radni-clenove/,2026-10-16,list,,"mimo pilot: typ podle zdroje (LBO, Růstový kapitál)"
+CAN-0025,Tilia Impact Ventures,ZDR-09,https://cvca.cz/clenstvi/radni-clenove/,2026-10-16,list,INV-0001,
+CAN-0025,Tilia Impact Ventures,ZDR-13,https://cc.cz/startupy-letos-nabiraji-mene-penez-bez-umele-inteligence-by-bylo-jen-malo-prilezitosti-pro-investice/,2026-10-16,deal_report,INV-0001,
+CAN-0026,V4C Investment Advisers Limited,ZDR-09,https://cvca.cz/clenstvi/radni-clenove/,2026-10-16,list,,"mimo pilot: typ podle zdroje (manažerské odkupy, financování expanze)"
+CAN-0027,Versute Investments,ZDR-09,https://cvca.cz/clenstvi/radni-clenove/,2026-10-16,list,,"mimo pilot: typ podle zdroje (růstový kapitál, LBO, MBO)"
+CAN-0028,Tila Impact Partners,ZDR-10,https://www.eif.org/files/attachments/czechia-equity-fundmanagers.pdf,2026-10-16,list,INV-0001,"Oprava duplicity: tentýž subjekt jako CAN-0025 („Tila“ je překlep v seznamu EIF; v rejstříku žádná „Tila Impact“ není, Tilia Impact Partners s.r.o. má stejné sídlo, fond II i LP EIF se shodují). Ve výběru proto doplněn další unikátní kandidát ze stejného zdroje (CAN-0019, candidates_vyber_oprava.csv)."
+CAN-0029,skupina ČMZRB,ZDR-12,https://www.nrinvesticni.cz/realizovane-investice/,2026-10-16,list,,"Skupina, do které patří NRI? Nejistá shoda, nespárováno."
+CAN-0030,Národní rozvojová investiční,ZDR-12,https://www.nrinvesticni.cz/realizovane-investice/,2026-10-16,list,INV-0004,
+CAN-0030,NRI,ZDR-12,https://www.nrinvesticni.cz/realizovane-investice/,2026-10-16,list,INV-0004,
+CAN-0031,Index Ventures,ZDR-13,https://cc.cz/zmapovali-jsme-vsechny-investice-ktere-loni-oznamily-ceske-startupy-neseme-tri-dobre-a-tri-spatne-zpravy/,2026-10-16,deal_report,,
+CAN-0032,Northzone,ZDR-13,https://cc.cz/zmapovali-jsme-vsechny-investice-ktere-loni-oznamily-ceske-startupy-neseme-tri-dobre-a-tri-spatne-zpravy/,2026-10-16,deal_report,,
+CAN-0033,Puzzle Ventures,ZDR-13,https://cc.cz/zmapovali-jsme-vsechny-investice-ktere-loni-oznamily-ceske-startupy-neseme-tri-dobre-a-tri-spatne-zpravy/,2026-10-16,deal_report,,
+CAN-0034,A*Ventures,ZDR-13,https://cc.cz/zmapovali-jsme-vsechny-investice-ktere-loni-oznamily-ceske-startupy-neseme-tri-dobre-a-tri-spatne-zpravy/,2026-10-16,deal_report,,
+CAN-0035,Comma Capital,ZDR-13,https://cc.cz/zmapovali-jsme-vsechny-investice-ktere-loni-oznamily-ceske-startupy-neseme-tri-dobre-a-tri-spatne-zpravy/,2026-10-16,deal_report,,
+CAN-0036,Karman Ventures,ZDR-13,https://cc.cz/zmapovali-jsme-vsechny-investice-ktere-loni-oznamily-ceske-startupy-neseme-tri-dobre-a-tri-spatne-zpravy/,2026-10-16,deal_report,,
+CAN-0037,Notion Capital,ZDR-13,https://cc.cz/zmapovali-jsme-vsechny-investice-ktere-loni-oznamily-ceske-startupy-neseme-tri-dobre-a-tri-spatne-zpravy/,2026-10-16,deal_report,,
+CAN-0038,Ventures Together,ZDR-13,https://cc.cz/zmapovali-jsme-vsechny-investice-ktere-loni-oznamily-ceske-startupy-neseme-tri-dobre-a-tri-spatne-zpravy/,2026-10-16,deal_report,,
+CAN-0039,JSK,ZDR-13,https://cc.cz/zmapovali-jsme-vsechny-investice-ktere-loni-oznamily-ceske-startupy-neseme-tri-dobre-a-tri-spatne-zpravy/,2026-10-16,deal_report,,"Ze zdroje nelze určit, zda jde o firmu, nebo o osobu."
+CAN-0040,Budeto,ZDR-13,https://cc.cz/zmapovali-jsme-vsechny-investice-ktere-loni-oznamily-ceske-startupy-neseme-tri-dobre-a-tri-spatne-zpravy/,2026-10-16,deal_report,,
+CAN-0041,Zaka VC,ZDR-13,https://cc.cz/zmapovali-jsme-vsechny-investice-ktere-loni-oznamily-ceske-startupy-neseme-tri-dobre-a-tri-spatne-zpravy/,2026-10-16,deal_report,,
+CAN-0042,Purple Ventures,ZDR-13,https://cc.cz/zmapovali-jsme-vsechny-investice-ktere-loni-oznamily-ceske-startupy-neseme-tri-dobre-a-tri-spatne-zpravy/,2026-10-16,deal_report,,
+CAN-0042,Purple Ventures,ZDR-13,https://cc.cz/startupy-letos-nabiraji-mene-penez-bez-umele-inteligence-by-bylo-jen-malo-prilezitosti-pro-investice/,2026-10-16,deal_report,,
+CAN-0043,Plug and Play,ZDR-13,https://cc.cz/zmapovali-jsme-vsechny-investice-ktere-loni-oznamily-ceske-startupy-neseme-tri-dobre-a-tri-spatne-zpravy/,2026-10-16,deal_report,,
+CAN-0044,Vocal VC,ZDR-13,https://cc.cz/zmapovali-jsme-vsechny-investice-ktere-loni-oznamily-ceske-startupy-neseme-tri-dobre-a-tri-spatne-zpravy/,2026-10-16,deal_report,,
+CAN-0045,RTP Global,ZDR-13,https://cc.cz/zmapovali-jsme-vsechny-investice-ktere-loni-oznamily-ceske-startupy-neseme-tri-dobre-a-tri-spatne-zpravy/,2026-10-16,deal_report,,
+CAN-0046,Miton,ZDR-13,https://cc.cz/zmapovali-jsme-vsechny-investice-ktere-loni-oznamily-ceske-startupy-neseme-tri-dobre-a-tri-spatne-zpravy/,2026-10-16,deal_report,,
+CAN-0046,Miton,ZDR-13,https://cc.cz/startupy-letos-nabiraji-mene-penez-bez-umele-inteligence-by-bylo-jen-malo-prilezitosti-pro-investice/,2026-10-16,deal_report,,
+CAN-0047,Seed Starter,ZDR-13,https://cc.cz/zmapovali-jsme-vsechny-investice-ktere-loni-oznamily-ceske-startupy-neseme-tri-dobre-a-tri-spatne-zpravy/,2026-10-16,deal_report,,
+CAN-0048,Crescendo Ventures,ZDR-13,https://cc.cz/zmapovali-jsme-vsechny-investice-ktere-loni-oznamily-ceske-startupy-neseme-tri-dobre-a-tri-spatne-zpravy/,2026-10-16,deal_report,,
+CAN-0049,JIC Ventures,ZDR-13,https://cc.cz/zmapovali-jsme-vsechny-investice-ktere-loni-oznamily-ceske-startupy-neseme-tri-dobre-a-tri-spatne-zpravy/,2026-10-16,deal_report,,
+CAN-0050,Snowflake,ZDR-13,https://cc.cz/zmapovali-jsme-vsechny-investice-ktere-loni-oznamily-ceske-startupy-neseme-tri-dobre-a-tri-spatne-zpravy/,2026-10-16,deal_report,,
+CAN-0051,BTCZ Ventures,ZDR-13,https://cc.cz/zmapovali-jsme-vsechny-investice-ktere-loni-oznamily-ceske-startupy-neseme-tri-dobre-a-tri-spatne-zpravy/,2026-10-16,deal_report,,
+CAN-0052,Česká spořitelna,ZDR-13,https://cc.cz/zmapovali-jsme-vsechny-investice-ktere-loni-oznamily-ceske-startupy-neseme-tri-dobre-a-tri-spatne-zpravy/,2026-10-16,deal_report,,
+CAN-0053,Presto Ventures,ZDR-13,https://cc.cz/zmapovali-jsme-vsechny-investice-ktere-loni-oznamily-ceske-startupy-neseme-tri-dobre-a-tri-spatne-zpravy/,2026-10-16,deal_report,,"mimo pilot: testováno dříve (docs/agenti.md, kap. 5)"
+CAN-0053,Presto Ventures,ZDR-13,https://cc.cz/startupy-letos-nabiraji-mene-penez-bez-umele-inteligence-by-bylo-jen-malo-prilezitosti-pro-investice/,2026-10-16,deal_report,,"mimo pilot: testováno dříve (docs/agenti.md, kap. 5)"
+CAN-0054,Look AI Ventures,ZDR-13,https://cc.cz/zmapovali-jsme-vsechny-investice-ktere-loni-oznamily-ceske-startupy-neseme-tri-dobre-a-tri-spatne-zpravy/,2026-10-16,deal_report,,
+CAN-0055,Rockaway Ventures,ZDR-13,https://cc.cz/zmapovali-jsme-vsechny-investice-ktere-loni-oznamily-ceske-startupy-neseme-tri-dobre-a-tri-spatne-zpravy/,2026-10-16,deal_report,INV-0002,Nález ze StartupYardu („Rockaway Capital Partners“) oddělen jako CAN-0075: jiný investor téže skupiny.
+CAN-0075,Rockaway Capital Partners,ZDR-17,https://startupyard.com/,2026-10-16,list,,"Odděleno od CAN-0055 při ověření: odkaz vede na skupinu Rockaway Capital, která investuje sama (jiný investor než Rockaway Ventures, plan.md 3.1 a overovaci-postup.md bod 3). Neověřováno."
+CAN-0056,Insight Partners,ZDR-13,https://cc.cz/startupy-letos-nabiraji-mene-penez-bez-umele-inteligence-by-bylo-jen-malo-prilezitosti-pro-investice/,2026-10-16,deal_report,,
+CAN-0057,Decibel,ZDR-13,https://cc.cz/startupy-letos-nabiraji-mene-penez-bez-umele-inteligence-by-bylo-jen-malo-prilezitosti-pro-investice/,2026-10-16,deal_report,,
+CAN-0058,Sunflower Capital,ZDR-13,https://cc.cz/startupy-letos-nabiraji-mene-penez-bez-umele-inteligence-by-bylo-jen-malo-prilezitosti-pro-investice/,2026-10-16,deal_report,,
+CAN-0059,Earlybird,ZDR-13,https://cc.cz/startupy-letos-nabiraji-mene-penez-bez-umele-inteligence-by-bylo-jen-malo-prilezitosti-pro-investice/,2026-10-16,deal_report,,
+CAN-0060,Irregular Expressions,ZDR-13,https://cc.cz/startupy-letos-nabiraji-mene-penez-bez-umele-inteligence-by-bylo-jen-malo-prilezitosti-pro-investice/,2026-10-16,deal_report,,
+CAN-0061,Berkeley SkyDeck,ZDR-13,https://cc.cz/startupy-letos-nabiraji-mene-penez-bez-umele-inteligence-by-bylo-jen-malo-prilezitosti-pro-investice/,2026-10-16,deal_report,,
+CAN-0062,42Cap,ZDR-13,https://cc.cz/startupy-letos-nabiraji-mene-penez-bez-umele-inteligence-by-bylo-jen-malo-prilezitosti-pro-investice/,2026-10-16,deal_report,,
+CAN-0063,Dreamcraft Ventures,ZDR-13,https://cc.cz/startupy-letos-nabiraji-mene-penez-bez-umele-inteligence-by-bylo-jen-malo-prilezitosti-pro-investice/,2026-10-16,deal_report,,
+CAN-0064,Lumiere AI Ventures,ZDR-13,https://cc.cz/startupy-letos-nabiraji-mene-penez-bez-umele-inteligence-by-bylo-jen-malo-prilezitosti-pro-investice/,2026-10-16,deal_report,,
+CAN-0065,Lighthouse Ventures,ZDR-13,https://cc.cz/startupy-letos-nabiraji-mene-penez-bez-umele-inteligence-by-bylo-jen-malo-prilezitosti-pro-investice/,2026-10-16,deal_report,,
+CAN-0066,BD Partners,ZDR-13,https://cc.cz/startupy-letos-nabiraji-mene-penez-bez-umele-inteligence-by-bylo-jen-malo-prilezitosti-pro-investice/,2026-10-16,deal_report,,
+CAN-0067,Gi21 Capital,ZDR-13,https://cc.cz/startupy-letos-nabiraji-mene-penez-bez-umele-inteligence-by-bylo-jen-malo-prilezitosti-pro-investice/,2026-10-16,deal_report,,
+CAN-0068,Koopeo,ZDR-13,https://cc.cz/startupy-letos-nabiraji-mene-penez-bez-umele-inteligence-by-bylo-jen-malo-prilezitosti-pro-investice/,2026-10-16,deal_report,,
+CAN-0069,eRockets,ZDR-13,https://cc.cz/startupy-letos-nabiraji-mene-penez-bez-umele-inteligence-by-bylo-jen-malo-prilezitosti-pro-investice/,2026-10-16,deal_report,,
+CAN-0070,Czech Founders VC,ZDR-13,https://cc.cz/startupy-letos-nabiraji-mene-penez-bez-umele-inteligence-by-bylo-jen-malo-prilezitosti-pro-investice/,2026-10-16,deal_report,,
+CAN-0071,N1,ZDR-13,https://cc.cz/startupy-letos-nabiraji-mene-penez-bez-umele-inteligence-by-bylo-jen-malo-prilezitosti-pro-investice/,2026-10-16,deal_report,,"Možná totéž jako Nation1: nejistá shoda, nespárováno."
+CAN-0072,Tachles VC,ZDR-13,https://cc.cz/startupy-letos-nabiraji-mene-penez-bez-umele-inteligence-by-bylo-jen-malo-prilezitosti-pro-investice/,2026-10-16,deal_report,,
+CAN-0073,PurposeTech,ZDR-13,https://cc.cz/startupy-letos-nabiraji-mene-penez-bez-umele-inteligence-by-bylo-jen-malo-prilezitosti-pro-investice/,2026-10-16,deal_report,,
+CAN-0074,StartupYard,ZDR-17,https://startupyard.com/faq,2026-10-16,list,INV-0003,

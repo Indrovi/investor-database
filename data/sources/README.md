@@ -63,21 +63,11 @@ Zdroj s rolí jen `kandidati` (typicky tier 4) **nikdy nedokládá údaj** (plan
 
 Text v `value` a `quote` se přebírá strojově z výstupů agentů, nikdo ho ručně nepřepisuje. Opravy auditora (`CORRECTED`) jsou zapracované do `catalog.csv` a `uses.csv`. V `evidence.csv` zůstává původní tvrzení i s verdiktem.
 
-## Původ kandidátů (schváleno, zavede se v kroku 5)
+## Původ kandidátů (`candidates.csv`)
 
-Aby šlo u každého kandidáta zjistit, odkud ho máme, vznikne v kroku 5 tabulka `candidates.csv`. Jeden řádek bude jeden nález kandidáta v jednom zdroji:
+Aby šlo u každého kandidáta zjistit, odkud ho máme, zapisuje se v datech tabulka `candidates.csv`. Jeden řádek je jeden nález kandidáta v jednom zdroji z tohoto katalogu (`found_via` = `source_key`). `investor_id` zůstává prázdné, dokud kandidáta neověříme. Sloupce a kontroly popisuje [datový model](../../docs/datovy-model.md), kap. 3.6.
 
-| Sloupec | Popis |
-|---|---|
-| `candidate_id` | ID kandidáta |
-| `name` | jméno nebo název, jak je ve zdroji |
-| `found_via` | `source_key` zdroje z katalogu |
-| `found_url` | konkrétní stránka |
-| `found_date` | kdy byl kandidát nalezen |
-| `how` | jak: seznam, vyhledávací dotaz, článek o kole, portfolio jiného investora |
-| `investor_id` | záznam v `investors.csv`, jakmile vznikne |
-
-Kandidát nalezený ve více zdrojích bude mít víc řádků. Z toho půjde později spočítat, které zdroje přinášejí skutečné investory a kolik šumu. Popis přibude do datového modelu s pilotem.
+Kandidát nalezený ve více zdrojích má víc řádků. Z toho půjde později spočítat, které zdroje přinášejí skutečné investory a kolik šumu.
 
 ## Jak katalog vzniká
 

@@ -1,0 +1,19 @@
+deal_id,investor_id,fund_id,company_name,company_country,company_registry_type,company_registry_id,investment_date,date_basis,instrument,round_stage,is_follow_on,round_amount,round_currency,investor_amount,investor_currency,registry_entry_date,registry_contribution_amount,registry_contribution_currency,notes
+DEAL-0001,INV-0001,,Flox Intelligence,,,,2026-02-25,announcement,investment_unspecified,seed,unknown,3000000,USD,,,,,,"Kolo Seed+, Tilia ho vedla. TechCrunch (2026-10-13) zmiňuje zpětně i dřívější seed kolo; nepoužito."
+DEAL-0002,INV-0001,,FaceUp,,,,2026-05-19,announcement,investment_unspecified,series_a,true,5000000,USD,,,,,,"Tilia jako stávající investor. Článek Forbes (2026-05-19) to potvrzuje, ale může být jen pro členy, proto se necituje."
+DEAL-0003,INV-0001,,Theorema,,,,2026-03-27,announcement,investment_unspecified,pre_seed,unknown,3300000,USD,,,,,,CzechCrunch uvádí 70 mil. Kč (přepočet téhož kola).
+DEAL-0004,INV-0001,,Lifeyear,EE,,,2025-07-01,announcement,investment_unspecified,unknown,unknown,1300000,EUR,,,,,,"Kolo 2,8 mil. EUR zahrnuje grant 1,5 mil. EUR (není investice); kapitálová část 1,3 mil. EUR."
+DEAL-0005,INV-0001,,MIWA Technologies,,,,2019-10-08,announcement,convertible_loan,unknown,false,,,,,,,,Starší investice z doby fondu I (K3 nemá časový limit). Částka jen slovně („nižší jednotky milionů korun“).
+DEAL-0006,INV-0002,,Filuta AI,CZ,,,2025-06-24,announcement,investment_unspecified,seed,unknown,4200000,USD,,,,,,Rockaway Ventures kolo vedl.
+DEAL-0007,INV-0002,,Remix,BG,,,2025-12-19,announcement,equity,unknown,unknown,,,,,,,,"20% podíl, částka nezveřejněna. Euro.cz: v rámci aktuálního investičního kola."
+DEAL-0008,INV-0002,,AdSpawn,,,,2026-04-22,announcement,investment_unspecified,unknown,unknown,500000,EUR,,,,,,"Kolo s Czech Founders VC, částka Rockaway nezveřejněna."
+DEAL-0009,INV-0002,,Spotawheel,,,,2022-04-26,announcement,unclear,series_b,unknown,,,,,,,,"Kolo kombinovalo equity a asset-backed dluh (100–110 mil. EUR podle zdroje); forma účasti Rockaway neuvedena, proto unclear a jako doklad se nepočítá."
+DEAL-0010,INV-0003,,Fungies.io,US,,,2023-07-26,announcement,investment_unspecified,pre_seed,unknown,850000,USD,,,,,,"Tým v Polsku, firma založená v USA. Kterým vehiklem StartupYard investoval, nedoloženo."
+DEAL-0011,INV-0003,,Qoobus,RO,,,2020-01-22,announcement,investment_unspecified,unknown,false,,,40000,USD,,,,"11. kolo akcelerátoru (6 firem, každá 40 000 USD); zapsána jen Qoobus, kterou citace jmenuje."
+DEAL-0012,INV-0003,,Vistag,CZ,,,2018-10-30,announcement,investment_unspecified,unknown,false,,,,,,,,10. kolo akcelerátoru (7 firem). Citace v budoucím čase („získají investici“).
+DEAL-0013,INV-0003,,Ydoca,,,,2025-02-14,announcement,unclear,pre_seed,false,2300000,CZK,500000,CZK,,,,"Sporné: částka může být in-kind konvertibilní nóta za program (služba, ne investice) a Startitup (2025-03-24) připisuje investici jen DEPO Ventures. Proto unclear, jako doklad se nepočítá."
+DEAL-0014,INV-0004,FND-0004,Hardwario,CZ,,,2022-10-18,announcement,equity,unknown,false,,,,,,,,Úpis nových akcií při IPO na trhu START. Obě citace mají společný původ (prohlášení firmy).
+DEAL-0015,INV-0004,FND-0004,Primoco UAV,CZ,,,2021-05-21,announcement,equity,unknown,false,,,12000000,CZK,,,,"SPO na trhu START. Jen vlastní zdroj NRI (tier 3), K3 nezakládá."
+DEAL-0016,INV-0004,FND-0004,KARO Leather,CZ,,,2022-10-21,announcement,equity,unknown,false,,,38850000,CZK,,,,"Druhé kolo úpisu na trhu START (úpis skončil 2022-09-26). Jen vlastní zdroj NRI (tier 3), K3 nezakládá."
+DEAL-0017,INV-0011,FND-0006,Mews,,,,2022-12-15,announcement,equity,series_c_plus,false,185000000,USD,,,,,,Series C; dluhovou část kola poskytl jiný věřitel. Fond podle doby a strategie (kapitálový fond).
+DEAL-0018,INV-0011,FND-0006,Preply,,,,2022-07-13,announcement,equity,series_c_plus,false,50000000,USD,8000000,USD,,,,"Series C, Orbit jako nový investor; pořídil podíl."

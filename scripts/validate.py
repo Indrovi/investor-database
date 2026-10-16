@@ -5,7 +5,12 @@ Kontroluje CSV tabulky popsané v docs/datovy-model.md:
 - formát a povolené hodnoty sloupců,
 - že každý důležitý údaj má v citations.csv zdroj (URL, datum) a krátkou citaci,
 - propojení tabulek (investor, fond, investice, zdroj, citace),
-- pravidla z docs/plan.md (K1–K3, AUM vs. velikost fondu, vyřazení).
+- pravidla z docs/plan.md (K1–K3, AUM vs. velikost fondu, vyřazení),
+- duplicitní registrační čísla (stejné IČO = jeden záznam) a původ kandidátů
+  v nepovinném candidates.csv (zdroj z katalogu data/sources/catalog.csv).
+
+Duplicity validátor jen hlásí. Ke kterému záznamu zjištění patří (párování),
+rozhoduje koordinátor podle docs/overovaci-postup.md.
 
 Odvozené hodnoty (počet doložených investic, poslední doložená investice,
 aktivita, hodnocení A/B/C) se do CSV neukládají, počítá je tento skript.
@@ -98,7 +103,7 @@ CAD BRL MXN ILS AED SAR TRY UAH ZAR
 
 # Pole, která lze doložit citací, podle typu entity (docs/datovy-model.md, kapitola 4).
 CITABLE_FIELDS = {
-    "investor": {"identity", "primary_type", "decision_authority", "country", "sectors", "stages",
+    "investor": {"identity", "primary_type", "decision_authority", "country", "city", "sectors", "stages",
                  "geographies", "ticket", "aum", "rejection"},
     "fund": {"fund", "size"},
     "investment": {"deal", "investment_date", "round_amount", "investor_amount",
@@ -126,6 +131,8 @@ FULL_DATE_RE = re.compile(r"\d{4}-\d{2}-\d{2}")
 AMOUNT_RE = re.compile(r"\d+(?:\.\d+)?")
 CURRENCY_RE = re.compile(r"[A-Z]{3}")
 PRECISION_RANK = {"year": 0, "month": 1, "day": 2}
+CANDIDATE_METHODS = {"list", "search", "deal_report", "portfolio"}
+CATALOG_PATH = Path(__file__).resolve().parents[1] / "data" / "sources" / "catalog.csv"
 
 
 @dataclass(frozen=True)
@@ -134,6 +141,8 @@ class TableSpec:
     id_column: str
     id_prefix: str
     columns: tuple[str, ...]
+    optional: bool = False  # soubor nemusí existovat
+    unique_ids: bool = True  # False: víc řádků smí mít stejné ID (víc nálezů téhož kandidáta)
 
 
 TABLES = {
@@ -143,10 +152,10 @@ TABLES = {
     )),
     "investors": TableSpec("investors.csv", "investor_id", "INV", (
         "investor_id", "record_status", "rejection_code", "merged_into", "name", "aliases",
-        "primary_type", "subtype", "country", "website", "registry_type", "registry_id",
+        "primary_type", "subtype", "country", "city", "website", "registry_type", "registry_id",
         "identity_level", "sectors", "sectors_original", "sectors_status", "stages", "stages_status",
         "geographies", "geographies_status", "ticket_min", "ticket_max", "ticket_currency",
-        "ticket_status", "aum_amount", "aum_currency", "aum_basis", "aum_as_of", "aum_status",
+        "ticket_status", "ticket_scope", "aum_amount", "aum_currency", "aum_basis", "aum_as_of", "aum_status",
         "notes",
     )),
     "funds": TableSpec("funds.csv", "fund_id", "FND", (
@@ -163,6 +172,9 @@ TABLES = {
     "citations": TableSpec("citations.csv", "citation_id", "CIT", (
         "citation_id", "entity_type", "entity_id", "fields", "source_id", "quote", "note",
     )),
+    "candidates": TableSpec("candidates.csv", "candidate_id", "CAN", (
+        "candidate_id", "name", "found_via", "found_url", "found_date", "how", "investor_id", "note",
+    ), optional=True, unique_ids=False),
 }
 
 
@@ -261,6 +273,8 @@ class InvestorSummary:
     last_investment_date: str
     activity_status: str
     confidence_grade: str
+    last_deal_id: str = ""  # investice, ze které je last_investment_date
+    documented_deal_ids: tuple[str, ...] = ()  # doložené investice (K3), od nejnovější
 
 
 @dataclass
@@ -306,10 +320,20 @@ class Support:
 
 # --- Validace ---
 
+def load_catalog_keys(path: Path) -> set[str]:
+    """Klíče zdrojů z katalogu (source_key). Chybějící katalog = prázdná množina."""
+    if not path.exists():
+        return set()
+    with path.open(encoding="utf-8-sig", newline="") as handle:
+        return {(row.get("source_key") or "").strip() for row in csv.DictReader(handle)} - {""}
+
+
 class Validator:
-    def __init__(self, data_dir: Path, today: date) -> None:
+    def __init__(self, data_dir: Path, today: date, catalog: Path = CATALOG_PATH) -> None:
         self.data_dir = data_dir
         self.today = today
+        self.catalog = catalog
+        self.catalog_keys = load_catalog_keys(catalog)
         self.issues: list[Issue] = []
         self.rows: dict[str, list[Row]] = {name: [] for name in TABLES}
         self.by_id: dict[str, dict[str, Row]] = {name: {} for name in TABLES}
@@ -334,6 +358,8 @@ class Validator:
         self._check_funds()
         self._check_investments()
         self._check_investors()
+        self._check_duplicate_registry()
+        self._check_candidates()
         self._check_unused_sources()
         counts = {name: len(rows) for name, rows in self.rows.items()}
         return Report(self.data_dir, self.today, counts, self.issues, self._summaries())
@@ -354,6 +380,8 @@ class Validator:
     def _load(self) -> None:
         for name, spec in TABLES.items():
             path = self.data_dir / spec.file_name
+            if not path.exists() and spec.optional:
+                continue
             if not path.exists():
                 self.issues.append(Issue(ERROR, "MISSING_FILE", name, None, "", "",
                                          f"Soubor {spec.file_name} neexistuje."))
@@ -391,6 +419,8 @@ class Validator:
             self._error(row, spec.id_column, "INVALID_ID",
                         f"ID musí mít tvar {spec.id_prefix}-0000.")
         first = self.by_id[row.table].get(row_id)
+        if first is not None and not spec.unique_ids:
+            return
         if first is not None:
             self._error(row, spec.id_column, "DUPLICATE_ID",
                         f"ID už je použité na řádku {first.line}.")
@@ -765,7 +795,7 @@ class Validator:
             self._check_value_statuses(row, included=status == "included")
             self._check_sector_labels(row)
 
-            for column, field in (("registry_id", "identity"), ("country", "country"),
+            for column, field in (("registry_id", "identity"), ("country", "country"), ("city", "city"),
                                   ("primary_type", "primary_type")):
                 if row[column]:
                     self._require_source(row, "investor", field)
@@ -781,6 +811,54 @@ class Validator:
                 k2 = self._check_k2(row)
                 k3 = self._check_k3(row)
                 self.inclusion_ok[row.id] = k1 and k2 and k3
+
+    def _check_duplicate_registry(self) -> None:
+        """Stejné registrační číslo = stejná právnická osoba = jeden záznam, i mezi vyřazenými.
+
+        Jde jen o kontrolu duplicit. Párování (ke kterému záznamu nové zjištění patří, a zda
+        další právnickou osobu značky sloučit jako E10) rozhoduje koordinátor podle
+        docs/overovaci-postup.md, bod 3. Validátor nic neslučuje.
+        """
+        first_with: dict[tuple[str, ...], Row] = {}
+        for row in self.rows["investors"]:
+            key: tuple[str, ...] = (row["registry_type"], row["registry_id"])
+            if not all(key):
+                continue
+            if row["registry_type"] == "other":
+                key += (row["country"],)  # čísla různých zahraničních registrů se mohou shodovat
+            first = first_with.setdefault(key, row)
+            if first is not row:
+                self._error(row, "registry_id", "DUPLICATE_REGISTRY_ID",
+                            f"Registrační číslo {row['registry_id']} už má záznam {first.id}. "
+                            "Jedna právnická osoba má jeden záznam: zjištění přiřaďte k existujícímu "
+                            "záznamu (docs/overovaci-postup.md, bod 3).")
+
+    def _check_candidates(self) -> None:
+        """Původ kandidátů: jeden řádek = jeden nález kandidáta v jednom zdroji z katalogu.
+
+        Kandidát nalezený ve více zdrojích má víc řádků se stejným candidate_id. investor_id je
+        nepovinné a vyplní se, až kandidát dostane záznam v investors.csv.
+        """
+        first_of: dict[str, Row] = {}
+        for row in self.rows["candidates"]:
+            self._require(row, "name", "found_via", "found_url", "found_date", "how")
+            source_key = row["found_via"]
+            if source_key and source_key not in self.catalog_keys:
+                self._error(row, "found_via", "UNKNOWN_SOURCE_KEY",
+                            f"Zdroj {source_key} není v katalogu zdrojů ({self.catalog.name}). "
+                            "Nový zdroj se nejdřív popíše v data/sources/.")
+            self._check_url(row, "found_url")
+            self._check_full_date(row, "found_date")
+            self._check_enum(row, "how", CANDIDATE_METHODS)
+            self._check_reference(row, "investor_id", "investors")
+            if not row.id:
+                continue
+            first = first_of.setdefault(row.id, row)
+            if first is not row and first["investor_id"] != row["investor_id"]:
+                self._error(row, "investor_id", "CANDIDATE_INVESTOR_MISMATCH",
+                            f"Stejný kandidát má na řádku {first.line} investor_id "
+                            f"„{first['investor_id'] or '(prázdné)'}“. Všechny nálezy jednoho "
+                            "kandidáta patří k jednomu záznamu.")
 
     def _check_sector_labels(self, row: Row) -> None:
         """Původní označení sektorů ze zdroje se uchovává doslovně vedle číselníku."""
@@ -969,8 +1047,14 @@ class Validator:
                 continue
             evidenced = [deal for deal in self.deals_by_investor.get(row.id, [])
                          if self._deal_evidence(deal)]
-            dates = [self.deal_dates[deal.id] for deal in evidenced if deal.id in self.deal_dates]
-            last = max(dates, key=lambda d: (d.earliest, PRECISION_RANK[d.precision]), default=None)
+            dated = [deal for deal in evidenced if deal.id in self.deal_dates]
+            last_deal = max(dated, key=lambda deal: (self.deal_dates[deal.id].earliest,
+                                                     PRECISION_RANK[self.deal_dates[deal.id].precision]),
+                            default=None)
+            last = self.deal_dates[last_deal.id] if last_deal else None
+            newest_first = sorted(evidenced, reverse=True, key=lambda deal: (
+                (self.deal_dates[deal.id].earliest, PRECISION_RANK[self.deal_dates[deal.id].precision])
+                if deal.id in self.deal_dates else (date.min, -1)))
             activity = "active" if last and last.earliest >= cutoff else "inactive"
             sources = {source.id for deal in evidenced for source in self._deal_evidence(deal)}
             if status == "included" and self.inclusion_ok.get(row.id):
@@ -979,7 +1063,9 @@ class Validator:
                 grade = "C"
             k2 = bool(self._sources_for("investor", row.id, "decision_authority"))
             summaries.append(InvestorSummary(row.id, status, row["primary_type"], k2, len(evidenced),
-                                             last.raw if last else "", activity, grade))
+                                             last.raw if last else "", activity, grade,
+                                             last_deal.id if last_deal else "",
+                                             tuple(deal.id for deal in newest_first)))
         return summaries
 
 

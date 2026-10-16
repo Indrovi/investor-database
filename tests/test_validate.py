@@ -314,6 +314,47 @@ class ActivityWindowTest(unittest.TestCase):
         self.assertEqual(self.activity_with_date("2024-10-13"), "inactive")
 
 
+class DuplicatesAndCandidatesTest(unittest.TestCase):
+    """Kontrola duplicit a původu kandidátů. Validátor jen hlásí, párování dělá koordinátor."""
+
+    def test_duplicate_registry_id_is_reported_but_not_merged(self):
+        report = validate_modified([("investors", "INV-0005", "registry_type", "cz_ico"),
+                                    ("investors", "INV-0005", "registry_id", "99999994")])
+        self.assertIn(("ERROR", "DUPLICATE_REGISTRY_ID", "INV-0005", "registry_id"), issue_keys(report))
+        self.assertEqual(report.counts["investors"], 5)
+        self.assertEqual(summaries(report)["INV-0001"].documented_deals, 2)
+
+    def test_same_foreign_number_in_different_countries_is_not_a_duplicate(self):
+        report = validate_modified([
+            ("investors", "INV-0003", "registry_type", "other"), ("investors", "INV-0003", "registry_id", "B123456"),
+            ("investors", "INV-0003", "country", "LU"),
+            ("investors", "INV-0004", "registry_type", "other"), ("investors", "INV-0004", "registry_id", "B123456"),
+            ("investors", "INV-0004", "country", "CZ"),
+        ])
+        self.assertNotIn("DUPLICATE_REGISTRY_ID", {issue.code for issue in report.issues})
+
+    def test_several_findings_of_one_candidate_are_allowed(self):
+        report = validate.validate(VALID_DIR, TODAY)
+        self.assertEqual(report.counts["candidates"], 5)
+        self.assertNotIn("DUPLICATE_ID", {issue.code for issue in report.issues})
+
+    def test_findings_of_one_candidate_point_to_one_investor(self):
+        report = validate_modified(added_rows=[("candidates", {
+            "candidate_id": "CAN-0001", "name": "Fiktivní Ventures", "found_via": "TYP-01",
+            "found_url": "https://fiktivni-ventures.example/portfolio", "found_date": "2026-10-03",
+            "how": "portfolio", "investor_id": "INV-0003"})])
+        self.assertIn(("ERROR", "CANDIDATE_INVESTOR_MISMATCH", "CAN-0001", "investor_id"),
+                      issue_keys(report))
+
+    def test_candidate_without_investor_id_is_valid(self):
+        report = validate_modified([("candidates", "CAN-0002", "investor_id", "")])
+        self.assertEqual([i.format() for i in report.issues], [])
+
+    def test_candidates_file_is_optional(self):
+        report = validate_modified(transform=lambda d: (d / "candidates.csv").unlink())
+        self.assertEqual([i.format() for i in report.issues], [])
+
+
 class SingleChangeTest(unittest.TestCase):
     """Jedna změna v platných datech musí vyvolat konkrétní hlášení.
 
@@ -396,6 +437,23 @@ SINGLE_CHANGE_CASES = [
      ("WARNING", "MISSING_ARCHIVE", "SRC-0001", "archive_url")),
     ([("investors", "INV-0001", "investor_id", "INV-1")],
      ("ERROR", "INVALID_ID", "INV-1", "investor_id")),
+    ([("investors", "INV-0002", "city", "Praha")],
+     ("ERROR", "MISSING_CITATION", "INV-0002", "city")),
+    ([("investors", "INV-0005", "registry_type", "cz_ico"),
+      ("investors", "INV-0005", "registry_id", "99999994")],
+     ("ERROR", "DUPLICATE_REGISTRY_ID", "INV-0005", "registry_id")),
+    ([("candidates", "CAN-0003", "found_via", "ZDR-99")],
+     ("ERROR", "UNKNOWN_SOURCE_KEY", "CAN-0003", "found_via")),
+    ([("candidates", "CAN-0003", "found_via", "")],
+     ("ERROR", "MISSING_VALUE", "CAN-0003", "found_via")),
+    ([("candidates", "CAN-0003", "found_url", "media.example/clanek")],
+     ("ERROR", "INVALID_URL", "CAN-0003", "found_url")),
+    ([("candidates", "CAN-0003", "found_date", "2027-01-05")],
+     ("ERROR", "FUTURE_DATE", "CAN-0003", "found_date")),
+    ([("candidates", "CAN-0003", "how", "rss")],
+     ("ERROR", "INVALID_ENUM", "CAN-0003", "how")),
+    ([("candidates", "CAN-0003", "investor_id", "INV-0999")],
+     ("ERROR", "UNKNOWN_REFERENCE", "CAN-0003", "investor_id")),
 ]
 
 

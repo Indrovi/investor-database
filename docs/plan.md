@@ -25,7 +25,7 @@ Metodika je navržená tak, aby šla použít **celosvětově**. Pilotně se ov�
 | 2 | Datový model s doložením původu každého údaje (data provenance) | [datovy-model.md](datovy-model.md), `scripts/validate.py`, testy a fiktivní příklady | **hotovo** |
 | 3 | Mapa veřejných zdrojů a spolehlivosti dat (pro ČR) | [zdroje-cr.md](zdroje-cr.md), katalog `data/sources/` | **hotovo** (celosvětový odhad počtu investorů přesunut do kroku 7) |
 | 4 | Ověřovací postup (verification protocol) | kap. 6.6 a [checklist](overovaci-postup.md) | **hotovo** |
-| 5 | Pilot: české VC | `data/sample/` | plánováno |
+| 5 | Pilot: české VC | `data/sample/`, přehled `investori_prehled.csv`, skripty `scripts/pilot/` | **hotovo**: 5 unikátních investorů, všichni zařazení; otevřené otázky pro krok 6 v [data/sample/README.md](../data/sample/README.md) |
 | 6 | Ruční ověření a měření přesnosti | `results/` | plánováno |
 | 7 | Závěrečná analýza: odhad počtu investorů a nákladů na rozšíření na celý svět | kapitola plánu a `results/` | plánováno |
 | 8 | Revize plánu podle pilotu a finalizace | finální `docs/plan.md` | plánováno |
@@ -446,8 +446,12 @@ Investiční tým nebo správce **doložitelně sídlí v ČR**, bez ohledu na d
 | Evidence původu kandidátů (`candidates.csv`) se zavede v pilotu (krok 5) | [data/sources/README.md](../data/sources/README.md) | rozhodnuto |
 | Pokrytí ČR v CEE Funding Map; komerční užití dat obchodního rejstříku; seznam správců podle § 15 ve WS JERRS | [zdroje-cr.md](zdroje-cr.md), kap. 8 | otevřené |
 | Archivace zdrojů (např. Wayback Machine) odložena do dokončení pilotu; do té doby URL, citace, datum přístupu a varování validátoru | 6.2, [ověřovací postup](overovaci-postup.md) | odloženo |
-| Stejné IČO = stejný subjekt (žádný nový záznam). U značky s více právnickými osobami rozhoduje skutečná investiční pravomoc: jako E10 se slučují jen osoby bez ní (vehikula, feedery, SPV, GP). Automatické párování v pilotu. | 3.1, K1, 8 (E10), [ověřovací postup](overovaci-postup.md) | rozhodnuto (automatizace v pilotu) |
+| Stejné IČO = stejný subjekt (žádný nový záznam). U značky s více právnickými osobami rozhoduje skutečná investiční pravomoc: jako E10 se slučují jen osoby bez ní (vehikula, feedery, SPV, GP). Duplicitní IČO hlásí validátor, párování dělá koordinátor ručně. | 3.1, K1, 8 (E10), [ověřovací postup](overovaci-postup.md) | rozhodnuto (automatizace v pilotu) |
 | Sankční seznamy EU a OFAC | 9 | otevřené |
+| Ruční audit pilotu (krok 6): nezávislost důkazů a hodnocení A u NRI, K2 u Rockaway, právnické struktury Tilie a Orbitu, zda Vistag je skutečně uskutečněná investice StartupYardu | [data/sample/README.md](../data/sample/README.md) | otevřené |
+| Město sídla investičního týmu jako samostatný doložený údaj; přehled zařazených investorů pro čtení generovaný z dat | [datovy-model.md](datovy-model.md), kap. 3.1 a 9.1 | rozhodnuto |
+| Pilot nejdřív na 5 různorodých českých VC, rozšíření až po osvědčení postupu. Kandidáti jen ze zmapovaných zdrojů, zdroje s omezeným přístupem vynechány, současný tarif Firecrawl. | 11, [data/sample/README.md](../data/sample/README.md) | rozhodnuto |
+| Původ kandidátů v `candidates.csv`, `investor_id` až po ověření | [datovy-model.md](datovy-model.md), kap. 3.6 | rozhodnuto |
 
 ---
 

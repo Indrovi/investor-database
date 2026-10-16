@@ -13,7 +13,8 @@ Projekt vychází ze [zadání](docs/zadani.md) a pracuje výhradně s veřejně
 | Agenti pro hledání a ověřování zdrojů | [docs/agenti.md](docs/agenti.md), `.claude/`, `scripts/agents.py`, `scripts/check_quotes.py` | hotovo: vyzkoušeno na testech Credo a Presto Ventures, opravy ověřené; API klíč Firecrawl doplní autor do `.env` |
 | Mapa veřejných zdrojů pro české VC (krok 3) | [docs/zdroje-cr.md](docs/zdroje-cr.md), [data/sources/](data/sources/) | hotovo: 20 zdrojů a 5 typů zdrojů, 289 doložených zjištění |
 | Ověřovací postup (krok 4) | [docs/overovaci-postup.md](docs/overovaci-postup.md) | hotovo: checklist pro pilot nad existujícími postupy |
-| Data ze vzorku (sample) se zdrojem u každého údaje | `data/sample/` | připravuje se (krok 5) |
+| Data ze vzorku (sample) se zdrojem u každého údaje | [data/sample/](data/sample/) | hotovo (krok 5): 5 unikátních investorů, všech 5 zařazených (`included`); otevřené otázky pro krok 6 v [data/sample/README.md](data/sample/README.md) |
+| Přehled zařazených investorů pro čtení | [data/sample/investori_prehled.csv](data/sample/investori_prehled.csv) | generuje se z dat (`scripts/export_overview.py`) |
 | Výsledky měření přesnosti (accuracy) | `results/` | připravuje se (krok 6) |
 
 ## Struktura repozitáře
@@ -26,7 +27,9 @@ data/examples/   fiktivní ukázková data pro datový model a testy
 data/sources/    katalog veřejných zdrojů: zdroje, použití se spolehlivostí, důkazy
 results/         měření přesnosti, odhad nákladů
 scripts/         skripty: validate.py (validace dat), check_quotes.py (kontrola citací),
-                 agents.py (spouštění agentů a předání souborem), firecrawl_mcp.py (Firecrawl s klíčem z .env)
+                 agents.py (spouštění agentů a předání souborem), firecrawl_mcp.py (Firecrawl s klíčem z .env),
+                 select_sample.py (výběr vzorku), export_overview.py (přehled investorů pro čtení)
+scripts/pilot/   sestavení dat pilotu z výstupů agentů a rozhodnutí koordinátora, použitá zadání agentů
 tests/           testy skriptů
 ai-log/          exporty konverzací s AI (zatím jen lokálně)
 .env.example     vzor pro .env s API klíčem (.env je v .gitignore)
@@ -83,6 +86,19 @@ Jak se ověřovaly výstupy AI (ruční kontrola, validační skripty, kontrola 
 | 2026-10-16 | Konzistence katalogu a dokumentace | skript: existence důkazů u každého použití, odkazy v dokumentu, počty, přehled vs. `uses.csv`, sloupce vs. README | vše sedí; jediné hodnocení bez důkazu plyne z metodiky a je tak označené |
 | 2026-10-16 | Spotřeba kreditů Firecrawlu | `creditsUsed` ze záznamů běhů a zůstatek účtu | 491 kreditů, z toho asi 243 jedno 81stránkové PDF čtené třikrát |
 | 2026-10-16 | Python testy | `python3 -m unittest discover -s tests` | 80/80 OK |
+| 2026-10-16 | Python testy po fázi 0 kroku 5 (`candidates.csv`, duplicitní IČO) | `python3 -m unittest discover -s tests` | 93/93 OK; každý ze 60 kódů validátoru má test |
+| 2026-10-16 | Pilot: hledání kandidátů a výběr | průzkumník nad 5 zmapovanými zdroji, `check_quotes` (přímo a proti kopii Firecrawlu), triáž, `select_sample.py` se seedem zapsaným předem | 151/151 citací doslovně; 74 kandidátů, 55 ve výběru, 5 vylosováno |
+| 2026-10-16 | Pilot: ověření 5 kandidátů | průzkumník → auditor → kontrola citací → rozhodnutí podle checklistu | 4 subjekty ověřeny, K3 splněno u všech, K1 sporné u 3, typ sporný u 1 |
+| 2026-10-16 | Pilot: data | `validate.py data/sample --today 2026-10-16` a kontrola doslovnosti všech citací v datech | 0 chyb (jen `MISSING_ARCHIVE`); 83/83 citací doslovně (70 živě, 13 proti kopii Firecrawlu) |
+| 2026-10-16 | Pilot: přehodnocení K1–K3 | K1 i podle I2 (tým a značka), K2 jednoznačná pravomoc; doplňující ověření K2 u Rockaway (průzkumník a auditor, 10 stránek) | 4 subjekty `included` (A); právnické osoby týmů jako E10; nejtěsnější: K2 Rockaway (auditor: sporné) a typ NRI |
+| 2026-10-16 | Pilot: data po přehodnocení | `validate.py data/sample --today 2026-10-16`, kontrola doslovnosti všech citací | 0 chyb (jen `MISSING_ARCHIVE`); 110/110 citací doslovně (90 živě, 19 proti kopii Firecrawlu, 1 přes Firecrawl) |
+| 2026-10-16 | Přehled pro čtení | `export_overview.py data/sample --today 2026-10-16` a kontrola proti datům a validátoru | 4 řádky = 4 zařazení investoři; město, počty, poslední doložená investice a všechny odkazy na zdroje a citace sedí |
+| 2026-10-16 | Python testy po přidání přehledu a pole `city` | `python3 -m unittest discover -s tests` | 103/103 OK |
+| 2026-10-16 | Oprava duplicity ve výběru | opravený snímek kandidátů (CAN-0028 → CAN-0025), `select_sample.py` se stejným seedem | 4 kandidáti beze změny, 5. unikátní: CAN-0019 Orbit Capital |
+| 2026-10-16 | Ověření Orbit Capital a data | průzkumník → auditor → kontrola citací; `validate.py`, kontrola doslovnosti, přehled | included (A); 0 chyb; 141/142 citací ověřeno nyní, 1 (Unquote, 429) ověřena dříve; přehled 5 řádků sedí s daty |
+| 2026-10-16 | Přehled: doložené investice a deklarovaný ticket | `export_overview.py data/sample --today 2026-10-16`, `validate.py`, `python3 -m unittest discover -s tests` | 5 řádků; u každého investora firmy s doloženými investicemi; ticket označen jako deklarovaný, u Orbitu pro growth equity; 0 chyb; 105/105 testů OK |
+| 2026-10-16 | Reprodukovatelnost dat pilotu | `scripts/pilot/build_candidates.py`, `build_sample.py`, `export_overview.py` z uložených výstupů agentů; porovnání s daty v repozitáři | všechny soubory v `data/sample/` bajt po bajtu shodné; výběr shodný |
+| 2026-10-16 | Python testy po pilotu (`select_sample.py`) | `python3 -m unittest discover -s tests` | 96/96 OK |
 
 ### Nalezené chyby
 
@@ -113,6 +129,12 @@ Chyby ve výstupech AI nebo v datech a způsob jejich opravy.
 | 2026-10-16 | Souběžné běhy agentů překročily limit Firecrawlu a jedno 81stránkové PDF se četlo třikrát | Zhruba polovina kreditů tarifu Free za měsíc | Doporučení v docs/agenti.md: velká PDF číst jednou, agenty pouštět za sebou |
 | 2026-10-16 | Průzkumník (AI) při mapování četl přes Firecrawl veřejné stránky Czechia Dealroom, jehož podmínky automatický přístup zakazují | Riziko porušení podmínek zdroje | Zdroje s omezujícími podmínkami jen ručně a interně (D-019) |
 | 2026-10-16 | Koordinátor (AI) po vytvoření `check_quotes.py` neopravil plan.md a datovy-model.md, které dál uváděly kontrolu citací na webu jako odloženou do kroku 4 | Dokumentace neodpovídala nástrojům | Opraveno při kroku 4, odkazy na `check_quotes.py` |
+| 2026-10-16 | Koordinátor (AI) při triáži spároval „Rockaway Capital Partners“ s Rockaway Ventures jen podle značky | Chybný kandidát ve výběru ovlivnil los ze zdroje StartupYard | Opraveno při ověření (CAN-0075), snímek výběru uložen, výběr bez náhrad zachován |
+| 2026-10-16 | Koordinátor (AI) nechal při triáži nejistou shodu „Tila“ / „Tilia“ jako dva kandidáty | Vzorek obsahoval tentýž subjekt dvakrát (jen 4 unikátní investoři) | Oprava duplicity: opravený snímek a doplnění 5. unikátního kandidáta podle seedu |
+| 2026-10-16 | Průzkumník (AI) citoval IČO z výsledků hledání v rejstříku bez mezer | 5 nedoslovných citací | Do dat nepoužity; IČO doložena jinými citacemi |
+| 2026-10-16 | Agenti (AI) 20× volali Firecrawl s nepovoleným parametrem `objective` | Zbytečné kroky (kredity ne, hook volání zablokoval) | Bez zásahu; hook funguje |
+| 2026-10-16 | Koordinátor (AI) v prvním vyhodnocení pilotu vyžadoval u K1 konkrétní právnickou osobu s IČO, ačkoli metodika připouští I2 | Všichni 4 investoři zůstali kandidáty | Přehodnoceno: investiční subjekt je tým a značka (I2), právnické osoby jako E10 |
+| 2026-10-16 | Koordinátor (AI) zapsal u NRI do typické investice (`ticket_max`) limit programu 80 mil. Kč | Záměna typické investice s limitem programu | Opraveno: ticket `not_public`, limit jen v citaci a poznámce |
 
 ### Rozhodnutí (decision log)
 
@@ -140,3 +162,9 @@ Chyby ve výstupech AI nebo v datech a způsob jejich opravy.
 | D-018 | 2026-10-15 | Uzavření architektury agentů. Tvrzení se předávají souborem JSON (`scripts/agents.py`). Neúplný záznam bez úplné URL se odmítne. Parametry Firecrawlu vynucuje hook `PreToolUse`. API klíč je v `.env`, čte ho jen `headersHelper` a agenti mají čtení `.env` zakázané. | Požadavek autora: žádné změny znaků v citacích, žádné tiché přeskočení, kontrola mimo prompt, klíč mimo repozitář a konverzaci |
 | D-019 | 2026-10-16 | Krok 3 jen pro ČR, celosvětový odhad až v závěrečné analýze. Katalog zdrojů ve třech tabulkách (zdroje, použití se spolehlivostí, důkazy). Zdroje s omezujícími podmínkami jen ručně a interně. Evidence původu kandidátů v pilotu. | Schválení mapy zdrojů autorem |
 | D-020 | 2026-10-16 | Ověřovací postup jako checklist nad existujícími postupy. Archivace odložena do dokončení pilotu. Stejné IČO = stejný subjekt. U značky s více právnickými osobami rozhoduje investiční pravomoc, jako E10 se slučují jen osoby bez ní. Automatické párování v pilotu. Pro K3 se hledají i starší investice, 24 měsíců určuje jen aktivitu. Citace zůstávají doslovné, osobní údaje se chrání výběrem úryvku. Sankční seznamy zatím otevřené. | Schválení checklistu autorem: využít hotové postupy, metodiku ani architekturu agentů neměnit |
+| D-021 | 2026-10-16 | Pilot nejdřív na 5 různorodých českých VC, rozšíření až po osvědčení postupu. Kandidáti jen ze zmapovaných zdrojů, zdroje s omezeným přístupem vynechané, současný tarif Firecrawl. `candidates.csv` s `investor_id` až po ověření. Validátor hlásí duplicitní IČO, párování dělá koordinátor. | Rozhodnutí autora k návrhu pilotu |
+| D-022 | 2026-10-16 | Pilot: kandidáti automaticky ze zmapovaných zdrojů, triáž a výběr 5 kandidátů reprodukovatelně (seed zapsaný předem, jeden z každého zdroje), Credo a Presto vynechány, bez náhrad. Kandidáti, u nichž rozhodnutí patří autorovi, zůstávají `candidate`. | Pokyn autora ke spuštění pilotu |
+| D-023 | 2026-10-16 | Přehodnocení pilotu: K1 splní i identita týmu a značky I2 z nezávislých zdrojů bez IČO, K2 musí jednoznačně doložit skutečnou rozhodovací pravomoc. Kandidát může mít úplný profil, chybějící údaje mají důvod. | Pokyn autora |
+| D-024 | 2026-10-16 | Nové pole `city` (město sídla investičního týmu, jen s citací). Přehled zařazených investorů pro čtení se generuje z dat skriptem, druhá databáze nevzniká. | Požadavek autora na prakticky použitelný výstup |
+| D-025 | 2026-10-16 | Duplicita ve výběru se opravuje novým snímkem kandidátů a opakovaným výběrem se stejným seedem; původní výběr zůstává pro audit. Nejde o náhradu neúspěšného investora. | Požadavek autora na 5 unikátních investorů |
+| D-026 | 2026-10-16 | Nové pole `ticket_scope` (ke které strategii se deklarovaný ticket vztahuje). Přehled vypisuje všechny doložené investice a ticket jako deklarovanou hodnotu. Hraniční rozhodnutí (hodnocení A u NRI, K2 Rockaway) jsou body pro ruční audit v kroku 6. | Pokyn autora k uzavření kroku 5 |

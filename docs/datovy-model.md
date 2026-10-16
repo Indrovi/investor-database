@@ -26,6 +26,7 @@ erDiagram
     CITATIONS }o--o| INVESTORS : "dokládá údaj"
     CITATIONS }o--o| FUNDS : "dokládá údaj"
     CITATIONS }o--o| INVESTMENTS : "dokládá údaj"
+    CANDIDATES }o--o| INVESTORS : "nález kandidáta"
 ```
 
 | Soubor | Jeden řádek = | K čemu slouží |
@@ -35,6 +36,7 @@ erDiagram
 | `investments.csv` | jedna konkrétní investice | doklad, že investor opravdu investuje (K3), a podklad pro aktivitu |
 | `sources.csv` | jeden zdroj | URL, vydavatel, tier, datum publikace a přístupu, archiv |
 | `citations.csv` | jedna citace | spojuje údaj (entita + pole) se zdrojem a s krátkou citací |
+| `candidates.csv` (nepovinný) | jeden nález kandidáta v jednom zdroji | odkud kandidáta máme (zdroj z katalogu, URL, datum, způsob nalezení) |
 
 **Příklad dohledání původu údaje:** Typická investice Fiktivní Ventures je 250 000–2 000 000 EUR (`investors.csv`, INV-0001). V `citations.csv` ji dokládá CIT-0002 (`entity_id=INV-0001`, `fields` obsahuje `ticket`). Ta odkazuje na zdroj SRC-0005 v `sources.csv` (URL, datum přístupu, archiv) a obsahuje citaci „Investujeme 250 tisíc až 2 miliony eur…“.
 
@@ -55,6 +57,7 @@ Seznamy se zapisují do jedné buňky a oddělují středníkem (`software_saas;
 | `primary_type` | u `included` | číselník | základní typ (plan.md, kap. 4) |
 | `subtype` | – | číselník | forma subjektu. Základní typ neurčuje (plan.md, kap. 4.2). |
 | `country` | u `included` | ISO 3166-1 alpha-2 | země HQ, u fyzické osoby země působení |
+| `city` | – | text | město sídla investičního týmu (např. `Praha`). Vyplňuje se jen s citací `city`, z poznámek se nevytěžuje. |
 | `website` | – | URL | web subjektu |
 | `registry_type`, `registry_id` | u úrovně I1 | číselník + číslo | IČO a LEI se kontrolují kontrolním součtem |
 | `identity_level` | u `included` | `I1`, `I2`, `I3` | úroveň identity (plan.md, K1) |
@@ -63,7 +66,8 @@ Seznamy se zapisují do jedné buňky a oddělují středníkem (`software_saas;
 | `sectors_status` | u `included` | stav | původ hodnoty, nebo důvod, proč chybí |
 | `stages` + `stages_status` | u `included` | seznam + stav | fáze investic |
 | `geographies` + `geographies_status` | u `included` | seznam + stav | země (ISO kódy) nebo regiony, kam investuje |
-| `ticket_min`, `ticket_max`, `ticket_currency` + `ticket_status` | u `included` | částka, měna + stav | **typická investice** do jedné firmy |
+| `ticket_min`, `ticket_max`, `ticket_currency` + `ticket_status` | u `included` | částka, měna + stav | **typická investice** do jedné firmy, jak ji deklaruje zdroj. Není to konkrétní investovaná částka ani limit programu. |
+| `ticket_scope` | – | text | ke které strategii nebo programu se deklarovaný ticket vztahuje (např. `growth equity`), pokud jich investor má víc |
 | `aum_amount`, `aum_currency`, `aum_basis`, `aum_as_of` + `aum_status` | u `included` | částka, měna, číselník, datum + stav | **celkový kapitál investora (AUM)** |
 | `notes` | – | text | interní poznámka, není to zdroj |
 
@@ -163,13 +167,43 @@ Pokud tomu žádná nezávislá citace nevyhoví, validátor vydá varování `I
 | `quote` | vždy | text ≤ 300 znaků | **doslovný úryvek ze zdroje** v původním jazyce |
 | `note` | u `derived`, `estimate` a vyřazení `E9` | text | popis metody odvození nebo odhadu, u E9 výsledek prověření, jinak volitelný komentář |
 
+### 3.6 `candidates.csv` (původ kandidátů)
+
+Nepovinný soubor. Když existuje, validátor ho kontroluje. Popisuje, **odkud kandidáta máme**, ne údaje o něm: ty se dokládají citacemi v ostatních tabulkách. Kandidát nalezený ve více zdrojích má víc řádků se stejným `candidate_id`.
+
+| Sloupec | Povinné | Formát | Popis |
+|---|---|---|---|
+| `candidate_id` | vždy | `CAN-0000` | ID kandidáta, u všech jeho nálezů stejné |
+| `name` | vždy | text | jméno nebo název, jak je ve zdroji |
+| `found_via` | vždy | `ZDR-00` nebo `TYP-00` | zdroj z katalogu [data/sources/catalog.csv](../data/sources/catalog.csv) |
+| `found_url` | vždy | URL | konkrétní stránka |
+| `found_date` | vždy | `YYYY-MM-DD` | kdy byl kandidát nalezen |
+| `how` | vždy | `list`, `search`, `deal_report`, `portfolio` | seznam (členové, LP, regulátor), vyhledávání, článek nebo oznámení o investici, portfolio jiného investora nebo akcelerátoru |
+| `investor_id` | – | `INV-0000` | záznam v `investors.csv`. **Prázdné, dokud kandidáta neověříme.** Všechny nálezy jednoho kandidáta musí mít stejné. |
+| `note` | – | text | např. „mimo pilot: investiční tým sídlí mimo ČR“ (plan.md, kap. 11.1) |
+
+**Fyzické osoby** (např. andělé jmenovaní v článcích) se zapisují, jen když jsou předmětem ověřování. Jinak stačí jejich počet (plan.md, kap. 6.5, minimalizace údajů).
+
+### 3.7 Kontrola duplicit a párování
+
+Jsou to dvě různé věci:
+
+- **Kontrola duplicit (validátor, automaticky):**
+  - Hlásí, když mají dva záznamy v `investors.csv` stejné registrační číslo, i když je jeden z nich vyřazený (`DUPLICATE_REGISTRY_ID`). Stejné IČO znamená stejnou právnickou osobu, a ta má jeden záznam.
+  - Hlásí, když nálezy jednoho kandidáta míří k různým záznamům (`CANDIDATE_INVESTOR_MISMATCH`).
+  - Nic neslučuje ani nepřepisuje.
+- **Párování (koordinátor, podle [ověřovacího postupu](overovaci-postup.md), bod 3):**
+  - rozhoduje, ke kterému záznamu nové zjištění patří,
+  - u značky s více právnickými osobami rozhoduje, kdo má skutečnou investiční pravomoc a které osoby se sloučí jako E10,
+  - zatím se dělá ručně.
+
 ## 4. Doložení údajů
 
 **Pole, která lze citovat:**
 
 | Entita | Pole v `fields` |
 |---|---|
-| `investor` | `identity` (název + registrace), `primary_type`, `decision_authority` (posouzení K2), `country`, `sectors`, `stages`, `geographies`, `ticket`, `aum`, `rejection` |
+| `investor` | `identity` (název + registrace), `primary_type`, `decision_authority` (posouzení K2), `country`, `city`, `sectors`, `stages`, `geographies`, `ticket`, `aum`, `rejection` |
 | `fund` | `fund` (existence fondu), `size` |
 | `investment` | `deal` (investice proběhla), `investment_date`, `round_amount`, `investor_amount`, `registry_entry_date`, `registry_contribution` |
 
@@ -179,7 +213,7 @@ Jedna citace může dokládat víc polí, pokud je její úryvek podporuje všec
 
 | Situace | Požadavek |
 |---|---|
-| Každý vyplněný důležitý údaj: popisné údaje investora, `registry_id`, `country`, `primary_type`, každý fond a jeho velikost, každá investice, její datum, částky a údaje z rejstříku | ≥1 citace se zdrojem (tier 1–3) a úryvkem |
+| Každý vyplněný důležitý údaj: popisné údaje investora, `registry_id`, `country`, `city`, `primary_type`, každý fond a jeho velikost, každá investice, její datum, částky a údaje z rejstříku | ≥1 citace se zdrojem (tier 1–3) a úryvkem |
 | Stav `derived` nebo `estimate` | navíc popis metody v `note` |
 | Stav `ambiguous` nebo `conflicting` | ≥1 citace se zdrojem, která nejasný nebo rozporný údaj ukazuje |
 | Stav `not_public` nebo `not_applicable` | citace není potřeba |
@@ -315,18 +349,20 @@ python3 -m unittest discover -s tests -v
 | Struktura souborů (při chybě se dál nepokračuje) | `MISSING_FILE`, `MISSING_COLUMN`, `WRONG_DELIMITER`, varování `UNKNOWN_COLUMN` |
 | Formát hodnot | `MISSING_VALUE`, `INVALID_ID`, `DUPLICATE_ID`, `INVALID_ENUM`, `INVALID_COUNTRY`, `INVALID_URL`, `INVALID_DATE`, `FUTURE_DATE`, `INVALID_AMOUNT`, `MISSING_CURRENCY`, `INVALID_CURRENCY`, `INVALID_REGISTRY_ID`, varování `UNKNOWN_CURRENCY`, `CURRENCY_WITHOUT_AMOUNT`, `POSSIBLE_PLACEHOLDER_DATE` |
 | Propojení tabulek | `UNKNOWN_REFERENCE`, `FUND_INVESTOR_MISMATCH`, `INVALID_CITATION_FIELD`, `MERGED_INTO_INVALID`, varování `UNUSED_SOURCE` |
+| Duplicity a původ kandidátů (kap. 3.6 a 3.7) | `DUPLICATE_REGISTRY_ID`, `UNKNOWN_SOURCE_KEY`, `CANDIDATE_INVESTOR_MISMATCH` |
 | Doložení údajů | `MISSING_CITATION`, `MISSING_SOURCE`, `MISSING_QUOTE`, `MISSING_METHOD`, `AGGREGATOR_AS_EVIDENCE`, `MISSING_ORIGINAL_LABEL`, varování `ORIGINAL_LABEL_NOT_IN_QUOTE`, `QUOTE_TOO_LONG`, `MISSING_ARCHIVE` |
 | Pravidla z plánu | `MISSING_STATUS`, `STATUS_VALUE_MISMATCH`, `SUBTYPE_TYPE_MISMATCH`, `TICKET_RANGE_INVALID`, `AMOUNT_EXCEEDS_ROUND`, `AUM_BASIS_REQUIRED`, `AUM_DERIVED_NOT_ALLOWED`, `AUM_FOR_NATURAL_PERSON`, `MISSING_AS_OF`, `FUND_SIZE_TYPE_REQUIRED`, `DATE_BASIS_REQUIRED`, `DATE_BASIS_WITHOUT_DATE`, `REGISTRY_DATE_AS_INVESTMENT_DATE`, `REGISTRY_CONTRIBUTION_AS_AMOUNT`, `REJECTION_CODE_REQUIRED`, `REJECTION_CODE_NOT_ALLOWED`, `E9_REVIEW_MISSING`, `K1_NOT_MET`, `K2_NOT_MET`, `K3_NOT_MET`, varování `STALE_VALUE`, `AUM_MATCHES_FUND_SIZE`, `AUM_MATCHES_FUND_TOTAL`, `INVESTMENT_NOT_EXPLICIT` |
 
-**Testy:** `tests/test_validate.py` obsahuje 56 testů. Každý z 57 kódů validátoru má aspoň jeden test.
+**Testy:** `tests/test_validate.py` obsahuje 70 testů. Každý z 60 kódů validátoru má aspoň jeden test.
 
 | Skupina | Počet | Co ověřuje |
 |---|---|---|
 | Ukázková data | 4 | platná sada bez hlášení, neplatná sada přesně se všemi vloženými chybami, odvozené hodnoty, návratové kódy |
 | Případy z požadavků | 10 | chybějící měna, neznámé datum, nejasný kapitál, zdroje odvozených hodnot, nejasný nástroj, rejstřík a vklad v Kč, AUM vs. upsaný kapitál fondů |
 | Poslední revize kroku 2 | 7 | K2, samotný zápis v rejstříku vs. zápis s listinou, obecné financování a investiční úvěr u `investment_unspecified`, ticket nad 500 tis. EUR neurčuje typ, E9 až po prověření |
+| Duplicity a kandidáti | 6 | stejné IČO se hlásí, ale nic se neslučuje; stejné zahraniční číslo v jiné zemi není duplicita; víc nálezů jednoho kandidáta; jeden kandidát = jeden záznam; kandidát bez `investor_id`; `candidates.csv` je nepovinný |
 | Hranice aktivity | 3 | rok, měsíc, přesná hranice 24 měsíců |
-| Jedna změna v datech | 27 | 24 případů, kdy jedna úprava platných dat musí vyvolat konkrétní hlášení, a 3 případy struktury souborů |
+| Jedna změna v datech | 35 | 32 případů, kdy jedna úprava platných dat musí vyvolat konkrétní hlášení, a 3 případy struktury souborů |
 | Pomocné funkce | 5 | data, kontrolní součty IČO a LEI, seznam zemí, výrazy pro výslovnou investici |
 
 **Co validátor neověří:**
@@ -335,11 +371,32 @@ python3 -m unittest discover -s tests -v
 - zda citace `decision_authority` rozhodovací pravomoc opravdu dokládá (kontroluje se jen, že existuje),
 - význam citace u `investment_unspecified` (jen hrubá kontrola výrazů),
 - typ investora podle ticketu: hranice 500 tis. EUR je jen orientační (plan.md, kap. 4.3),
-- zda stejné IČO nemá víc nevyřazených záznamů (párování řeší [ověřovací postup](overovaci-postup.md), automaticky až v pilotu).
+- párování: ke kterému záznamu zjištění patří a zda další právnickou osobu značky sloučit jako E10. Validátor jen hlásí duplicitní IČO (kap. 3.7).
 
 Že citace na uvedené URL opravdu je, ověřuje samostatný skript `python3 scripts/check_quotes.py --data DATA_DIR` ([agenti.md](agenti.md), kap. 3).
 
 **Pozor na Excel s českým nastavením:** ukládá CSV se středníkem jako oddělovačem. Validátor to pozná (`WRONG_DELIMITER`).
+
+### 9.1 Přehled pro čtení (`investori_prehled.csv`)
+
+CSV tabulky slouží k ukládání a ověřování údajů. Pro člověka, který chce rychle najít investora, je určený přehled, který se z nich **generuje**:
+
+```bash
+python3 scripts/export_overview.py data/sample --today 2026-10-16
+```
+
+- **Rozsah:** jeden řádek je jeden zařazený investor (`included`). Kandidáti a vyřazené záznamy, včetně sloučených E10, se nevypisují.
+- **Ručně se neupravuje.** Pokud validátor najde chybu, přehled se nevytvoří.
+- **Čitelné hodnoty:** kódy číselníků se převádějí na text (např. `series_a` → Series A, `CEE` → střední a východní Evropa). Odvozené hodnoty mají poznámku „(odvozeno)“.
+- **Chybějící údaje** mají vždy důvod: nezveřejněno, zdroje si odporují, nevztahuje se, nejasné, nebo neuvedeno (údaj zatím není v datech). Nic se nedopočítává.
+- **Aktivitu, poslední doloženou investici, počet doložených investic a hodnocení A/B** počítá validátor a přehled je jen přebírá. Poslední doložená investice je ta, která splňuje K3. Novější investice s nástrojem `unclear` nebo doložená jen vlastním zdrojem investora se do ní nepočítá.
+- **Oddělené údaje:**
+  - Ticket se vypisuje jako „deklarované rozpětí“ nebo „deklarovaná výše“, případně se strategií z `ticket_scope`. Nezaměňuje se s konkrétní investovanou částkou ani s limitem programu.
+  - Velikost každého fondu se vypisuje zvlášť, AUM samostatně.
+- **Doložené investice:** sloupec „Doložené investice (firmy)“ vypisuje firmy, datum a fázi u všech investic, které splňují K3 (nejvýš 8, od nejnovější). Investice s nástrojem `unclear`, doložené jen zápisem v rejstříku nebo jen vlastním zdrojem investora a dluhové financování se nevypisují.
+- **Dohledatelnost:** sloupce „Zdroje: …“ uvádějí ke každé skupině údajů URL zdroje a ID citace ve tvaru `URL (CIT-0000)`. Doslovnou citaci k ID najdete v `citations.csv`.
+
+Testy přehledu jsou v `tests/test_export_overview.py` (8 testů).
 
 ## 10. Fiktivní příklady
 
@@ -351,7 +408,7 @@ Adresář [data/examples/](../data/examples/) obsahuje **jen fiktivní data**:
 
 Sady jsou dvě:
 
-- `valid/`: správně zapsaná data včetně okrajových případů. Validátor nehlásí žádnou chybu ani varování.
+- `valid/`: správně zapsaná data včetně okrajových případů, i s `candidates.csv` (kandidát nalezený ve dvou zdrojích, neověřený kandidát, kandidát mimo pilot). Validátor nehlásí žádnou chybu ani varování.
 - `invalid/`: kopie platné sady s 38 záměrnými chybami a 3 varováními. Každá je popsaná ve sloupci `notes` a test ověřuje, že validátor najde přesně je.
 
 | Případ | Správný zápis (`valid/`) | Chybný zápis (`invalid/`) → hlášení |
@@ -383,6 +440,11 @@ Sady jsou dvě:
 - nejasný nástroj se nepočítá jako důkaz,
 - datum zápisu a vklad v rejstříku nejsou datum a výše investice,
 - celkový upsaný kapitál fondů není AUM.
+
+**Rozhodnuto 2026-10-16:**
+
+- původ kandidátů v `candidates.csv`, `investor_id` až po ověření (kap. 3.6),
+- validátor hlásí duplicitní IČO, párování zůstává na koordinátorovi (kap. 3.7).
 
 **Otevřené:**
 

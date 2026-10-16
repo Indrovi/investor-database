@@ -7,10 +7,10 @@ Checklist propojuje postupy, které už máme. Nová pravidla nezavádí: o zař
 
 ## A. Příjem kandidáta
 
-1. **Zapsat nález** do `candidates.csv`: zdroj z katalogu (`source_key`), URL, datum, způsob nalezení ([data/sources/README.md](../data/sources/README.md)). Tabulka vznikne s pilotem.
+1. **Zapsat nález** do `candidates.csv`: zdroj z katalogu (`source_key`), URL, datum, způsob nalezení ([datovy-model.md](datovy-model.md), kap. 3.6). `investor_id` se doplní až po ověření.
    - Zdroje s omezujícími podmínkami (Czechia Dealroom, OpenVC, CEE Funding Map, CC+) jen ručně a interně. Nic se z nich nepřebírá ([zdroje-cr.md](zdroje-cr.md), kap. 8).
 2. **Pilotní filtr:** investiční tým nebo správce doložitelně sídlí v ČR (plan.md 11.1). Jinak v `candidates.csv` poznámka „mimo pilot“ s důvodem.
-3. **Párování** (plan.md K1, 3.1, E10). Automatické párování přijde s pilotem, do té doby ručně podle tohoto bodu.
+3. **Párování** (plan.md K1, 3.1, E10). Párování dělá koordinátor ručně podle tohoto bodu. Validátor k tomu jen hlásí duplicity (stejné IČO u dvou záznamů, nálezy jednoho kandidáta u různých záznamů) a nic neslučuje ([datovy-model.md](datovy-model.md), kap. 3.7).
    - **Stejné IČO = stejná právnická osoba:** pokud záznam s daným IČO už existuje, nový nevzniká a zjištění se přiřadí k existujícímu záznamu. Hledá se i mezi vyřazenými záznamy E10. U nich se zjištění přiřadí k záznamu v `merged_into`.
    - **Bez IČO** (fyzické osoby, zahraniční subjekty): párovat podle názvu, domény webu, země a klíčových osob.
    - **Jedna značka, více právnických osob:** stejná značka neznamená stejný subjekt. Rozhoduje, kdo má **skutečnou investiční pravomoc** (K2), proto se všechny právnické osoby značky automaticky neslučují.
@@ -102,6 +102,6 @@ Checklist propojuje postupy, které už máme. Nová pravidla nezavádí: o zař
 ## Otevřené otázky
 
 - **Archivace** (Wayback Machine nebo jiná): odložena do dokončení pilotu.
-- **Automatické párování podle IČO:** zavede se v pilotu, do té doby ručně podle bodu 3. Ani automatické párování nesmí slučovat právnické osoby se samostatnou investiční pravomocí.
+- **Automatické párování:** zatím ručně podle bodu 3, kontrolu duplicitního IČO už dělá validátor. Zda párování automatizovat, ukáže pilot. Ani automatické párování nesmí slučovat právnické osoby se samostatnou investiční pravomocí.
 - **Sankční seznamy EU a OFAC** (plan.md 9): zatím otevřené, datový model pro ně nemá pole.
 - **Otázky z mapy zdrojů:** pokrytí ČR v CEE Funding Map, komerční užití dat obchodního rejstříku, seznam správců podle § 15 ve WS JERRS ([zdroje-cr.md](zdroje-cr.md), kap. 8).

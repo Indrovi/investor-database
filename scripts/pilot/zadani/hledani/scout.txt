@@ -1,0 +1,21 @@
+Krok 5 projektu, pilot českých VC: hledání kandidátů. Nejde o ověřování investorů. Nic nezapisuj, neposuzuj K1–K3 ani typ investora.
+
+Uložené kopie stránek: soubor .cache/pages/index.tsv (sloupce url, soubor, stazeno). Kopie je výstup Firecrawlu z dřívějšího běhu a platí jako otevřená stránka: čti ji nástrojem Read, ve sloupci `text z` uveď `firecrawl` a jako accessed_date datum ze sloupce stazeno. Firecrawlem otevírej jen stránky, které v indexu nejsou.
+
+Zdroje, v tomto pořadí (jiné stránky neotevírej):
+1. https://cvca.cz/clenstvi/radni-clenove/ (uložená kopie): všichni řádní členové na stránce.
+2. https://www.eif.org/files/attachments/czechia-equity-fundmanagers.pdf (uložená kopie): všechny fondy v tabulce.
+3. https://www.nrinvesticni.cz/realizovane-investice/ (uložená kopie): fondy a správci, do kterých NRI investovala, a investoři jmenovaní u přímých investic.
+4. https://cc.cz/tag/ccvc/ (uložená kopie): najdi dva nejnovější články, které mají v titulku řetězec „investic“ (stránka je řadí od nejnovějšího). Tyto dva články otevři Firecrawlem a vypiš investory jmenované u investic do startupů.
+5. https://startupyard.com/ a https://startupyard.com/faq (uložené kopie): investoři a partneři, kteří akcelerátor financují nebo rozhodují o investicích.
+
+Co vrátit:
+- Jedno tvrzení na kandidáta a zdroj: entita = jméno přesně podle zdroje, pole `kandidat`, hodnota = totéž jméno. Citace musí jméno doslova obsahovat.
+- Pokud zdroj kandidáta nějak označuje (např. Venture Capital, Private Equity, Private Debt, seed fond, poradce, banka), dej označení do citace, je-li ve stejné větě nebo řádku tabulky. Jinak přidej zvláštní tvrzení s polem `oznaceni`.
+- Pokud zdroj uvádí, kde sídlí investiční tým nebo správce (např. sloupec Team location), přidej tvrzení s polem `sidlo_tymu`.
+- U EIF uveď jako kandidáta správce (Fund manager) a název fondu dej do poznámky.
+- Kandidáti jsou firmy, fondy a jejich správci. Startupy, které investici získaly, kandidáti nejsou.
+- Fyzické osoby (andělé, zakladatelé) nevypisuj jménem. V části „Nenalezeno nebo neověřeno“ uveď jen jejich počet u každého zdroje.
+- Ve sloupci poznámka uveď číslo zdroje (1–5) a u článků CzechCrunch, u které investice je kandidát jmenován.
+
+Omezení: Firecrawlem otevři nejvýš 4 stránky. Nepoužívej Czechia Dealroom, OpenVC, CEE Funding Map ani databázi CC+.

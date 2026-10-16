@@ -1,0 +1,26 @@
+Krok 5 projektu, pilot českých VC. Investor: Orbit Capital. Nic nezapisuj.
+
+Uložené kopie stránek: .cache/pages/index.tsv (url, soubor, stazeno). Kopie je výstup
+Firecrawlu z dřívějšího běhu a platí jako otevřená stránka: čti ji nástrojem Read, ve sloupci
+`text z` uveď `firecrawl` a jako accessed_date datum ze sloupce stazeno. Firecrawlem otevírej
+jen stránky, které v indexu nejsou.
+
+Najdi a vytěž k tomuto investorovi, vždy s úplnou URL a doslovnou citací:
+1. Identita: právnické osoby spojené se značkou (správce, investiční společnost, fondová vehikula,
+   GP, poradenská společnost) s registračním číslem a sídlem z úředního zdroje.
+2. Fakta k rozhodovací pravomoci: kdo o investicích rozhoduje (obhospodařovatel, GP, investiční
+   výbor, tým) a kde sídlí investiční tým.
+3. Doložené investice: přednostně nejnovější, ale i starší. U každé firma, datum, nástroj a
+   nejlépe nezávislý zdroj (tisková zpráva firmy, redakční článek, listina). Nejvýš 6 investic.
+4. Popisné údaje: sektory, fáze, regiony, typická investice, fondy (velikost, typ, datum), AUM.
+
+Výchozí stopy (zmapované zdroje): https://cvca.cz/clenstvi/radni-clenove/ (profil Orbit Capital), https://www.eif.org/files/attachments/czechia-equity-fundmanagers.pdf (fond Orbit Growth Debt II, správce OGD Advisory s.r.o.), https://cc.cz/zmapovali-jsme-vsechny-investice-ktere-loni-oznamily-ceske-startupy-neseme-tri-dobre-a-tri-spatne-zpravy/ (investice do Jutro Medical). Všechny tři stránky jsou v uložených kopiích.
+
+Upřesnění: Orbit Capital podle zdrojů kombinuje růstový kapitál (equity) a venture debt. U každé investice uveď nástroj a odliš kapitálovou investici od úvěru nebo jiného dluhového financování. Zjisti, které právnické osoby ke značce patří (např. OGD Advisory s.r.o.) a kdo o investicích rozhoduje.
+
+Omezení:
+- Nepoužívej Czechia Dealroom, OpenVC, CEE Funding Map, databázi CC+ ani jiné databáze,
+  jejichž podmínky zakazují automatický přístup.
+- Otevři nejvýš 20 stránek. Velká PDF (výroční zprávy, příručky) neotevírej, uveď je ve Stopách.
+- U fyzických osob jen jméno a role. Z výpisu rejstříku cituj jen řádek s rolí nebo podílem.
+- Nejvýš 30 tvrzení.

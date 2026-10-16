@@ -107,6 +107,8 @@ python3 scripts/agents.py calls .cache/agents/BEH/investor-evidence-auditor.json
 - **První vytvoření adresáře:** podle dokumentace Claude Code může být po prvním vytvoření `.claude/agents/` potřeba restart. V našem případě (Claude Code 2.1.300) se agenti objevili i bez něj.
 - **Kontrola hlaviček:** platnost hlaviček ověří `claude plugin validate .claude/agents`.
 
+**Pilot (krok 5):** celý řetězec pro jednoho kandidáta spouští `scripts/pilot/run_one.sh` a zadání připravuje `scripts/pilot/prompt.py` ([data/sample/README.md](../data/sample/README.md)).
+
 **Kontrola citací (`scripts/check_quotes.py`):**
 
 ```bash

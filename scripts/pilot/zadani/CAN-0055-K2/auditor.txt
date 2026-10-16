@@ -1,0 +1,10 @@
+Krok 5 projektu, pilot českých VC: doplňující ověření K2. Investor: Rockaway Ventures. Nic nezapisuj.
+
+Tvrzení průzkumníka jsou v souboru .cache/agents/pilot/CAN-0055-K2/handoff.json. Načti ho nástrojem Read.
+
+Uložené kopie stránek: .cache/pages/index.tsv (url, soubor, stazeno). Kopie je výstup
+Firecrawlu z dřívějšího běhu a platí jako otevřená stránka: čti ji nástrojem Read, ve sloupci
+`text z` uveď `firecrawl` a jako accessed_date datum ze sloupce stazeno. Firecrawlem otevírej
+jen stránky, které v indexu nejsou.
+
+Posuď jen K2: dokládají tvrzení jednoznačně, kdo o investicích fondu Rockaway Ventures skutečně rozhoduje (tým a jeho GP, nebo externí AMISTA)? Hledej rozpory a alternativní vysvětlení. Otevři nejvýš 4 stránky, velká PDF neotevírej. U fyzických osob jen jméno a role.

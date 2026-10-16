@@ -1,0 +1,17 @@
+Krok 5 projektu, pilot českých VC. Investor: Národní rozvojová investiční (NRI). Nic nezapisuj.
+
+Tvrzení průzkumníka jsou v souboru .cache/agents/pilot/CAN-0030/handoff.json. Načti ho nástrojem Read.
+
+Uložené kopie stránek: .cache/pages/index.tsv (url, soubor, stazeno). Kopie je výstup
+Firecrawlu z dřívějšího běhu a platí jako otevřená stránka: čti ji nástrojem Read, ve sloupci
+`text z` uveď `firecrawl` a jako accessed_date datum ze sloupce stazeno. Firecrawlem otevírej
+jen stránky, které v indexu nejsou.
+
+Kromě obvyklého postupu zvlášť prověř:
+- která právnická osoba má skutečnou investiční pravomoc a zda jiná osoba téže značky
+  rozhoduje sama (docs/overovaci-postup.md, bod 3),
+- zda doložené investice patří tomuto investorovi, ne subjektu s podobným názvem,
+- K3 i u starších investic. Hranice 24 měsíců se týká jen aktivity.
+
+Omezení: stejné databáze jako průzkumník nepoužívej, otevři nejvýš 12 stránek, velká PDF
+neotevírej. U fyzických osob jen jméno a role.
