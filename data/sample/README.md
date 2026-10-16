@@ -1,6 +1,6 @@
 # Pilot: české VC (krok 5)
 
-> **Stav:** krok 5 uzavřen 2026-10-16. Po opravě duplicity ve výběru je ověřeno 5 unikátních investorů, všech 5 je zařazených (`included`). Otevřené otázky pro ruční audit jsou v kap. Otevřené otázky pro krok 6.
+> **Stav:** krok 5 uzavřen 2026-10-16. Po opravě duplicity ve výběru je ověřeno 5 unikátních investorů, všech 5 je zařazených (`included`). Audit v kroku 6 našel 6 chyb a 1 nejistotu; **data obsahují původní, neopravené hodnoty** (opravy v kroku 8, viz kap. Otevřené otázky pro krok 6).
 > **Postup:** [ověřovací postup](../../docs/overovaci-postup.md) · **Pravidla:** [plan.md](../../docs/plan.md) · **Data:** [datový model](../../docs/datovy-model.md) · **Zdroje:** [katalog](../sources/)
 
 ## Rozsah
@@ -146,7 +146,9 @@ Triáž o zařazení nerozhoduje. To dělá až ověření podle checklistu.
 
 ## Otevřené otázky pro krok 6 (ruční audit)
 
-Tato rozhodnutí jsou v datech zapsaná podle metodiky, ale jsou hraniční. V kroku 6 je ověří člověk a podle výsledku se data upraví.
+**Vyhodnoceno v kroku 6** ([results/README.md](../../results/README.md)): otázky rozhodla AI podle metodiky, nejistoty jsou zapsané. NRI má hodnocení B, Vistag se do K3 nepočítá, K2 u Rockaway, Tilie a Orbitu je doložené na úrovni týmu. Audit našel 6 chyb a 1 nejistotu. **Data zatím obsahují původní, neopravené hodnoty**, aby zůstal skutečný výsledek kontroly. Opravy se zapracují v kroku 8, seznam je v [results/README.md](../../results/README.md#souhrn-chyby-nejistoty-a-doporučené-opravy).
+
+Původní znění otázek z kroku 5 (rozhodnutí v datech byla podle metodiky, ale hraniční):
 
 1. **NRI, nezávislost důkazů a hodnocení A.** Jediná doložená investice (Hardwario, 2022) má dva vydavatele, Lupu a ČTK (Forbes). Oba ale přebírají totéž prohlášení firmy.
    - **Ověřit:** jde o dva nezávislé důkazy podle plan.md 6.3?

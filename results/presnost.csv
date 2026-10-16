@@ -1,0 +1,13 @@
+Ukazatel,Úroveň,Počet,Podíl,95% interval,Poznámka
+kontrola AI: bez nalezené chyby či nejistoty (profil investora),"kontrola AI (předběžné, není přesnost)",67/70,96%,88%–99%,"OK 53, OK s výhradou 14, chyba 3, nejistota 0"
+kontrola AI: bez nalezené chyby či nejistoty (fondy),"kontrola AI (předběžné, není přesnost)",8/8,100%,68%–100%,"OK 6, OK s výhradou 2, chyba 0, nejistota 0"
+kontrola AI: bez nalezené chyby či nejistoty (investice),"kontrola AI (předběžné, není přesnost)",32/36,89%,75%–96%,"OK 29, OK s výhradou 3, chyba 3, nejistota 1"
+kontrola AI: bez nalezené chyby či nejistoty (sloučení E10),"kontrola AI (předběžné, není přesnost)",8/8,100%,68%–100%,"OK 2, OK s výhradou 6, chyba 0, nejistota 0"
+kontrola AI: bez nalezené chyby či nejistoty (celkem),"kontrola AI (předběžné, není přesnost)",115/122,94%,89%–97%,"OK 90, OK s výhradou 25, chyba 6, nejistota 1"
+údaj v databázi je podle ruční kontroly správný,ruční ověření,8/10,80%,49%–94%,"zodpovězeno 10 z 10, nelze určit 0"
+kontrola AI se shoduje s ruční kontrolou,ruční ověření,10/10,100%,72%–100%,shoda verdiktu AI (OK / chyba) s výsledkem člověka
+zařazení investoři splňují K1–K3 a typ (po rozhodnutí sporů),kontrola AI a rozhodnutí sporů,5/5,100%,57%–100%,"rozhodnutí AI podle metodiky, s nejistotami k právním strukturám; člověk K1–K3 přímo neověřoval"
+hodnocení spolehlivosti A/B správně,kontrola AI a rozhodnutí sporů,4/5,80%,38%–96%,NRI: A → B (jeden původ důkazu)
+"doložené investice (K3) se správným investorem, firmou, nástrojem a datem",kontrola AI a rozhodnutí sporů,13/14,93%,69%–99%,"1 nejistá (Vistag, zdroj v budoucím čase); ručně ověřeny 4 z nich (Preply, Hardwario, MIWA, Remix), všechny správně"
+přiřazení investice k fondu doloženo zdrojem,kontrola AI a rozhodnutí sporů,3/5,60%,23%–88%,"Mews a Preply přiřazeny k fondu bez zdroje; ručně ověřeno Preply (chyba, K1b) a Primoco UAV (správně, K9)"
+vyřazení při triáži potvrzeno (vzorek),kontrola AI (předběžné),5/5,100%,57%–100%,5 z 17 vyřazených podle typu; ruční ověření neproběhlo

@@ -1,0 +1,146 @@
+# Kontrola doslovnosti citací v data/sample (scripts/pilot/verify_quotes.py --data data/sample), 2026-10-16.
+# Přímo = živá stránka; uložená kopie = výstup Firecrawlu z běhu agenta (.cache/pages). Firecrawl se nevolal.
+CIT-0001 DOSLOVNĚ    (uložená kopie 2026-10-16, HTTP 200) Obchodní firma: Tilia Impact Ventures, osoba rizikového kapitálu, s.r.
+CIT-0002 DOSLOVNĚ    (přímo, HTTP 200) Statutární orgán: Jednatel: Dr. SILKE HORÁKOVÁ
+CIT-0003 DOSLOVNĚ    (uložená kopie 2026-10-15, HTTP 200) Tila Impact Ventures Fund II | Tila Impact Partners | Czech Republic |
+CIT-0004 DOSLOVNĚ    (přímo, HTTP 200) Silke Horáková Co-founder, Partner Petr Vítek Co-founder, Partner Pave
+CIT-0005 DOSLOVNĚ    (přímo, HTTP 200) Počet nalezených subjektů: 0
+CIT-0006 DOSLOVNĚ    (uložená kopie 2026-10-15, HTTP 200) Multi-Country | Venture Capital | ICT | Early Stage Fund | Fund | 01/0
+CIT-0007 DOSLOVNĚ    (přímo, HTTP 200) All potential investments for the Fund need approval from the Investme
+CIT-0008 DOSLOVNĚ    (přímo, HTTP 200) The round was led by Tilia Impact Ventures and included participation 
+CIT-0009 DOSLOVNĚ    (přímo, HTTP 200) Tilia Impact Ventures Fund II (“the Fund”), managed by Tilia Impact Ve
+CIT-0010 DOSLOVNĚ    (přímo, HTTP 200) Contact us Drtinova 557/10, 150 00 Prague Czech Republic
+CIT-0011 DOSLOVNĚ    (uložená kopie 2026-10-15, HTTP 200) Tila Impact Ventures Fund II | Tila Impact Partners | Czech Republic |
+CIT-0012 DOSLOVNĚ    (přímo, HTTP 200) 0.3 - 1.2m EUR initial ticket Equity / Convertible debt Early stage Se
+CIT-0013 DOSLOVNĚ    (přímo, HTTP 200) A typical investment ticket provides an initial equity or convertible 
+CIT-0014 DOSLOVNĚ    (uložená kopie 2026-10-16, HTTP 200) Preferovaná výše jedné investice | 1 mil Kč – 5 mil Kč
+CIT-0015 DOSLOVNĚ    (uložená kopie 2026-10-16, HTTP 200) Objem prostředků ve správě | 62,7 mil. Kč
+CIT-0016 DOSLOVNĚ    (přímo, HTTP 200) Rockaway Ventures, a European investment fund under the Rockaway Capit
+CIT-0017 DOSLOVNĚ    (přímo, HTTP 200) Petr Šmíd, General Partner at Rockaway Ventures, sees a venture capita
+CIT-0018 DOSLOVNĚ    (přímo, HTTP 200) vyjadřuje se Petr Šmíd, který vede Rockaway Ventures.
+CIT-0019 DOSLOVNĚ    (přímo, HTTP 200) Jediný akcionář: Rockaway Capital SE, IČ: 019 67 631
+CIT-0020 DOSLOVNĚ    (přímo, HTTP 200) The goal of the Rockaway Ventures fund is to support startups with pro
+CIT-0021 DOSLOVNĚ    (přímo, HTTP 200) The fund has two general partners, Zabrodsky and Andrea Lauren. Its in
+CIT-0022 DOSLOVNĚ    (přímo, HTTP 200) V čele nového fondu stojí Andrea Lauren a Dušan Zábrodský, dlouholetí 
+CIT-0023 DOSLOVNĚ    (uložená kopie 2026-10-16, HTTP 200) zahraničního fondu Rockaway Ventures Fund SCSp SICAV-RAIF se sídlem v 
+CIT-0024 DOSLOVNĚ    (přímo, HTTP 200) Vedoucím investorem současného, takzvaného seed kola byl fond Rockaway
+CIT-0025 DOSLOVNĚ    (přímo, HTTP 200) Their investment strategy spans across Europe to North America, with k
+CIT-0026 DOSLOVNĚ    (přímo, HTTP 200) Since 2014, Rockaway Ventures has been investing in areas where the Ro
+CIT-0027 DOSLOVNĚ    (přímo, HTTP 200) Company Overview for STARTUP YARD LIMITED (07757587)
+CIT-0028 DOSLOVNĚ    (přímo, HTTP 200) Loni 31. srpna si všichni společně v Londýně zaregistrovali firmu Star
+CIT-0029 DOSLOVNĚ    (přímo, HTTP 200) Sídlo: Perlová 371/5, Staré Město, 110 00 Praha 1
+CIT-0030 DOSLOVNĚ    (přímo, HTTP 200) StartupYard, based in beautiful Prague, is Central Europe’s leading pr
+CIT-0031 DOSLOVNĚ    (přímo, HTTP 200) Každý z projektů od StartupYardu získává investici 40 tisíc dolarů.
+CIT-0032 DOSLOVNĚ    (přímo, HTTP 200) Jedenácté kolo StartupYardu operuje skrze obchodní společnost StartupY
+CIT-0033 DOSLOVNĚ    (přímo, HTTP 200) Jednatel: NIKOLA RAFAJ
+CIT-0034 DOSLOVNĚ    (přímo, HTTP 200) Lukáš i Petr na konci ledna rezignovali na posty directorů a všichni j
+CIT-0035 DOSLOVNĚ    (přímo, HTTP 200) This follow-on fund is in partnership with DEPO Ventures who have full
+CIT-0036 DOSLOVNĚ    (přímo, HTTP 200) We focus on deep-tech startups such as AI, cybersecurity, IoT, or anot
+CIT-0037 DOSLOVNĚ    (přímo, HTTP 200) Batch 15 is built for the first-time founder from CEE who is thinking 
+CIT-0038 DOSLOVNĚ    (přímo, HTTP 200) We provide the acceleration program through a convertible note worth €
+CIT-0039 DOSLOVNĚ    (uložená kopie 2026-10-16, HTTP 200) Národní rozvojová investiční, a.s., osoba rizikového kapitálu, B24613 
+CIT-0040 DOSLOVNĚ    (uložená kopie 2026-10-16, HTTP 200) Identifikační číslo: 08465797
+CIT-0041 DOSLOVNĚ    (přímo, HTTP 200) ČMZRB investiční, a.s. zapsáno 29. srpna 2019 vymazáno 9. září 2021
+CIT-0042 DOSLOVNĚ    (přímo, HTTP 200) Přemyslovská 2845/43, Žižkov, 130 00 Praha 3
+CIT-0043 DOSLOVNĚ    (přímo, HTTP 200) Předmět činnosti: Správa fondu fondů
+CIT-0044 DOSLOVNĚ    (uložená kopie 2026-10-16, HTTP 200) Správcem fondu je NRI, kterábude nakupovat akcie cílových firem v rámc
+CIT-0045 DOSLOVNĚ    (přímo, HTTP 200) Kapitálový vstup formou nákupu akcií v rámci IPO/SPO
+CIT-0046 DOSLOVNĚ    (přímo, HTTP 200) Českým malým a středním podnikům a nově i podnikům se středně velkou t
+CIT-0047 DOSLOVNĚ    (přímo, HTTP 200) Maximálně do výše: 80 mil. Kč
+CIT-0048 DOSLOVNĚ    (uložená kopie 2026-10-16, HTTP 200) Národní rozvojová investiční, a.s., osoba rizikového kapitálu, B24613 
+CIT-0049 DOSLOVNĚ    (přímo, HTTP 200) NRI is focused to implement equity and quasi-equity financial instrume
+CIT-0050 DOSLOVNĚ    (uložená kopie 2026-10-16, HTTP 200) Obchodní firma: Tilia Impact Ventures, osoba rizikového kapitálu, s.r.
+CIT-0051 DOSLOVNĚ    (přímo, HTTP 200) Statutární orgán: Jednatel: Dr. SILKE HORÁKOVÁ
+CIT-0052 DOSLOVNĚ    (uložená kopie 2026-10-16, HTTP 200) Obchodní firma: Tilia Impact Partners s.r.o. Sídlo: Drtinova 557/10, S
+CIT-0053 DOSLOVNĚ    (přímo, HTTP 200) Statutární orgán: Jednatel: Mgr. PAVEL PETŘEK, MSc.
+CIT-0054 DOSLOVNĚ    (uložená kopie 2026-10-16, HTTP 200) Identifikační číslo: 22266852
+CIT-0055 DOSLOVNĚ    (přímo, HTTP 200) Jednatel: NIKOLA RAFAJ
+CIT-0056 DOSLOVNĚ    (uložená kopie 2026-10-16, HTTP 200) Identifikační číslo: 03764931
+CIT-0057 DOSLOVNĚ    (přímo, HTTP 200) Zapsaná v obchodním rejstříku pro Anglii a Wales pod č. 07757587.
+CIT-0058 DOSLOVNĚ    (přímo, HTTP 200) lei":"315700BOU2P8YSSK8F03","entity":{"legalName":{"name":"Rockaway Ve
+CIT-0059 DOSLOVNĚ    (přímo, HTTP 200) Rockaway Ventures Fund SICAV (RVF SICAV) is being created for one sing
+CIT-0060 DOSLOVNĚ    (uložená kopie 2026-10-16, HTTP 200) Rockaway Ventures Advisors a.s., B26973 vedená u Městského soudu v Pra
+CIT-0061 DOSLOVNĚ    (přímo, HTTP 200) Jediný akcionář: Rockaway Advisors s.r.o., IČ: 090 52 127
+CIT-0062 DOSLOVNĚ    (přímo, HTTP 200) The EIF pledge is to a new private credit fund called Orbit Growth Deb
+CIT-0063 DOSLOVNĚ    (přímo, HTTP 200) Ten doplňuje Radovana Nesrstu, který Orbit založil a spolu s nímž teď 
+CIT-0064 DOSLOVNĚ    (uložená kopie 2026-10-15, HTTP 200) Orbit Growth Debt II | OGD Advisory s.r.o. | Czech Republic | 3SIIF-FT
+CIT-0065 DOSLOVNĚ    (přímo, HTTP 200) The equity investment was led by Kinnevik and the Growth Equity busine
+CIT-0066 DOSLOVNĚ    (přímo, HTTP 200) popisuje Radovan Nesrsta, hlavní partner a člen investičního výboru Or
+CIT-0067 DOSLOVNĚ    (přímo, HTTP 200) Ten doplňuje Radovana Nesrstu, který Orbit založil a spolu s nímž teď 
+CIT-0068 DOSLOVNĚ    (přímo, HTTP 200) The Luxembourg-domiciled Orbit Growth SCSp fund held a first close on 
+CIT-0069 DOSLOVNĚ    (uložená kopie 2026-10-16, HTTP 200) Preferovaná odvětví | Technology and technology-enabled scale-ups | | 
+CIT-0070 DOSLOVNĚ    (uložená kopie 2026-10-16, HTTP 200) Sector Tech & tech-enabled Stage Scaling / expansion Scale EUR 8M+ run
+CIT-0071 DOSLOVNĚ    (uložená kopie 2026-10-16, HTTP 200) Objem prostředků ve správě | Growth Equity: Scaling to EUR 200 million
+CIT-0072 DOSLOVNĚ    (přímo, HTTP 200) The initial ticket size will range from EUR 5m to EUR 10m with additio
+CIT-0073 DOSLOVNĚ    (přímo, HTTP 200) The firm, which has offices in the Czech Republic and Poland, manages 
+CIT-0074 DOSLOVNĚ    (uložená kopie 2026-10-16, HTTP 200) Název subjektu: | OGD Advisory s.r.o. | IČO: | 22269720 | | Spisová zn
+CIT-0075 DOSLOVNĚ    (přímo, HTTP 200) Společník: Ing. RADOVAN NESRSTA
+CIT-0076 DOSLOVNĚ    (uložená kopie 2026-10-16, HTTP 200) Název subjektu: | ORBIT Capital GP s.r.o. | IČO: | 08319961 | | Spisov
+CIT-0077 DOSLOVNĚ    (přímo, HTTP 200) Statutární orgán: jednatel: Ing. RADOVAN NESRSTA
+CIT-0078 DOSLOVNĚ    (přímo, HTTP 200) Tilia Impact Ventures Fund II (“the Fund”), managed by Tilia Impact Ve
+CIT-0079 DOSLOVNĚ    (uložená kopie 2026-10-15, HTTP 200) Tila Impact Ventures Fund II | Tila Impact Partners | Czech Republic |
+CIT-0080 DOSLOVNĚ    (přímo, HTTP 200) Druhý fond Tilia Impact Ventures je spolufinancován Evropským investič
+CIT-0081 DOSLOVNĚ    (přímo, HTTP 200) teď uzavřela svůj druhý fond Impact Seed Fund, s nímž cílí už na 32 mi
+CIT-0082 DOSLOVNĚ    (přímo, HTTP 200) První kolo jsme uzavřeli na 43 milionech korun a doufám, že ve druhém 
+CIT-0083 DOSLOVNĚ    (přímo, HTTP 200) Během své desetileté investiční periody se chce Rockaway Ventures Fund
+CIT-0084 DOSLOVNĚ    (uložená kopie 2026-10-16, HTTP 200) zahraničního fondu Rockaway Ventures Fund SCSp SICAV-RAIF se sídlem v 
+CIT-0085 DOSLOVNĚ    (přímo, HTTP 200) Rockaway Ventures z investiční skupiny Jakuba Havrlanta oznámilo uzavř
+CIT-0086 DOSLOVNĚ    (přímo, HTTP 200) Rockaway Ventures, a European investment fund under the Rockaway Capit
+CIT-0087 DOSLOVNĚ    (přímo, HTTP 200) navazuje na úspěšný program z období Operačního programu Podnikání a i
+CIT-0088 DOSLOVNĚ    (přímo, HTTP 200) Mezi příklady firem, které díky této podpoře zamířily na burzu, patří 
+CIT-0089 DOSLOVNĚ    (přímo, HTTP 200) Správce IPO fondu a poskytovatel podpory: Národní rozvojová investiční
+CIT-0090 DOSLOVNĚ    (přímo, HTTP 200) Díky velmi pozitivnímu ohlasu a výsledkům byl připraven ve spolupráci 
+CIT-0091 DOSLOVNĚ    (přímo, HTTP 200) Na program je do roku 2030 vyčleněno zhruba 360 milionů korun.
+CIT-0092 DOSLOVNĚ    (přímo, HTTP 200) The Luxembourg-domiciled Orbit Growth SCSp fund held a first close on 
+CIT-0093 DOSLOVNĚ    (přímo, HTTP 200) Orbit Capital, a Czech investment firm, is on the road to raise EUR 20
+CIT-0094 DOSLOVNĚ    (přímo, HTTP 200) Orbit pro ně chce připravit 200 milionů eur, tedy v aktuálním přepočtu
+CIT-0095 DOSLOVNĚ    (přímo, HTTP 200) The EIF pledge is to a new private credit fund called Orbit Growth Deb
+CIT-0096 DOSLOVNĚ    (uložená kopie 2026-10-16, HTTP 200) Orbit Growth Debt II which successfully held its first closing on May 
+CIT-0097 DOSLOVNĚ    (přímo, HTTP 200) Czech venture investor Orbit Capital has raised €107m (£91.7m) for its
+CIT-0098 DOSLOVNĚ    (přímo, HTTP 200) Orbit Growth Debt II builds on a predecessor fund called Orbit Growth 
+CIT-0099 DOSLOVNĚ    (přímo, HTTP 200) Orbit Capital also has a EUR 35m venture debt fund, Orbit Capital Vent
+CIT-0100 DOSLOVNĚ    (přímo, HTTP 200) The round was led by Tilia Impact Ventures and included participation 
+CIT-0101 DOSLOVNĚ    (přímo, HTTP 200) Flox Intelligence, a company developing AI systems to reduce human-wil
+CIT-0102 DOSLOVNĚ    (přímo, HTTP 200) Existing investors Jiří Hlavenka, Tilia Impact Ventures and Reflex Cap
+CIT-0103 DOSLOVNĚ    (přímo, HTTP 200) The fund joined a Series A round totalling $5 million, led by Croatian
+CIT-0104 DOSLOVNĚ    (přímo, HTTP 200) V pre-seedovém kole získala Theorema prvních 70 milionů korun. Mezi in
+CIT-0105 DOSLOVNĚ    (přímo, HTTP 200) oznámil, že v pre-seed investici získal 3,3 milionu dolarů (přes 70 mi
+CIT-0106 DOSLOVNĚ    (přímo, HTTP 200) The round includes €1.5 million in deep tech grant funding from the Es
+CIT-0107 DOSLOVNĚ    (přímo, HTTP 200) Tilia Impact Ventures, PurposeTech: Lifeyear (healthcare) | Estonsko |
+CIT-0108 DOSLOVNĚ    (přímo, HTTP 200) Druhou investicí v portfoliu Tilia Impact Ventures se nyní stává spole
+CIT-0109 DOSLOVNĚ    (přímo, HTTP 200) Zástupci fondu pro CzechCrunch prozradili, že jde o konvertibilní půjč
+CIT-0110 DOSLOVNĚ    (přímo, HTTP 200) Vedoucím investorem současného, takzvaného seed kola byl fond Rockaway
+CIT-0111 DOSLOVNĚ    (přímo, HTTP 200) oznámil uzavření dalšího investičního kola ve výši 4,2 milionu dolarů,
+CIT-0112 DOSLOVNĚ    (přímo, HTTP 200) Prague-based Filuta AI, a company that develops tools based on artific
+CIT-0113 DOSLOVNĚ    (přímo, HTTP 200) Rockaway Ventures získává 20% podíl v Remixu, jednom z největších hráč
+CIT-0114 DOSLOVNĚ    (přímo, HTTP 200) V rámci aktuálního investičního kola získává Rockaway v Remixu, který 
+CIT-0115 DOSLOVNĚ    (přímo, HTTP 200) Rockaway Ventures: Remix (recommerce) | Bulharsko | nespecifikované
+CIT-0116 DOSLOVNĚ    (přímo, HTTP 200) The round was supported by Rockaway Ventures, a venture capital arm of
+CIT-0117 DOSLOVNĚ    (přímo, HTTP 200) has secured €500,000 (over CZK 12 million), as Vestbee was told
+CIT-0118 DOSLOVNĚ    (přímo, HTTP 200) Tržby vo výške takmer 139-tisíc eur a dosiahnutý zisk sú len úvodnou f
+CIT-0119 DOSLOVNĚ    (přímo, HTTP 200) Venture capital firm VentureFriends led the round, which included othe
+CIT-0120 DOSLOVNĚ    (přímo, HTTP 200) joined by Adevinta Ventures, Uniqa Ventures, Rockaway Ventures, Veloci
+CIT-0121 DOSLOVNĚ    (přímo, HTTP 200) Barcelona and Athens, 26 April 2022
+CIT-0122 DOSLOVNĚ    (uložená kopie 2026-10-16, HTTP 200) Fungies.io announces the closure of its PreSeed round, with investment
+CIT-0123 DOSLOVNĚ    (přímo, HTTP 200) The start-up, which is based in Poland, has raised a $850K Pre-seed ro
+CIT-0124 DOSLOVNĚ    (přímo, HTTP 200) Startupy v 11. kole StartupYardu: Qoobus (Rumunsko)
+CIT-0125 DOSLOVNĚ    (přímo, HTTP 200) Každý z projektů od StartupYardu získává investici 40 tisíc dolarů.
+CIT-0126 DOSLOVNĚ    (přímo, HTTP 200) Mezi sedmi startupy, které od StartupYardu získají investici a další m
+CIT-0127 DOSLOVNĚ    (přímo, HTTP 200) Český prapor v desátém akceleračním kole StartupYardu drží karlínský V
+CIT-0128 DOSLOVNĚ    (přímo, HTTP 200) Pětkrát rychlejší výběrová řízení. Do česko-slovenské AI platformy Ydo
+CIT-0129 DOSLOVNĚ    (přímo, HTTP 200) V rámci pre-seed investičního kola startup získal financování v celkov
+CIT-0130 DOSLOVNĚ    (přímo, HTTP 200) Mezi novými akcionáři je mnoho drobných investorů, několik významných 
+CIT-0131 DOSLOVNĚ    (přímo, HTTP 200) Mezi novými akcionáři je mnoho drobných investorů, několik významných 
+CIT-0132 DOSLOVNĚ    (přímo, HTTP 200) Prostřednictvím programu Rizikový kapitál – IPO fond nakoupila 12,7% p
+CIT-0133 DOSLOVNĚ    (přímo, HTTP 200) V absolutním vyjádření se jedná o podporu ve výši 12 mil. Kč.
+CIT-0134 DOSLOVNĚ    (přímo, HTTP 200) Národní rozvojová investiční se účastnila druhého kola úpisu. Nakoupil
+CIT-0135 DOSLOVNĚ    (přímo, HTTP 200) The equity investment was led by Kinnevik and the Growth Equity busine
+CIT-0136 DOSLOVNĚ    (přímo, HTTP 200) Mews, a leader in hospitality technology, today announced it has close
+CIT-0137 DOSLOVNĚ    (přímo, HTTP 200) Suma přichází od švédské investiční společnosti Kinnevik a amerického 
+CIT-0138 DOSLOVNĚ    (přímo, HTTP 200) Przemyslaw Gacek, co-founder of Grupa Pracuj also participated, as wel
+CIT-0139 DOSLOVNĚ    (přímo, HTTP 200) MEXICO CITY, July 13, 2022 /PRNewswire/ --
+CIT-0140 DOSLOVNĚ    (přímo, HTTP 200) Fond Orbit Capital si za své peníze v projektu pořídil podíl, jeho vel
+CIT-0141 DOSLOVNĚ    (přímo, HTTP 200) Na investičním kole se podílí český Orbit Capital s částkou osm milion
+CIT-0142 DOSLOVNĚ    (přímo, HTTP 200) Most recently, Orbit Capital invested USD 8m into Preply as part of a 
+
+Záznamů: 142, doslovně: 142, problém: 0

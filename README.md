@@ -15,7 +15,7 @@ Projekt vychází ze [zadání](docs/zadani.md) a pracuje výhradně s veřejně
 | Ověřovací postup (krok 4) | [docs/overovaci-postup.md](docs/overovaci-postup.md) | hotovo: checklist pro pilot nad existujícími postupy |
 | Data ze vzorku (sample) se zdrojem u každého údaje | [data/sample/](data/sample/) | hotovo (krok 5): 5 unikátních investorů, všech 5 zařazených (`included`); otevřené otázky pro krok 6 v [data/sample/README.md](data/sample/README.md) |
 | Přehled zařazených investorů pro čtení | [data/sample/investori_prehled.csv](data/sample/investori_prehled.csv) | generuje se z dat (`scripts/export_overview.py`) |
-| Výsledky měření přesnosti (accuracy) | `results/` | připravuje se (krok 6) |
+| Výsledky měření přesnosti (accuracy) | [results/](results/README.md) | hotovo (krok 6): autor ručně zkontroloval 10 údajů, 8/10 správně; kontrola AI se s ruční shoduje 10/10; 6 chyb a 1 nejistota, opravy odložené do kroku 8 |
 
 ## Struktura repozitáře
 
