@@ -101,7 +101,7 @@ scripts/         skripty: validate.py (validace dat), check_quotes.py (kontrola 
                  select_sample.py (výběr vzorku), export_overview.py (přehled investorů pro čtení)
 scripts/pilot/   sestavení dat pilotu z výstupů agentů a rozhodnutí koordinátora, použitá zadání agentů
 tests/           testy skriptů
-ai-log/          exporty konverzací s AI (zatím jen lokálně)
+ai-log/          exporty konverzací s AI (příkaz /export v Claude Code)
 .env.example     vzor pro .env s API klíčem (.env je v .gitignore)
 ```
 
@@ -138,7 +138,7 @@ Projekt vznikl ve spolupráci s AI. Tato část dokumentuje, k čemu se AI použ
     - výsledek obsahoval otevřené otázky pro autora k právnické struktuře (kterou osobu evidovat, sloučení E10, GP v Lucembursku),
     - do dat zadání A se nepřidal.
   - **Úprava po testu:** pravidla nástrojů ve skillu se drobně upravila (jen nástroje Read, Grep a Glob a skripty projektu). Test se potom už neopakoval.
-- **Exporty konverzací:** textové soubory z příkazu `/export` v Claude Code, název začíná datem a časem exportu. Ukládají se do adresáře `ai-log/`, ale do veřejného repozitáře se zatím nepřidávají (rozhodnutí autora).
+- **Exporty konverzací:** textové soubory z příkazu `/export` v Claude Code, název začíná datem a časem exportu. Jsou v adresáři [`ai-log/`](ai-log/). Do repozitáře se přidaly při odevzdání po kontrole na API klíče, tokeny, hesla a osobní údaje. Jediný nález, osobní e-mail autora, je nahrazený textem „[e-mail autora]“ (D-031).
 
 ### Kontroly výstupů
 
@@ -263,3 +263,4 @@ Chyby ve výstupech AI nebo v datech a způsob jejich opravy.
 | D-028 | 2026-10-16 | Opravy dat až po měření přesnosti; měření se vztahuje k datům před opravami (commit `c96c21e`) | Zachovat skutečný výsledek kontroly |
 | D-029 | 2026-10-16 | Celosvětový odhad pro každý typ zvlášť, rozlišit celkový počet a počet ověřitelný z veřejných zdrojů; vstupy rozlišené na zdroje, měření pilotu a předpoklady | Pokyn autora, revize na žádost autora |
 | D-030 | 2026-10-16 | Krok 8 jen jako stručné dokončení: jednoznačné opravy do dat, nejasné případy označené jako nejisté a nepočítané mezi doložené, rozsáhlejší problémy jako omezení (plan.md, kap. 14) | Pokyn autora |
+| D-031 | 2026-10-16 | Exporty konverzací se při odevzdání přidávají do repozitáře (`ai-log/`) po kontrole citlivých údajů | Zadání chce doložit práci s AI; rozhodnutí autora |

@@ -1,0 +1,418 @@
+ ▐▛███▛█   Claude Code v2.1.299
+▝▜██████▀  Opus 5.5 · Claude Max
+ ▝▝   ▝▝   ~/apps/investor-database
+
+
+❯ /model                                                                        
+  ⎿  Set model to Opus 5.5 and saved as your default for new sessions
+
+❯ /effort                                                                       
+  ⎿  Set effort level to xhigh (saved as your default for new sessions): Deeper
+     reasoning than high, just below maximum (on supported models)
+
+❯ Začínáme nový projekt. Zadání najdeš v docs/zadani.md - Nejprve inicializuj   
+  Git s větví main a pomocí GitHub CLi vytvoř veřejný repozitář                 
+  Indrovi/investor-database. Propoj lokální projekt s GitHubem a ověř správné   
+  nastavení. Poté si přečti zadání ve zmíněném adresáři a navrhni stručný plán  
+  realizace v logických krocích. U každého kroku uvěď očekávaný výstup a        
+  upozorni na nejasnosti, které bude potřeba rozhodnout. Zatím nic              
+  neimplementuj, nevytvářej ani commit ani push. Plán nejprve společně          
+  brainstormujeme a vyhodnotíme.                                                
+
+● Bash(ls -la && ls -la docs && git --version && gh --version && gh auth status
+      2>&1)
+  ⎿  total 12
+     drwxrwxr-x  3 tomas tomas 4096 Oct 14 09:48 .
+     drwxrwxr-x 21 tomas tomas 4096 Oct 14 09:46 ..
+     … +15 lines (ctrl+o to expand)
+
+  Read 1 file (ctrl+o to expand)
+
+● Bash(gh repo view Indrovi/investor-database 2>&1 | head -5; git config
+      --global init.defaultBranch; git config user.name; git config user.email)
+  ⎿  Error: Exit code 1
+     GraphQL: Could not resolve to a Repository with the name 
+     'Indrovi/investor-database'. (repository)
+
+● Bash(git init -b main && gh repo create Indrovi/investor-database --public
+      --source=. --remote=origin 2>&1)
+  ⎿  Initialized empty Git repository in /home/tomas/apps/investor-database
+     /.git/
+     https://github.com/Indrovi/investor-database
+
+● Bash(echo "--- branch:" && git branch --show-current && echo "--- remotes:" &&
+      git remote -v && echo "--- status:" && git status --short --branch &&
+      echo "--- gh rep…)
+  ⎿  --- branch:
+     main
+     --- remotes:
+     … +19 lines (ctrl+o to expand)
+  ⎿  (file diff unavailable for this command)
+
+● Bash(git config --show-origin --get-all credential.https://github.com.helper;
+      git config --show-origin --get-all credential.helper; echo "exit=$?")
+  ⎿  file:/home/tomas/.gitconfig
+     file:/home/tomas/.gitconfig     !/usr/bin/gh auth git-credential
+     exit=1
+
+● Repo je založené a ověřené. Uložím si pár poznámek o tom, jak chceš pracovat,
+  a pak sepíšu plán.
+
+  Read 1 file, wrote 2 memories (ctrl+o to expand)
+
+● 1. Git a GitHub jsou nastavené a ověřené
+
+  Kontrola: Lokální repozitář
+  Stav: git init -b main, jsi na větvi main a zatím tu není žádný commit
+  ────────────────────────────────────────
+  Kontrola: GitHub
+  Stav: Repozitář Indrovi/investor-database
+  (https://github.com/Indrovi/investor-database) je veřejný a prázdný
+  ────────────────────────────────────────
+  Kontrola: Remote
+  Stav: origin vede na https://github.com/Indrovi/investor-database.git (fetch i
+
+  push)
+  ────────────────────────────────────────
+  Kontrola: Přihlášení
+  Stav: gh je přihlášené jako Indrovi s právem repo a git používá gh pro
+  přihlašování, takže push bude fungovat
+  ────────────────────────────────────────
+  Kontrola: Výchozí větev na GitHubu
+  Stav: Nastaví se až prvním pushem main, protože repozitář je zatím prázdný
+  ────────────────────────────────────────
+  Kontrola: ⚠️ Identita pro git
+  Stav: Chybí user.name a user.email. Bez nich nepůjde udělat první commit.
+  Repozitář je veřejný, takže doporučuju GitHub noreply e-mail
+  (…+Indrovi@users.noreply.github.com), aby tvoje adresa nebyla vidět v
+  historii.
+
+  Commit ani push jsem nedělal.
+
+  ---
+
+  2. Návrh plánu
+
+  Zadání chce tři věci: plán, data ze vzorku se zdrojem u každého údaje a měření
+  přesnosti. Kroky 1–4 tvoří plán, kroky 5–6 ho ověří na vzorku, krok 7 odhadne
+  náklady a krok 8 vše dokončí.
+
+  Krok 0 – Struktura repozitáře a pravidla práce
+
+  - Výstup: README.md, .gitignore a složky docs/ (plán), data/sample/, results/,
+    scripts/.
+  - K rozhodnutí: jazyk výstupů (čeština, nebo angličtina), formát dat (navrhuju
+    CSV kvůli čitelnosti a JSON Schema na kontrolu), nástroje (navrhuju
+    Python).
+
+  Krok 1 – Kdo je a kdo není investor
+
+  - Obsah:
+    - Typy investorů: VC, PE, family office, business anděl a velký soukromý
+      investor.
+    - Hraniční případy: firemní VC (CVC), akcelerátory, státní fondy, kluby
+      andělů, fondy fondů, crowdfundingové platformy.
+    - Kdo bude zařazen:
+      - subjekt existuje a dá se dohledat,
+      - investuje kapitál do soukromých firem za účelem výnosu,
+      - má ≥1 doloženou investici s datem za posledních N měsíců.
+    - Kdo bude vyřazen:
+      - poradci a M&A firmy,
+      - banky, které firmám jen půjčují,
+      - fondy obchodující jen na burze a realitní fondy,
+      - holdingy investující jen do vlastní skupiny,
+      - neaktivní fondy,
+      - zprostředkovatelé.
+  - Výstup: část plánu s rozhodovacím stromem a tabulkou hraničních případů.
+  - K rozhodnutí:
+    - jak dlouho zpětně musí být investice doložená (24, nebo 36 měsíců),
+    - zda zařadit CVC, akcelerátory a státní fondy,
+    - od jaké hranice je soukromý investor „velký“.
+
+  Krok 2 – Datový model se zdrojem u každého údaje
+
+  - Obsah:
+    - Údaje o investorovi: identita (IČO nebo registrační číslo), typ, sektory,
+      fáze a druh investic, typická výše investice od–do, celkový kapitál s
+      měnou a datem.
+    - Ke každé hodnotě: URL zdroje, datum zdroje, datum přístupu, doslovná
+      citace ze zdroje a označení, zda je údaj uvedený, odvozený, nebo odhad.
+    - Samostatná tabulka důkazů: portfoliová firma, datum, investiční kolo,
+      zdroj.
+    - Archivace: zdroje uložit do Wayback Machine, aby zůstaly dohledatelné.
+  - Výstup: schéma dat a validační skript, který zastaví záznam s hodnotou bez
+    zdroje.
+  - K rozhodnutí:
+    - co dělat, když údaj není veřejný (typicky kapitál u andělů a family
+      office),
+    - jakou použít klasifikaci sektorů.
+
+  Krok 3 – Veřejné zdroje, počet investorů a spolehlivost dat
+
+  - Typy zdrojů:
+    - Registry regulátorů: SEC Form ADV, ČNB, ESMA EuVECA.
+    - Obchodní rejstříky: justice.cz/ARES, Companies House, GLEIF. V ČR rejstřík
+      ukazuje společníky s.r.o., což je přímý doklad investice.
+    - Asociace: CVCA, Invest Europe, NVCA, EBAN.
+    - Seznamy, do kterých fondů investovali velcí investoři (LP): EIF a národní
+      rozvojové banky.
+    - Ostatní: weby fondů, tisk a veřejné profily na agregátorech.
+  - Výstup: tabulka segment × zdroje × odhad počtu × očekávaná spolehlivost × z 
+    čeho odhad vychází. Počty doložím zdroji, zatím je neuvádím, abych
+    netipoval.
+  - K rozhodnutí:
+    - Co přesně znamená „veřejně dostupná data“? Návrh: jen to, co je dostupné
+      bez přihlášení a v souladu s podmínkami služby. LinkedIn a PitchBook ne,
+      Crunchbase a Dealroom jen veřejná část.
+    - Jak řešit GDPR u fyzických osob (andělé)?
+
+  Krok 4 – Jak ověříme pravost a zařazení
+
+  - Tři úrovně kontroly:
+    a. Existence: subjekt je v registru.
+    b. Aktivita: existuje datovaný důkaz investice, ideálně z nezávislého zdroje
+       (rejstřík, tisková zpráva portfoliové firmy).
+    c. Zařazení: typ a údaje potvrzují ≥2 zdroje.
+  - Každý záznam i údaj dostane míru důvěryhodnosti A/B/C. Pro rozpory mezi
+    zdroji platí pravidla: primární zdroj má přednost před sekundárním, novější
+    před starším.
+  - Výstup: část plánu a kontrolní seznam (checklist) pro ruční ověření.
+  - K rozhodnutí: stačí k zařazení jeden zdroj, nebo jsou potřeba dva nezávislé?
+
+  Krok 5 – Pilot: VC fondy v jedné zemi
+
+  - Obsah:
+    - Sběr: kandidáty sbírat záměrně široce, aby žádný nechyběl, pak je
+      odduplikovat a vyfiltrovat podle pravidel z kroku 1.
+    - Údaje: u zařazených vyplnit údaje se zdroji.
+    - Vyřazení: logovat vyřazené kandidáty s důvodem (abychom změřili chybná
+      vyřazení).
+    - Čas: měřit čas na jeden záznam, který je vstupem pro odhad nákladů.
+  - Výstup: data/sample/investors.csv, evidence.csv, rejected.csv a skripty.
+  - K rozhodnutí:
+    - Země: navrhuju ČR (známé prostředí, otevřené rejstříky, CVCA). Nevýhoda je
+      malý počet fondů, takže výsledky přesnosti budou mít širší interval
+      spolehlivosti.
+    - Co je „český VC fond“: sídlo správce v ČR, nebo investice v ČR? Řada fondů
+      je založená v Lucembursku nebo na Slovensku.
+    - Velikost vzorku: návrh je celá populace dané země.
+    - Míra automatizace: ruční sběr, nebo skripty s extrakcí pomocí LLM s
+      povinnou citací.
+
+  Krok 6 – Ruční ověření a měření přesnosti
+
+  - Metriky:
+    - přesnost zařazení (podíl skutečných aktivních VC mezi zařazenými),
+    - přesnost jednotlivých údajů: správně / částečně / špatně / neověřitelné,
+    - správnost vyřazení,
+    - odhad úplnosti proti nezávislému referenčnímu seznamu.
+  - Výsledky budou mít Wilsonovy intervaly spolehlivosti.
+  - Výstup: results/accuracy.md a results/verification.csv.
+  - K rozhodnutí (klíčové):
+    - Kdo ověřuje? Pokud data sbírám i ověřuji já, kontrola není nezávislá.
+      Návrh: já sbírám a ty ručně ověříš celý vzorek, nebo aspoň náhodný
+      podvzorek kolem 30 záznamů.
+    - Tolerance u čísel: např. kapitál ±10 % a u výše investice stačí, že se
+      rozsahy překrývají.
+
+  Krok 7 – Odhad nákladů na celý svět
+
+  - Výpočet: počet subjektů z kroku 3 × náklad na jeden záznam (čas z pilotu ×
+    hodinová sazba + LLM/API) × podíl ruční kontroly + roční aktualizace,
+    protože data stárnou.
+  - Tři scénáře podle míry automatizace a rozpad podle segmentů. Andělé a family
+    office budou nejdražší a nejméně spolehliví.
+  - Výstup: results/cost-estimate.md s tabulkou a předpoklady.
+  - K rozhodnutí:
+    - měna,
+    - hodinová sazba (Česko, nebo levnější práce v zahraničí),
+    - zda počítat jen jednorázové vybudování, nebo i roční provoz.
+
+  Krok 8 – Úprava plánu podle pilotu a dokončení
+
+  - Výstup: finální docs/plan.md s pravidly upravenými podle chyb z pilotu a
+    README. Commit a push udělám až po tvém souhlasu.
+
+  ---
+
+  3. Co bych potřeboval rozhodnout jako první
+
+  1. Země pilotu. Doporučuju ČR.
+  2. Kdo dělá ruční ověření. Doporučuju tebe, aspoň na náhodném podvzorku, jinak
+     měření přesnosti nemá velkou váhu.
+  3. Co s chybějícími údaji. Doporučuju povolit „neuvedeno“ s důvodem a odhady
+     jasně označit, ale investora kvůli tomu nevyřazovat.
+  4. Jak chápat „sektor“ v zadání. Doporučuju ho chápat jako odvětví, do kterých
+     investor investuje. „Do čeho běžně investuje“ pak znamená fázi, druh
+     investice a geografii.
+  5. Hranice veřejných dat. Doporučuju jen data dostupná bez přihlášení a v
+     souladu s podmínkami služby.
+  6. Rozsah a čas. Kolik času na projekt máme a kdo bude výstup hodnotit? Od
+     toho se odvíjí velikost vzorku a míra automatizace.
+  7. Jazyk výstupů a git identita (jméno a e-mail pro commity).
+
+✻ Worked for 3m 4s · done 9:58 AM
+
+※ recap: Stavíme spolehlivou databázi investorů; Git i veřejný repozitář Indrovi/investor-database jsou nastavené a plán v 8 krocích je navržený. Teď potřebuju tvá rozhodnutí, hlavně zemi pilotu (doporučuju ČR) a kdo ručně ověří vzorek. (disable recaps in /config)
+
+❯ Pokračujeme pouze krokem 0 - přípravou projektu. Vytvoř základní strukturu    
+  repo podle navrženého plánu, včetně README.md, .gitignore a adresáře ai-log   
+  pro exporty konverzací. V README.md zatím stručně popiš účel projektu a       
+  připrav následný prostor pro dokumentaci práce s AI, kontroly výstupů,        
+  nalezených chyb a rozhodnutí. Nastav lokální Git identitu - Autor: Tomáš,     
+  e-mail: [e-mail autora] - Dokumentace bude česky, ale odborná            
+  terminologie prosím anglicky. Git commit raději češky. Další věci budeme      
+  řešit postupně.                                                               
+
+● Bash(git config user.name "Tomáš" && git config user.email
+      "[e-mail autora]" && mkdir -p data/sample results scripts ai-log &&
+      touch data/sample/.gitkeep result…)
+  ⎿  user.name=Tomáš
+     user.email=[e-mail autora]
+  ⎿  Created ai-log/.gitkeep (+0 -0)
+  ⎿  Created data/sample/.gitkeep (+0 -0)
+  ⎿  Created results/.gitkeep (+0 -0)
+  ⎿  Created scripts/.gitkeep (+0 -0)
+
+● Write(.gitignore)
+  ⎿  Wrote 27 lines to .gitignore
+      1 # Python
+      2 __pycache__/
+      3 *.py[cod]
+      4 .venv/
+      5 venv/
+      6 .ipynb_checkpoints/
+      7 .pytest_cache/
+      8 .mypy_cache/
+      9 .ruff_cache/
+     … +17 lines (ctrl+o to expand)
+
+● Write(README.md)
+  ⎿  Wrote 54 lines to README.md
+       1 # Investor Database
+       3 Spolehlivá databáze investorů do soukromých firem: VC fondů, PE 
+         fondů, family offices, angel investorů a velkých soukromých inve
+          odpovídat skutečnému, aktivnímu investorovi a u každého údaje m
+         usí být doložený zdroj (data provenance).
+       5 Projekt vychází ze [zadání](docs/zadani.md) a pracuje výhradně s
+          veřejně dostupnými daty.
+       7 ## Výstupy (deliverables)
+       8 
+      10 |---|---|---|
+     … +62 lines (ctrl+o to expand)
+
+● Bash(python3 - <<'EOF'
+      p = "README.md"…)
+  ⎿  53:| D-001 | 2026-10-14 | Dokumentace česky, odborná terminologie angl
+     icky, commit messages česky | Rozhodnutí autora projektu |
+     54:| D-002 | 2026-10-14 | Veřejný GitHub repozitář `Indrovi/investor-d
+     … +30 lines (ctrl+o to expand)
+  ⎿  Updated README.md (+2 -2)
+      50  
+      51  | ID | Datum | Rozhodnutí | Zdůvodnění |
+      52  |---|---|---|---|
+      53 -| D-001 | 2026-10-14 | Dokumentace česky, odborná terminologie 
+         -anglicky, commit messages česky | Dohoda v týmu |              
+      54 -| D-002 | 2026-10-14 | Veřejný GitHub repozitář `Indrovi/invest
+         -or-database`, hlavní větev `main` | Výstupy musí být veřejně do
+         -stupné v repozitáři |                                          
+      53 +| D-001 | 2026-10-14 | Dokumentace česky, odborná terminologie 
+         +anglicky, commit messages česky | Rozhodnutí autora projektu | 
+      54 +| D-002 | 2026-10-14 | Veřejný GitHub repozitář `Indrovi/invest
+         +or-database`, hlavní větev `main` | Zadání chce výstupy v repoz
+         +itáři; veřejný repozitář určil autor projektu |                
+
+  Wrote 1 memory (ctrl+o to expand)
+
+● Bash(echo '- [Language conventions](language-conventions.md) — docs in Czech +
+      English terminology; commits in Czech' >>
+      /home/tomas/.claude/projects/-home-tomas-app…)
+  ⎿  (No output)
+
+● Krok 0 je hotový. Projekt má základní strukturu, ale commit ani push jsem 
+  neudělal.
+
+  Git identita je nastavená jen pro tento repozitář (git config --local): Tomáš,
+  [e-mail autora].
+
+  Struktura projektu:
+  .gitignore
+  README.md
+  docs/zadani.md      (už existoval)
+  data/sample/        data z pilotního vzorku
+  results/            měření přesnosti a odhad nákladů
+  scripts/            skripty
+  ai-log/             exporty konverzací s AI
+  Prázdné složky obsahují soubor .gitkeep, protože git prázdné složky neukládá.
+
+  README.md je česky, odborné termíny jsou anglicky:
+  - Účel projektu: krátký popis s odkazem na zadání.
+  - Výstupy (deliverables): tabulka se stavem tří požadovaných výstupů.
+  - Struktura repozitáře: popis složek.
+  - Práce s AI:
+    - nástroj a pracovní postup (nejdřív plán, pak odsouhlasení, pak
+      implementace),
+    - pojmenování exportů v ai-log/ jako YYYY-MM-DD_NN_tema.md; konverzaci
+      vyexportuješ příkazem /export.
+  - Tři tabulky: kontroly výstupů, nalezené chyby a rozhodnutí.
+    - Do kontrol jsem zapsal ověření napojení na GitHub.
+    - Rozhodnutí obsahují D-001 (jazyk dokumentace a commitů) a D-002 (veřejný
+      repozitář, větev main).
+    - Tabulka chyb je zatím prázdná.
+
+  .gitignore obsahuje:
+  - Python (__pycache__, .venv apod.),
+  - soubory .env s API klíči,
+  - lokální cache .cache/,
+  - soubory editorů a systému,
+  - .claude/settings.local.json.
+
+  Python jsem předpokládal, protože jsem ho navrhl v plánu, ale ještě jsme ho
+  neodsouhlasili. Kdybychom zvolili jiný nástroj, sekci upravím. Ověřil jsem, že
+  se .env, .venv/ i __pycache__/ opravdu ignorují.
+
+  Mám udělat první commit, třeba se zprávou „Příprava struktury projektu (krok 
+  0)“, a pushnout ho na origin/main?
+
+✻ Baked for 1m 11s · done 12:35 PM
+
+※ recap: Budujeme spolehlivou databázi investorů a krok 0 je hotový: struktura projektu, README, .gitignore, složka ai-log a git identita. Čekám, jestli mám udělat první commit „Příprava struktury projektu (krok 0)“ a pushnout ho na GitHub. (disable recaps in /config)
+
+❯ Krok 0 schvaluji. Vytvoř commit "Založení struktury projektu" a prověď push   
+  na origin/main - zkontroluji potom manuálně. Na závěr stručně potvrď výsledek 
+  a zda-li nenastala chyba.                                                     
+
+● Bash(git status --short && git add -A && git status --short && git commit -q
+      -F - <<'EOF'
+      Založení struktury projektu…)  ⎿  ?? .gitignore
+     ?? README.md
+     ?? ai-log/
+     … +26 lines (ctrl+o to expand)
+
+● Bash(git push -u origin main 2>&1; echo "push exit=$?"; echo "---"; git status
+      --short --branch; git fetch -q origin && git rev-parse HEAD origin/main;
+      gh repo view…)
+  ⎿  To https://github.com/Indrovi/investor-database.git
+      * [new branch]      main -> main
+     branch 'main' set up to track 'origin/main'.
+     … +12 lines (ctrl+o to expand)
+
+● Commit i push proběhly bez chyby.
+
+  - Commit: c19bb33 „Založení struktury projektu“ s autorem Tomáš
+    [e-mail autora]. Obsahuje 7 souborů: .gitignore, README.md,
+    docs/zadani.md a soubory .gitkeep ve složkách ai-log/, data/sample/,
+    results/ a scripts/.
+  - Push: main je na origin/main a lokální větev ho sleduje. Lokální HEAD i
+    origin/main ukazují na stejný commit.
+  - GitHub: repozitář je veřejný a výchozí větev je teď main.
+
+  Do commitu jsem kromě tvé zprávy přidal řádek Co-Authored-By: Claude Opus 5.5,
+  který označuje podíl AI. Pokud ho v dalších commitech nechceš, napiš a
+  vynechám ho.
+
+  Zkontrolovat to můžeš na https://github.com/Indrovi/investor-database.
+
+✻ Cooked for 14s · done 12:48 PM
+
+※ recap: Stavíme spolehlivou databázi investorů podle zadání; krok 0 (struktura repa, README, .gitignore, Git identita) je hotový a pushnutý na origin/main bez chyb. Dalším krokem je tvoje kontrola na GitHubu a pak společně krok 1: pravidla, kdo do databáze patří a kdo ne. (disable recaps in /config)

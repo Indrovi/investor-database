@@ -1,0 +1,2288 @@
+ ▐▛███▛█   Claude Code v2.1.299
+▝▜██████▀  Opus 5.5 · Claude Max
+ ▝▝   ▝▝   ~/apps/investor-database
+
+
+❯ /model                                                                        
+  ⎿  Set model to Opus 5.5 and saved as your default for new sessions
+
+❯ /effort                                                                       
+  ⎿  Set effort level to xhigh (saved as your default for new sessions): Deeper
+     reasoning than high, just below maximum (on supported models)
+
+❯ Začínáme nový projekt. Zadání najdeš v docs/zadani.md - Nejprve inicializuj   
+  Git s větví main a pomocí GitHub CLi vytvoř veřejný repozitář                 
+  Indrovi/investor-database. Propoj lokální projekt s GitHubem a ověř správné   
+  nastavení. Poté si přečti zadání ve zmíněném adresáři a navrhni stručný plán  
+  realizace v logických krocích. U každého kroku uvěď očekávaný výstup a        
+  upozorni na nejasnosti, které bude potřeba rozhodnout. Zatím nic              
+  neimplementuj, nevytvářej ani commit ani push. Plán nejprve společně          
+  brainstormujeme a vyhodnotíme.                                                
+
+● Bash(ls -la && ls -la docs && git --version && gh --version && gh auth status
+      2>&1)
+  ⎿  total 12
+     drwxrwxr-x  3 tomas tomas 4096 Oct 14 09:48 .
+     drwxrwxr-x 21 tomas tomas 4096 Oct 14 09:46 ..
+     … +15 lines (ctrl+o to expand)
+
+  Read 1 file (ctrl+o to expand)
+
+● Bash(gh repo view Indrovi/investor-database 2>&1 | head -5; git config
+      --global init.defaultBranch; git config user.name; git config user.email)
+  ⎿  Error: Exit code 1
+     GraphQL: Could not resolve to a Repository with the name 
+     'Indrovi/investor-database'. (repository)
+
+● Bash(git init -b main && gh repo create Indrovi/investor-database --public
+      --source=. --remote=origin 2>&1)
+  ⎿  Initialized empty Git repository in /home/tomas/apps/investor-database
+     /.git/
+     https://github.com/Indrovi/investor-database
+
+● Bash(echo "--- branch:" && git branch --show-current && echo "--- remotes:" &&
+      git remote -v && echo "--- status:" && git status --short --branch &&
+      echo "--- gh rep…)
+  ⎿  --- branch:
+     main
+     --- remotes:
+     … +19 lines (ctrl+o to expand)
+  ⎿  (file diff unavailable for this command)
+
+● Bash(git config --show-origin --get-all credential.https://github.com.helper;
+      git config --show-origin --get-all credential.helper; echo "exit=$?")
+  ⎿  file:/home/tomas/.gitconfig
+     file:/home/tomas/.gitconfig     !/usr/bin/gh auth git-credential
+     exit=1
+
+● Repo je založené a ověřené. Uložím si pár poznámek o tom, jak chceš pracovat,
+  a pak sepíšu plán.
+
+  Read 1 file, wrote 2 memories (ctrl+o to expand)
+
+● 1. Git a GitHub jsou nastavené a ověřené
+
+  Kontrola: Lokální repozitář
+  Stav: git init -b main, jsi na větvi main a zatím tu není žádný commit
+  ────────────────────────────────────────
+  Kontrola: GitHub
+  Stav: Repozitář Indrovi/investor-database
+  (https://github.com/Indrovi/investor-database) je veřejný a prázdný
+  ────────────────────────────────────────
+  Kontrola: Remote
+  Stav: origin vede na https://github.com/Indrovi/investor-database.git (fetch i
+
+  push)
+  ────────────────────────────────────────
+  Kontrola: Přihlášení
+  Stav: gh je přihlášené jako Indrovi s právem repo a git používá gh pro
+  přihlašování, takže push bude fungovat
+  ────────────────────────────────────────
+  Kontrola: Výchozí větev na GitHubu
+  Stav: Nastaví se až prvním pushem main, protože repozitář je zatím prázdný
+  ────────────────────────────────────────
+  Kontrola: ⚠️ Identita pro git
+  Stav: Chybí user.name a user.email. Bez nich nepůjde udělat první commit.
+  Repozitář je veřejný, takže doporučuju GitHub noreply e-mail
+  (…+Indrovi@users.noreply.github.com), aby tvoje adresa nebyla vidět v
+  historii.
+
+  Commit ani push jsem nedělal.
+
+  ---
+
+  2. Návrh plánu
+
+  Zadání chce tři věci: plán, data ze vzorku se zdrojem u každého údaje a měření
+  přesnosti. Kroky 1–4 tvoří plán, kroky 5–6 ho ověří na vzorku, krok 7 odhadne
+  náklady a krok 8 vše dokončí.
+
+  Krok 0 – Struktura repozitáře a pravidla práce
+
+  - Výstup: README.md, .gitignore a složky docs/ (plán), data/sample/, results/,
+    scripts/.
+  - K rozhodnutí: jazyk výstupů (čeština, nebo angličtina), formát dat (navrhuju
+    CSV kvůli čitelnosti a JSON Schema na kontrolu), nástroje (navrhuju
+    Python).
+
+  Krok 1 – Kdo je a kdo není investor
+
+  - Obsah:
+    - Typy investorů: VC, PE, family office, business anděl a velký soukromý
+      investor.
+    - Hraniční případy: firemní VC (CVC), akcelerátory, státní fondy, kluby
+      andělů, fondy fondů, crowdfundingové platformy.
+    - Kdo bude zařazen:
+      - subjekt existuje a dá se dohledat,
+      - investuje kapitál do soukromých firem za účelem výnosu,
+      - má ≥1 doloženou investici s datem za posledních N měsíců.
+    - Kdo bude vyřazen:
+      - poradci a M&A firmy,
+      - banky, které firmám jen půjčují,
+      - fondy obchodující jen na burze a realitní fondy,
+      - holdingy investující jen do vlastní skupiny,
+      - neaktivní fondy,
+      - zprostředkovatelé.
+  - Výstup: část plánu s rozhodovacím stromem a tabulkou hraničních případů.
+  - K rozhodnutí:
+    - jak dlouho zpětně musí být investice doložená (24, nebo 36 měsíců),
+    - zda zařadit CVC, akcelerátory a státní fondy,
+    - od jaké hranice je soukromý investor „velký“.
+
+  Krok 2 – Datový model se zdrojem u každého údaje
+
+  - Obsah:
+    - Údaje o investorovi: identita (IČO nebo registrační číslo), typ, sektory,
+      fáze a druh investic, typická výše investice od–do, celkový kapitál s
+      měnou a datem.
+    - Ke každé hodnotě: URL zdroje, datum zdroje, datum přístupu, doslovná
+      citace ze zdroje a označení, zda je údaj uvedený, odvozený, nebo odhad.
+    - Samostatná tabulka důkazů: portfoliová firma, datum, investiční kolo,
+      zdroj.
+    - Archivace: zdroje uložit do Wayback Machine, aby zůstaly dohledatelné.
+  - Výstup: schéma dat a validační skript, který zastaví záznam s hodnotou bez
+    zdroje.
+  - K rozhodnutí:
+    - co dělat, když údaj není veřejný (typicky kapitál u andělů a family
+      office),
+    - jakou použít klasifikaci sektorů.
+
+  Krok 3 – Veřejné zdroje, počet investorů a spolehlivost dat
+
+  - Typy zdrojů:
+    - Registry regulátorů: SEC Form ADV, ČNB, ESMA EuVECA.
+    - Obchodní rejstříky: justice.cz/ARES, Companies House, GLEIF. V ČR rejstřík
+      ukazuje společníky s.r.o., což je přímý doklad investice.
+    - Asociace: CVCA, Invest Europe, NVCA, EBAN.
+    - Seznamy, do kterých fondů investovali velcí investoři (LP): EIF a národní
+      rozvojové banky.
+    - Ostatní: weby fondů, tisk a veřejné profily na agregátorech.
+  - Výstup: tabulka segment × zdroje × odhad počtu × očekávaná spolehlivost × z 
+    čeho odhad vychází. Počty doložím zdroji, zatím je neuvádím, abych
+    netipoval.
+  - K rozhodnutí:
+    - Co přesně znamená „veřejně dostupná data“? Návrh: jen to, co je dostupné
+      bez přihlášení a v souladu s podmínkami služby. LinkedIn a PitchBook ne,
+      Crunchbase a Dealroom jen veřejná část.
+    - Jak řešit GDPR u fyzických osob (andělé)?
+
+  Krok 4 – Jak ověříme pravost a zařazení
+
+  - Tři úrovně kontroly:
+    a. Existence: subjekt je v registru.
+    b. Aktivita: existuje datovaný důkaz investice, ideálně z nezávislého zdroje
+       (rejstřík, tisková zpráva portfoliové firmy).
+    c. Zařazení: typ a údaje potvrzují ≥2 zdroje.
+  - Každý záznam i údaj dostane míru důvěryhodnosti A/B/C. Pro rozpory mezi
+    zdroji platí pravidla: primární zdroj má přednost před sekundárním, novější
+    před starším.
+  - Výstup: část plánu a kontrolní seznam (checklist) pro ruční ověření.
+  - K rozhodnutí: stačí k zařazení jeden zdroj, nebo jsou potřeba dva nezávislé?
+
+  Krok 5 – Pilot: VC fondy v jedné zemi
+
+  - Obsah:
+    - Sběr: kandidáty sbírat záměrně široce, aby žádný nechyběl, pak je
+      odduplikovat a vyfiltrovat podle pravidel z kroku 1.
+    - Údaje: u zařazených vyplnit údaje se zdroji.
+    - Vyřazení: logovat vyřazené kandidáty s důvodem (abychom změřili chybná
+      vyřazení).
+    - Čas: měřit čas na jeden záznam, který je vstupem pro odhad nákladů.
+  - Výstup: data/sample/investors.csv, evidence.csv, rejected.csv a skripty.
+  - K rozhodnutí:
+    - Země: navrhuju ČR (známé prostředí, otevřené rejstříky, CVCA). Nevýhoda je
+      malý počet fondů, takže výsledky přesnosti budou mít širší interval
+      spolehlivosti.
+    - Co je „český VC fond“: sídlo správce v ČR, nebo investice v ČR? Řada fondů
+      je založená v Lucembursku nebo na Slovensku.
+    - Velikost vzorku: návrh je celá populace dané země.
+    - Míra automatizace: ruční sběr, nebo skripty s extrakcí pomocí LLM s
+      povinnou citací.
+
+  Krok 6 – Ruční ověření a měření přesnosti
+
+  - Metriky:
+    - přesnost zařazení (podíl skutečných aktivních VC mezi zařazenými),
+    - přesnost jednotlivých údajů: správně / částečně / špatně / neověřitelné,
+    - správnost vyřazení,
+    - odhad úplnosti proti nezávislému referenčnímu seznamu.
+  - Výsledky budou mít Wilsonovy intervaly spolehlivosti.
+  - Výstup: results/accuracy.md a results/verification.csv.
+  - K rozhodnutí (klíčové):
+    - Kdo ověřuje? Pokud data sbírám i ověřuji já, kontrola není nezávislá.
+      Návrh: já sbírám a ty ručně ověříš celý vzorek, nebo aspoň náhodný
+      podvzorek kolem 30 záznamů.
+    - Tolerance u čísel: např. kapitál ±10 % a u výše investice stačí, že se
+      rozsahy překrývají.
+
+  Krok 7 – Odhad nákladů na celý svět
+
+  - Výpočet: počet subjektů z kroku 3 × náklad na jeden záznam (čas z pilotu ×
+    hodinová sazba + LLM/API) × podíl ruční kontroly + roční aktualizace,
+    protože data stárnou.
+  - Tři scénáře podle míry automatizace a rozpad podle segmentů. Andělé a family
+    office budou nejdražší a nejméně spolehliví.
+  - Výstup: results/cost-estimate.md s tabulkou a předpoklady.
+  - K rozhodnutí:
+    - měna,
+    - hodinová sazba (Česko, nebo levnější práce v zahraničí),
+    - zda počítat jen jednorázové vybudování, nebo i roční provoz.
+
+  Krok 8 – Úprava plánu podle pilotu a dokončení
+
+  - Výstup: finální docs/plan.md s pravidly upravenými podle chyb z pilotu a
+    README. Commit a push udělám až po tvém souhlasu.
+
+  ---
+
+  3. Co bych potřeboval rozhodnout jako první
+
+  1. Země pilotu. Doporučuju ČR.
+  2. Kdo dělá ruční ověření. Doporučuju tebe, aspoň na náhodném podvzorku, jinak
+     měření přesnosti nemá velkou váhu.
+  3. Co s chybějícími údaji. Doporučuju povolit „neuvedeno“ s důvodem a odhady
+     jasně označit, ale investora kvůli tomu nevyřazovat.
+  4. Jak chápat „sektor“ v zadání. Doporučuju ho chápat jako odvětví, do kterých
+     investor investuje. „Do čeho běžně investuje“ pak znamená fázi, druh
+     investice a geografii.
+  5. Hranice veřejných dat. Doporučuju jen data dostupná bez přihlášení a v
+     souladu s podmínkami služby.
+  6. Rozsah a čas. Kolik času na projekt máme a kdo bude výstup hodnotit? Od
+     toho se odvíjí velikost vzorku a míra automatizace.
+  7. Jazyk výstupů a git identita (jméno a e-mail pro commity).
+
+✻ Worked for 3m 4s · done 9:58 AM
+
+※ recap: Stavíme spolehlivou databázi investorů; Git i veřejný repozitář Indrovi/investor-database jsou nastavené a plán v 8 krocích je navržený. Teď potřebuju tvá rozhodnutí, hlavně zemi pilotu (doporučuju ČR) a kdo ručně ověří vzorek. (disable recaps in /config)
+
+❯ Pokračujeme pouze krokem 0 - přípravou projektu. Vytvoř základní strukturu    
+  repo podle navrženého plánu, včetně README.md, .gitignore a adresáře ai-log   
+  pro exporty konverzací. V README.md zatím stručně popiš účel projektu a       
+  připrav následný prostor pro dokumentaci práce s AI, kontroly výstupů,        
+  nalezených chyb a rozhodnutí. Nastav lokální Git identitu - Autor: Tomáš,     
+  e-mail: [e-mail autora] - Dokumentace bude česky, ale odborná            
+  terminologie prosím anglicky. Git commit raději češky. Další věci budeme      
+  řešit postupně.                                                               
+
+● Bash(git config user.name "Tomáš" && git config user.email
+      "[e-mail autora]" && mkdir -p data/sample results scripts ai-log &&
+      touch data/sample/.gitkeep result…)
+  ⎿  user.name=Tomáš
+     user.email=[e-mail autora]
+  ⎿  Created ai-log/.gitkeep (+0 -0)
+  ⎿  Created data/sample/.gitkeep (+0 -0)
+  ⎿  Created results/.gitkeep (+0 -0)
+  ⎿  Created scripts/.gitkeep (+0 -0)
+
+● Write(.gitignore)
+  ⎿  Wrote 27 lines to .gitignore
+      1 # Python
+      2 __pycache__/
+      3 *.py[cod]
+      4 .venv/
+      5 venv/
+      6 .ipynb_checkpoints/
+      7 .pytest_cache/
+      8 .mypy_cache/
+      9 .ruff_cache/
+     … +17 lines (ctrl+o to expand)
+
+● Write(README.md)
+  ⎿  Wrote 54 lines to README.md
+       1 # Investor Database
+       3 Spolehlivá databáze investorů do soukromých firem: VC fondů, PE 
+         fondů, family offices, angel investorů a velkých soukromých inve
+          odpovídat skutečnému, aktivnímu investorovi a u každého údaje m
+         usí být doložený zdroj (data provenance).
+       5 Projekt vychází ze [zadání](docs/zadani.md) a pracuje výhradně s
+          veřejně dostupnými daty.
+       7 ## Výstupy (deliverables)
+       8 
+      10 |---|---|---|
+     … +62 lines (ctrl+o to expand)
+
+● Bash(python3 - <<'EOF'
+      p = "README.md"…)
+  ⎿  53:| D-001 | 2026-10-14 | Dokumentace česky, odborná terminologie angl
+     icky, commit messages česky | Rozhodnutí autora projektu |
+     54:| D-002 | 2026-10-14 | Veřejný GitHub repozitář `Indrovi/investor-d
+     … +30 lines (ctrl+o to expand)
+  ⎿  Updated README.md (+2 -2)
+      50  
+      51  | ID | Datum | Rozhodnutí | Zdůvodnění |
+      52  |---|---|---|---|
+      53 -| D-001 | 2026-10-14 | Dokumentace česky, odborná terminologie 
+         -anglicky, commit messages česky | Dohoda v týmu |              
+      54 -| D-002 | 2026-10-14 | Veřejný GitHub repozitář `Indrovi/invest
+         -or-database`, hlavní větev `main` | Výstupy musí být veřejně do
+         -stupné v repozitáři |                                          
+      53 +| D-001 | 2026-10-14 | Dokumentace česky, odborná terminologie 
+         +anglicky, commit messages česky | Rozhodnutí autora projektu | 
+      54 +| D-002 | 2026-10-14 | Veřejný GitHub repozitář `Indrovi/invest
+         +or-database`, hlavní větev `main` | Zadání chce výstupy v repoz
+         +itáři; veřejný repozitář určil autor projektu |                
+
+  Wrote 1 memory (ctrl+o to expand)
+
+● Bash(echo '- [Language conventions](language-conventions.md) — docs in Czech +
+      English terminology; commits in Czech' >>
+      /home/tomas/.claude/projects/-home-tomas-app…)
+  ⎿  (No output)
+
+● Krok 0 je hotový. Projekt má základní strukturu, ale commit ani push jsem 
+  neudělal.
+
+  Git identita je nastavená jen pro tento repozitář (git config --local): Tomáš,
+  [e-mail autora].
+
+  Struktura projektu:
+  .gitignore
+  README.md
+  docs/zadani.md      (už existoval)
+  data/sample/        data z pilotního vzorku
+  results/            měření přesnosti a odhad nákladů
+  scripts/            skripty
+  ai-log/             exporty konverzací s AI
+  Prázdné složky obsahují soubor .gitkeep, protože git prázdné složky neukládá.
+
+  README.md je česky, odborné termíny jsou anglicky:
+  - Účel projektu: krátký popis s odkazem na zadání.
+  - Výstupy (deliverables): tabulka se stavem tří požadovaných výstupů.
+  - Struktura repozitáře: popis složek.
+  - Práce s AI:
+    - nástroj a pracovní postup (nejdřív plán, pak odsouhlasení, pak
+      implementace),
+    - pojmenování exportů v ai-log/ jako YYYY-MM-DD_NN_tema.md; konverzaci
+      vyexportuješ příkazem /export.
+  - Tři tabulky: kontroly výstupů, nalezené chyby a rozhodnutí.
+    - Do kontrol jsem zapsal ověření napojení na GitHub.
+    - Rozhodnutí obsahují D-001 (jazyk dokumentace a commitů) a D-002 (veřejný
+      repozitář, větev main).
+    - Tabulka chyb je zatím prázdná.
+
+  .gitignore obsahuje:
+  - Python (__pycache__, .venv apod.),
+  - soubory .env s API klíči,
+  - lokální cache .cache/,
+  - soubory editorů a systému,
+  - .claude/settings.local.json.
+
+  Python jsem předpokládal, protože jsem ho navrhl v plánu, ale ještě jsme ho
+  neodsouhlasili. Kdybychom zvolili jiný nástroj, sekci upravím. Ověřil jsem, že
+  se .env, .venv/ i __pycache__/ opravdu ignorují.
+
+  Mám udělat první commit, třeba se zprávou „Příprava struktury projektu (krok 
+  0)“, a pushnout ho na origin/main?
+
+✻ Baked for 1m 11s · done 12:35 PM
+
+※ recap: Budujeme spolehlivou databázi investorů a krok 0 je hotový: struktura projektu, README, .gitignore, složka ai-log a git identita. Čekám, jestli mám udělat první commit „Příprava struktury projektu (krok 0)“ a pushnout ho na GitHub. (disable recaps in /config)
+
+❯ Krok 0 schvaluji. Vytvoř commit "Založení struktury projektu" a prověď push   
+  na origin/main - zkontroluji potom manuálně. Na závěr stručně potvrď výsledek 
+  a zda-li nenastala chyba.                                                     
+
+● Bash(git status --short && git add -A && git status --short && git commit -q
+      -F - <<'EOF'
+      Založení struktury projektu…)  ⎿  ?? .gitignore
+     ?? README.md
+     ?? ai-log/
+     … +26 lines (ctrl+o to expand)
+
+● Bash(git push -u origin main 2>&1; echo "push exit=$?"; echo "---"; git status
+      --short --branch; git fetch -q origin && git rev-parse HEAD origin/main;
+      gh repo view…)
+  ⎿  To https://github.com/Indrovi/investor-database.git
+      * [new branch]      main -> main
+     branch 'main' set up to track 'origin/main'.
+     … +12 lines (ctrl+o to expand)
+
+● Commit i push proběhly bez chyby.
+
+  - Commit: c19bb33 „Založení struktury projektu“ s autorem Tomáš
+    [e-mail autora]. Obsahuje 7 souborů: .gitignore, README.md,
+    docs/zadani.md a soubory .gitkeep ve složkách ai-log/, data/sample/,
+    results/ a scripts/.
+  - Push: main je na origin/main a lokální větev ho sleduje. Lokální HEAD i
+    origin/main ukazují na stejný commit.
+  - GitHub: repozitář je veřejný a výchozí větev je teď main.
+
+  Do commitu jsem kromě tvé zprávy přidal řádek Co-Authored-By: Claude Opus 5.5,
+  který označuje podíl AI. Pokud ho v dalších commitech nechceš, napiš a
+  vynechám ho.
+
+  Zkontrolovat to můžeš na https://github.com/Indrovi/investor-database.
+
+✻ Cooked for 14s · done 12:48 PM
+
+※ recap: Stavíme spolehlivou databázi investorů podle zadání; krok 0 (struktura repa, README, .gitignore, Git identita) je hotový a pushnutý na origin/main bez chyb. Dalším krokem je tvoje kontrola na GitHubu a pak společně krok 1: pravidla, kdo do databáze patří a kdo ne. (disable recaps in /config)
+
+❯ /export                                                                       
+  ⎿  Conversation exported to: /home/tomas/apps/investor-database/2026-10-14-181
+     103-local-command-caveatthe-command-below-was-run-d.txt
+
+❯ Pokračujeme krokem 1 - Kdo je a kdo není investor. Na základě zadání navrhni  
+  metodiku zařazení/vyřazení pro VC, private equity, family offices, angel      
+  investors a velké soukromé investory (pokud mi nějaký subjekt chybí,          
+  navrhni). Zaměř se na oblasti: 1) Co považujeme za skutečného a aktivního     
+  investora. 2) Jaké veřejně dostupné důkazy vyžadujeme pro zařazení. 3) Které  
+  subjekty vyřadíme a podle jakých pravidel. 4) Jak řešit hraniční investory a  
+  nebo i chybějící informace --- Metodiku by měla být použitelná celosvětově,   
+  nicméně pro tento případ budeme ověřovat na českých VC investorech. Nejdřív   
+  předlož návrh. Zatím nevytvářej soubory, nic neimplementuj a nic necommituj.  
+
+● Bash(git status --short && ls -la ai-log)
+  ⎿  ?? 2026-10-14-181103-local-command-caveatthe-command-below-was-run-d.t
+     xt
+     total 8
+     … +3 lines (ctrl+o to expand)
+
+● Krok 1: návrh metodiky „Kdo je a kdo není investor“
+
+  Základní definice
+
+  Investor je subjekt, který opakovaně a kvůli finančnímu výnosu vkládá vlastní 
+  nebo svěřený kapitál do nekótovaných firem formou equity nebo quasi-equity
+  (podíl, akcie, convertible loan, SAFE). Jeho identitu i investice musí jít
+  doložit veřejnými zdroji s datem.
+
+  Jednotka záznamu: jeden záznam = jedna investiční firma, tedy správce fondů
+  (management company) nebo značka. Jednotlivé fondy (Fund I, II, SPV, feeder)
+  jsou podřízené záznamy. Slouží pro celkový kapitál (AUM) a důkazy, ale
+  nevznikají z nich duplicity.
+
+  Typy investorů: návrh doplnit
+
+  ┌─────────────────────────┬─────────────────────┬────────────────────────┐
+  │           Typ           │        Návrh        │         Důvod          │
+  ├─────────────────────────┼─────────────────────┼────────────────────────┤
+  │ Corporate VC (CVC)      │ zařadit             │ Velká část VC dealů    │
+  ├─────────────────────────┼─────────────────────┼────────────────────────┤
+  │                         │                     │ Investují vlastní      │
+  │ Accelerator / venture   │ zařadit s podmínkou │ kapitál ve             │
+  │ studio                  │                     │ standardizovaných      │
+  │                         │                     │ částkách               │
+  ├─────────────────────────┼─────────────────────┼────────────────────────┤
+  │ Public investor (státní │ zařadit, jen pokud  │                        │
+  │  fondy, development     │ investuje přímo do  │ Přímé investice z      │
+  │ banks, státní           │ firem               │ veřejného kapitálu     │
+  │ investiční fondy – SWF) │                     │                        │
+  ├─────────────────────────┼─────────────────────┼────────────────────────┤
+  │                         │ zařadit, jen pokud  │                        │
+  │ Angel syndicate / club  │ skutečně sdružuje   │ Jinak je to jen        │
+  │                         │ kapitál (přes SPV   │ komunita               │
+  │                         │ nebo fond)          │                        │
+  ├─────────────────────────┼─────────────────────┼────────────────────────┤
+  │ Institutional direct    │ zařadit, jen s      │                        │
+  │ investor (pension,      │ doloženými přímými  │ Občas investují přímo  │
+  │ insurance, crossover    │ investicemi         │ do private rounds      │
+  │ fondy)                  │                     │                        │
+  ├─────────────────────────┼─────────────────────┼────────────────────────┤
+  │                         │ vyřadit, ale použít │ Investují do fondů, ne │
+  │ Fund of funds / LP-only │  pro dohledání      │  do firem              │
+  │                         │ fondů               │                        │
+  ├─────────────────────────┼─────────────────────┼────────────────────────┤
+  │ Venture debt / private  │ vyřadit, pokud nemá │ Půjčují, nekupují      │
+  │ credit                  │  equity složku      │ podíl                  │
+  └─────────────────────────┴─────────────────────┴────────────────────────┘
+
+  Primary type se určí rozhodovacím stromem. Každý investor má jeden primary
+  type a k němu volitelné tagy (impact, growth, secondaries apod.):
+  1. Fyzická osoba nebo její osobní holding → angel nebo large private investor
+     (podle typické výše investice).
+  2. Spravuje majetek rodiny → family office (single nebo multi).
+  3. Investuje kapitál korporace → CVC.
+  4. Investuje veřejný kapitál → public investor.
+  5. Investuje v rámci standardizovaného programu → accelerator.
+  6. Spravuje fondy třetích stran:
+     - minoritní podíly v early-stage a growth startupech → VC,
+     - kontrolní podíly ve zralých firmách (buyout) → PE.
+
+     Rozhoduje, kam patří většina doložených dealů za posledních 36 měsíců.
+
+  ---
+
+  1) Kdo je skutečný a aktivní investor
+
+  Subjekt musí projít všemi třemi testy:
+
+  Test: Identita
+  Podmínka splnění: Právnická osoba: je v registru (IČO, company number, LEI,
+  SEC
+  CRD). Investor se páruje podle ID z registru, ne podle  názvu, protože stejné
+   názvy jsou častý zdroj chyb. Fyzická  osoba: jednoznačná veřejná identita
+  navázaná na doložené investice.
+  ────────────────────────────────────────
+  Test: Skutečný investor, ne náhodná firma
+  Podmínka splnění: Regulovaný fond nebo správce, případně veřejně deklarovaný 
+  investiční mandát: stačí ≥1 doložená investice. Ostatní (CVC,  FO, angels, 
+  holdingy): ≥2 doložené investice do různých firem, aby jednorázová transakce
+  nestačila.
+  ────────────────────────────────────────
+  Test: Aktivita
+  Podmínka splnění: ≥1 doložená investice (nová i follow-on) za posledních 36 
+  měsíců, nebo uzavřený fundraising nového fondu za posledních 24 měsíců
+
+  Status investora:
+  - active: investice v posledních 24 měsících,
+  - dormant: poslední investice před 24–36 měsíci,
+  - starší než 36 měsíců: vyřadit a zapsat do logu.
+
+  Okno 36 měsíců doporučuju proto, že kratší okno by vyřadilo fondy mezi dvěma
+  generacemi (vintage) a český trh má malý počet dealů.
+
+  2) Jaké veřejné důkazy vyžadujeme
+
+  Zdroje dělím do čtyř úrovní (evidence tiers). Platí celosvětově, liší se jen
+  konkrétní zdroje v jednotlivých zemích.
+
+  Tier: T1 úřední
+  Zdroj: rejstříky, regulátoři
+  Příklady: justice.cz/ARES, ČNB seznamy, Companies House, Handelsregister, SEC
+  Form ADV a Form D, ESMA (EuVECA), GLEIF
+  Použití: identita, regulatorní status, deal
+  ────────────────────────────────────────
+  Tier: T2 nezávislé
+  Zdroj: jiná strana než investor
+  Příklady: tisková zpráva startupu, oznámení co-investora nebo LP (EIF),
+  CzechCrunch, HN, Forbes, TechCrunch
+  Použití: deal s datem, výše investice, AUM
+  ────────────────────────────────────────
+  Tier: T3 vlastní tvrzení
+  Zdroj: sám investor
+  Příklady: portfolio page, investment thesis, výroční zpráva, rozhovor
+  Použití: sektory, fáze, výše investice, typ
+  ────────────────────────────────────────
+  Tier: T4 agregátory
+  Zdroj: databáze
+  Příklady: Crunchbase, Dealroom, OpenVC, Wikipedia
+  Použití: jen pro dohledání kandidátů, nikdy jako jediný důkaz
+
+  Minimum pro zařazení:
+  - Identita: T1.
+  - Aktivita: ≥1 datovaný deal z T1 nebo T2. Portfolio stránka investora bez
+    data nestačí, protože zastaralé portfolio stránky jsou nejčastější zdroj
+    falešně „aktivních“ investorů.
+  - Typ: sebeprezentace investora (T3) musí odpovídat T1/T2. Například jde o
+    správce v seznamu ČNB, Form D uvádí „Venture Capital Fund“ nebo tomu
+    odpovídá charakter dealů.
+
+  Každý důkaz obsahuje: URL, datum publikace, datum dealu, datum přístupu,
+  doslovnou citaci a archivní kopii (Wayback Machine).
+
+  Hodnocení spolehlivosti záznamu (confidence grade):
+  - A: identita z T1 a ≥2 nezávislé datované důkazy aktivity.
+  - B: identita z T1 a 1 nezávislý datovaný důkaz. To je minimum pro zařazení.
+  - C: jen T3 nebo T4. Nezařadit, záznam zůstává v seznamu kandidátů.
+
+  Specifika ČR:
+  - Obchodní rejstřík ukazuje společníky s.r.o. včetně data zápisu, což je
+    nejsilnější důkaz dealu.
+  - Akcionáři a.s. veřejní nejsou, kromě jediného akcionáře.
+  - Investice přes convertible loan nebo SAFE se v rejstříku objeví až po
+    konverzi na podíl.
+  - Startupy se zahraničním holdingem (Delaware, UK) vyžadují T2 nebo zahraniční
+    rejstřík.
+
+  Ve světě se dostupnost veřejných seznamů společníků liší (UK a Německo je
+  mají, Delaware ne). V zemích bez nich bude větší váha na T2.
+
+  3) Koho vyřadíme
+
+  Kód: E1
+  Kategorie: Zprostředkovatelé
+  Pravidlo: Poradci, M&A boutiques, placement agents a brokeři nevkládají
+  vlastní
+  kapitál. Pozor na slova „Capital“ a „Partners“ v názvu.
+  ────────────────────────────────────────
+  Kód: E2
+  Kategorie: Crowdfunding a investiční platformy
+  Pravidlo: Platforma je zprostředkovatel. Zařadit lze jen její vlastní fond,
+  pokud projde testy.
+  ────────────────────────────────────────
+  Kód: E3
+  Kategorie: Věřitelé
+  Pravidlo: Banky, leasing, factoring a private credit bez equity složky
+  ────────────────────────────────────────
+  Kód: E4
+  Kategorie: Jen veřejné trhy
+  Pravidlo: Podílové fondy, ETF, hedge funds a asset manageři bez přímých
+  private
+  dealů
+  ────────────────────────────────────────
+  Kód: E5
+  Kategorie: Reálná aktiva
+  Pravidlo: Realitní, infrastrukturní, energetické a komoditní fondy. V ČR tvoří
+   
+  velkou část fondů kvalifikovaných investorů v seznamech ČNB, takže  tento 
+  zdroj bude hodně „zašuměný“.
+  ────────────────────────────────────────
+  Kód: E6
+  Kategorie: Strategičtí nabyvatelé
+  Pravidlo: Firmy, které kupují podíly jen kvůli začlenění do vlastní skupiny a
+  nemají investiční mandát
+  ────────────────────────────────────────
+  Kód: E7
+  Kategorie: Neaktivní
+  Pravidlo: Žádná investice v okně 36 měsíců, fond v likvidaci, zaniklý subjekt
+  ────────────────────────────────────────
+  Kód: E8
+  Kategorie: Neověřitelné nebo podezřelé
+  Pravidlo: Subjekt není v registru, existují jen jeho vlastní tvrzení, nebo
+  jsou
+  zde varovné signály: chce poplatky od zakladatelů, nemá doložitelné
+  portfolio, tým je anonymní (podvody s „falešnými investory“)
+  ────────────────────────────────────────
+  Kód: E9
+  Kategorie: Nefinanční podpora
+  Pravidlo: Granty, dotační agentury, soutěže, inkubátory bez vlastního kapitálu
+  ────────────────────────────────────────
+  Kód: E10
+  Kategorie: Investují jen do fondů
+  Pravidlo: Fund of funds a ti, kdo vystupují jen jako LP
+  ────────────────────────────────────────
+  Kód: E11
+  Kategorie: Duplicity
+  Pravidlo: SPV, jednotlivé fondy a přejmenované subjekty se slučují pod jeden
+  nadřazený záznam, nevyřazují se
+
+  Každé vyřazení se zapíše do logu (kód + zdroj). V kroku 6 tak půjde změřit i
+  chybná vyřazení (false negatives).
+
+  4) Hraniční případy a chybějící informace
+
+  Hraniční případy:
+
+  Případ: CVC
+  Pravidlo: Zařadit, pokud má samostatnou investiční jednotku nebo mandát a ≥2
+  minoritní investice. Akvizice do skupiny se nepočítají.
+  ────────────────────────────────────────
+  Případ: Accelerator / venture studio
+  Pravidlo: Zařadit, pokud do equity vkládá vlastní kapitál a má ≥2 datované
+  investice v okně
+  ────────────────────────────────────────
+  Případ: Kluby andělů (angel networks)
+  Pravidlo: Klub sám není investor, pokud nesdružuje kapitál. Jeho členy
+  zařadíme
+  jako angels jen s jejich vlastními důkazy.
+  ────────────────────────────────────────
+  Případ: Angels (fyzické osoby)
+  Pravidlo: ≥2 investice, z toho ≥1 doložená nezávislým zdrojem, a veřejně se
+  prezentují jako investoři. GDPR: jen profesní údaje, žádné soukromé kontakty,
+   právní základ legitimate interest a informační povinnost podle čl. 14.
+  ────────────────────────────────────────
+  Případ: Investiční skupiny bohatých jednotlivců
+  Pravidlo: Zařadit jako large private investor nebo FO, pokud investují do
+  cizích firem. Provozní holding bez takových investic spadá pod E6.
+  ────────────────────────────────────────
+  Případ: Multi-family office / wealth manager
+  Pravidlo: Zařadit jen s doloženými přímými dealy, jinak spadá pod E4
+  ────────────────────────────────────────
+  Případ: Fond mezi dvěma generacemi fondů
+  Pravidlo: Je aktivní, pokud oznámil fundraising v posledních 24 měsících nebo
+  má follow-on investice v okně
+  ────────────────────────────────────────
+  Případ: Sankcionované subjekty
+  Pravidlo: Nevyřazovat automaticky, ale označit podle sankčních seznamů EU a
+  OFAC
+  ────────────────────────────────────────
+  Případ: Země investora
+  Pravidlo: Země HQ = sídlo investičního týmu. Domicil fondu (Lucembursko, SK,
+  NL) se eviduje zvlášť.
+
+  Chybějící informace: dvě skupiny polí
+  - Pole nutná pro zařazení (inclusion fields): identita, primary type, země HQ,
+    ≥1 datovaný důkaz aktivity.
+    - Pokud některé chybí, investor se nezařadí a zůstává v seznamu kandidátů.
+  - Popisná pole (descriptive fields), která chce zadání: sektory, fáze a typ
+    investic, typická výše investice (ticket size), celkový kapitál (AUM / fund
+    size).
+    - Pokud některé chybí, záznam zůstává.
+    - Hodnota se zapíše jako null s důvodem v missing_reason (not_public /
+      conflicting / not_applicable). Nikdy se tiše nedopočítává.
+
+  Druhy hodnot podle spolehlivosti:
+  - reported: hodnotu zveřejnil zdroj,
+  - derived: odvozená z doložených dealů s popsanou metodou, např. sektory z
+    portfolia,
+  - estimate: odhad, jen s výslovným označením. Jeho přesnost měříme zvlášť.
+
+  Ostatní pravidla:
+  - Rozpor mezi zdroji: T1 má přednost před T2 a T2 před T3. Při stejné úrovni
+    platí novější zdroj. Každý rozpor se zapíše do logu.
+  - Stárnutí: každá hodnota má datum as_of. AUM starší než 3 roky dostane
+    příznak stale.
+
+  Pilot: české VC
+
+  - Kdo je „český VC investor“: návrh je, že investiční tým doložitelně sídlí v
+    ČR, bez ohledu na to, kde je fond založený. Zahraniční VC s pobočkou v ČR do
+    pilotu nepatří, ale zapíšou se do logu.
+  - Kde hledat kandidáty:
+    - seznamy ČNB, včetně podlimitních správců podle § 15 ZISIF,
+    - členové CVCA,
+    - portfolia LP (EIF a státní fondy fondů),
+    - tisk,
+    - Dealroom a Crunchbase jen pro dohledání.
+  - Hlavní důkazy: obchodní rejstřík (společníci s.r.o.) a tisk.
+
+  ---
+
+  Otázky k rozhodnutí
+
+  1. K čemu bude databáze sloužit? Třeba pro startupy, které hledají investora,
+     nebo pro mapování trhu? Od toho se odvíjí, jak přísně chápat „aktivní“.
+  2. Okna aktivity: 36 měsíců pro zařazení a 24 měsíců pro status active.
+     Souhlasíš?
+  3. Jak číst zadání u popisných polí. Přísné čtení „u každého investora musí
+     být uvedeno“ by vyřadilo většinu FO a angels. Doporučuju povolit null s 
+     důvodem.
+  4. Rozšíření typů: souhlasíš s CVC, accelerator, public investor, angel
+     syndicate a institutional direct? A s vyřazením fund of funds a venture
+     debt?
+  5. Hranice mezi angel a large private investor. Návrh: typická investice nad
+     ~500 tis. EUR, nebo investování přes vlastní holding.
+  6. Jednotka záznamu = investiční firma (správce), fondy jako podřízené
+     záznamy. Souhlasíš?
+  7. Minimum pro zařazení: stačí hodnocení B (1 nezávislý důkaz), nebo chceš
+     vyžadovat A?
+
+  ---
+
+  Poznámka k repozitáři: příkaz /export uložil konverzaci do kořene repozitáře
+  jako 2026-10-14-181103-local-command-caveat…txt, ne do ai-log/. Navrhuju ho
+  přejmenovat na ai-log/2026-10-14_01_zalozeni-projektu.txt a v README upravit
+  pravidlo pojmenování na .txt, protože /export ukládá text. Zatím jsem s ním
+  nic nedělal.
+
+✻ Cooked for 3m 28s · done 6:49 PM
+
+※ recap: Stavíme spolehlivou databázi investorů a jsme v kroku 1, kde jsem navrhl pravidla, kdo je a kdo není investor. Teď potřebuju tvé odpovědi na sedm otázek k rozhodnutí na konci návrhu. (disable recaps in /config)
+
+❯ Děkuji za návrh. Před schválením ale potřebuji vyřešit nesrovnalosti: 1)      
+  Požadavek opakovaného investování, např. minimálně dvou investic u některých  
+  typů investorů. 2) Automatické vyřazení po 36 měsících bez doložené investice 
+  3) Povinná identifikace přes registr (např. ARES), které nemusí fungovat u    
+  některých typů investorů 4) Rozebrat zdroj českých investičních fondů (CVCA)? 
+  5) Vysvětlení finanční hranice mezi business angel a large private investor,  
+  proč nad 500 tis EUR. --- K tvým otázkám: Databáze má sloužit k tomu, aby se  
+  investičnímu projektu daly rychle najít investoři, kteří do takových věcí     
+  opravdu investují. Proto mě zajímá hlavně to, jestli je to skutečný investor, 
+  do čeho a kolik dává a jestli ještě investuje. Investora bych definoval jako  
+  firmu nebo člověka, který sám rozhoduje o tom, do čeho investuje a o které    
+  se dá veřejně doložit, že do nějaké firmy opravdu investoval (i na základě    
+  relevantních zdrojů). Typy beru ze zadání: VC fondy, private equity, family   
+  office, business angels a velcí soukromí invesrtoři. Nejsem si jistý, kam     
+  patří korporátní fondy velkých firem, atd. Musím souhlasit, že jeden záznam   
+  bude předstaovat investiční jednotku (subjekt), nikoliv každý její fond       
+  zvlášť. Pro doložení investice preferuji alespoň jeden kvalitní nezávislý     
+  důkaz (jak jsem zmiňoval, např. z relevatních zdrojů). Nyní vytvoř v plan.md  
+  v /docs                                                                       
+
+● Fetch(https://www.cvca.cz/)
+  ⎿  Received 110.9KB (200 OK)
+
+● Web Search("EBAN statistics compendium average ticket per business angel
+            Europe")
+  ⎿  Did 1 search in 6s
+
+● Fetch(https://cvca.cz/clenstvi/radni-clenove/)
+  ⎿  Received 127.9KB (200 OK)
+
+● Fetch(https://cvca.cz/clenstvi/pridruzeni-clenove/)
+  ⎿  Received 183.6KB (200 OK)
+
+● Fetch(https://www.eban.org/wp-content/uploads/2025/12/Stats-Compendium-2024.pd
+       f)
+  ⎿  Received 6MB (200 OK)
+
+● Bash(S=/tmp/claude-1000/-home-tomas-apps-investor-database/e13554d9-a360-4a1f-
+      ab30-5bff24d09e11/scratchpad; mkdir -p $S/cvca $S/eban; cd $S/cvca && curl
+      -sL -A "Mozi…)
+  ⎿  Error: Exit code 1
+     total 312
+     drwxrwxr-x 2 tomas tomas     80 Oct 14 19:28 .
+     drwx------ 4 tomas tomas     80 Oct 14 19:28 ..
+     -rw-rw-r-- 1 tomas tomas 187930 Oct 14 19:28 pridruzeni.html
+     -rw-rw-r-- 1 tomas tomas 130944 Oct 14 19:28 radni.html
+     Rockaway     radni=0 pridruzeni=0
+     Reflex       radni=0 pridruzeni=0
+     Presto       radni=0 pridruzeni=0
+     Lighthouse   radni=0 pridruzeni=0
+     … +11 lines (ctrl+o to expand)
+
+● Bash(S=/tmp/claude-1000/-home-tomas-apps-investor-database/e13554d9-a360-4a1f-
+      ab30-5bff24d09e11/scratchpad; cp
+      /home/tomas/.claude/projects/-home-tomas-apps-investor…)
+  ⎿  Traceback (most recent call last):
+       File "<string>", line 1, in <module>
+         import pypdf; print('pypdf', pypdf.__version__)
+     … +12 lines (ctrl+o to expand)
+
+● Ověřuji podklady k bodům 4 a 5. Seznam členů CVCA už mám, teď čtu statistiky
+  EBAN k velikosti investic business angels.
+
+  Read 1 file (ctrl+o to expand)
+
+● Bash(S=/tmp/claude-1000/-home-tomas-apps-investor-database/e13554d9-a360-4a1f-
+      ab30-5bff24d09e11/scratchpad; python3 -m venv $S/venv >/dev/null &&
+      $S/venv/bin/pip ins…)
+  ⎿  642 /tmp/claude-1000/-home-tomas-apps-investor-database/e13554d9-a360-
+     4a1f-ab30-5bff24d09e11/scratchpad/eban/compendium2024.txt
+     29:or communicated publicly, the Compendium falls short on accounting
+     … +59 lines (ctrl+o to expand)
+
+● Bash(S=/tmp/claude-1000/-home-tomas-apps-investor-database/e13554d9-a360-4a1f-
+      ab30-5bff24d09e11/scratchpad; F=$S/eban/compendium2024.txt; sed -n
+      '20,45p;125,160p;240…)
+  ⎿  The information featured in the EBAN 2024 Statistics Compendium was co
+     llected in 2024
+     -2025 and reports on activities that took place in 2024. EBAN started
+     … +146 lines (ctrl+o to expand)
+
+● Bash(F=/tmp/claude-1000/-home-tomas-apps-investor-database/e13554d9-a360-4a1f-
+      ab30-5bff24d09e11/scratchpad/eban/compendium2024.txt; for L in 131 155 244
+      252 457 513;…)
+  ⎿  line 131 -> PDF page 6
+     line 155 -> PDF page 6
+     line 244 -> PDF page 10
+     … +21 lines (ctrl+o to expand)
+
+● Bash(cd /tmp/claude-1000/-home-tomas-apps-investor-database/e13554d9-a360-4a1f
+      -ab30-5bff24d09e11/scratchpad/cvca && grep -o -i -E
+      '<h[2-4][^>]*>[^<]{2,80}</h[2-4]>'…)  ⎿  0
+  ⎿  Shell cwd was reset to /home/tomas/apps/investor-database
+
+● Bash(cd /tmp/claude-1000/-home-tomas-apps-investor-database/e13554d9-a360-4a1f
+      -ab30-5bff24d09e11/scratchpad/cvca && grep -n -o -i "Credo
+      Ventures[^<]\{0,40\}" radni.…)
+  ⎿  726:Credo Ventures a.s.
+     726:Credo Ventures a.s." href="https://cvca.cz/credo-ventu
+          27 726:class="radni-clenove"
+     … +3 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to /home/tomas/apps/investor-database
+
+● Podklady mám ověřené: CVCA má 27 řádných členů a EBAN uvádí průměrnou
+  investici angel investora. Ještě ověřím počet přidružených členů CVCA a pak
+  píšu docs/plan.md.
+
+● Bash(cd /tmp/claude-1000/-home-tomas-apps-investor-database/e13554d9-a360-4a1f
+      -ab30-5bff24d09e11/scratchpad/cvca && grep -o -E 'class="[a-z-]*clenove"'
+      pridruzeni.ht…)
+  ⎿       57 class="pridruzeni-clenove"
+  ⎿  Shell cwd was reset to /home/tomas/apps/investor-database
+
+● Bash(cd /tmp/claude-1000/-home-tomas-apps-investor-database/e13554d9-a360-4a1f
+      -ab30-5bff24d09e11/scratchpad/cvca && grep -o -E
+      '(datetime|datePublished|dateModified)…)
+  ⎿  "datePublished":"2019-10-09T10:39:06+00:00"
+     "dateModified":"2024-05-22T11:41:16+00:00"
+  ⎿  Shell cwd was reset to /home/tomas/apps/investor-database
+
+● Write(docs/plan.md)
+  ⎿  Wrote 344 lines to docs/plan.md
+      1 # Plán: Spolehlivá databáze investorů
+      2 
+      3 > **Stav:** pracovní verze, krok 1 (pravidla zařazení a vyřazení)
+      4 > **Poslední úprava:** 2026-10-14
+      5 > **Zadání:** [docs/zadani.md](zadani.md)
+      6 
+      7 ## 1. Účel databáze
+      9 Databáze slouží k tomu, aby šlo k investičnímu projektu rychle na
+        jít investory, kteří do podobných projektů **skutečně investují**
+        . U každého investora proto musí být doloženo:
+     … +568 lines (ctrl+o to expand)
+
+● Bash(git status --short && wc -l docs/plan.md)
+  ⎿  ?? 2026-10-14-181103-local-command-caveatthe-command-below-was-run-d.t
+     xt
+     ?? docs/plan.md
+     344 docs/plan.md
+
+● Vytvořil jsem docs/plan.md s metodikou kroku 1 a tvými rozhodnutími. Nic jsem
+  necommitoval. Tvých pět výhrad jsem vyřešil takto:
+
+  1) Požadavek na opakované investování: zrušil jsem ho. K zařazení teď stačí
+  jeden kvalitní nezávislý důkaz, jak chceš. „Kvalitní“ znamená, že jmenuje
+  investora i firmu, popisuje vložení kapitálu, má datum a dohledatelného
+  vydavatele a je veřejně dostupný. Ochranu proti „náhodné firmě“ místo počtu
+  investic zajišťují dvě věci:
+  - Nepočítané investice: zakladatel investující do vlastní firmy, investice do
+    vlastní skupiny a čistý dluh se jako důkaz nepočítají.
+  - Pravidla vyřazení E1–E10.
+
+  Počet doložených investic se ukládá zvlášť (documented_deals_count), takže
+  uživatel vidí, kdo investoval jen jednou.
+
+  2) Automatické vyřazení po 36 měsících: zrušil jsem ho. Aktivita je teď stav 
+  záznamu, ne podmínka zařazení, protože chybějící doklad ještě neznamená konec
+  investování.
+  - active: nová investice nebo nový fond za posledních 24 měsíců.
+  - unconfirmed: poslední nová investice před 24–60 měsíci, nebo jen follow-on
+    investice.
+  - inactive: doložené ukončení činnosti, nebo víc než 60 měsíců bez investice.
+
+  Žádný záznam se nemaže. Neaktivní se jen ve vyhledávání zobrazují až na konci.
+
+  3) Povinná identifikace přes registr: registr už není podmínkou, jen
+  nejsilnějším dokladem. Zavedl jsem úrovně identity:
+  - I1: potvrzeno úředním registrem,
+  - I2: potvrzeno nezávislým zdrojem tam, kde registr neexistuje nebo nedává
+    smysl,
+  - I3: jen vlastní tvrzení subjektu, to nestačí.
+
+  Fyzické osoby se identifikují jménem a nejméně dvěma dalšími profesními údaji.
+
+  4) Rozbor CVCA (ověřeno na webu 2026-10-14, podrobně v kapitole 11.2):
+  - Má 27 řádných členů a převážně jde o PE. VC investorů je mezi nimi jen
+    asi 8.
+  - Známá česká VC (Rockaway Ventures, Reflex Capital, Presto Ventures a další)
+    na seznamu chybí.
+  - Z 57 přidružených členů jsou většina advokáti, poradci, banky a pojišťovny.
+    Je mezi nimi ale i investor Pale Fire Capital, takže druh členství
+    neodpovídá typu subjektu.
+  - Kritéria členství nejsou zveřejněná a stránka byla naposledy upravena v
+    květnu 2024.
+  - Závěr: CVCA poslouží jen k hledání kandidátů, hlavně PE. Členství není
+    důkazem investice.
+
+  5) Hranice 500 tis. EUR: přiznávám, že jsem ji původně navrhl jako odhad bez
+  zdroje. Data EBAN za rok 2024 ji ale podporují:
+  - průměrný ticket jednoho angela v kole je 25 600 EUR,
+  - všichni angelové dohromady dají do jedné firmy v průměru 204 900 EUR.
+
+  Kdo dá sám 500 tis. EUR, investuje zhruba 20× víc než průměrný angel a sám
+  pokryje celé typické angel kolo. Hranici jsem doplnil o kritéria podle
+  chování: kontrolní podíly, zavedené firmy, holding s vlastním týmem. Je to
+  parametr, který se zkalibruje v pilotu. Ticket size je stejně samostatný údaj,
+  takže na něm vyhledávání nezávisí.
+
+  Tvoje rozhodnutí v plánu: účel databáze, definice investora, pět typů ze
+  zadání, jednotka záznamu = investiční subjekt a jeden nezávislý důkaz.
+
+  Korporátní fondy: doporučuji je zařadit jako VC se subtype corporate,
+  například Inven Capital ze skupiny ČEZ. Podmínkou je, že kupují finanční
+  minoritní podíly ve firmách mimo vlastní skupinu. Akvizice do vlastní skupiny
+  se vyřazují. Podobně přes subtype jsem zařadil akcelerátory, veřejné investory
+  a angel fondy. Angel kluby, ve kterých každý člen rozhoduje sám, nejsou
+  investoři, investory jsou jejich jednotliví členové.
+
+  K odsouhlasení (kapitola 12):
+  - korporátní fondy jako VC / corporate,
+  - úrovně identity I1/I2,
+  - hranice aktivity 24 a 60 měsíců,
+  - definice „českého VC“ pro pilot. Návrh: investiční tým sídlí v ČR, bez
+    ohledu na to, kde je fond založený.
+
+  Export konverzace pořád leží v kořeni repozitáře, ne v ai-log/. Až to
+  schválíš, můžu ho přesunout a rozhodnutí z tohoto kroku zapsat do decision
+  logu v README.
+
+  Zdroje:
+  - EBAN Statistics Compendium 2024
+    (https://www.eban.org/wp-content/uploads/2025/12/Stats-Compendium-2024.pdf)
+  - CVCA – řádní členové (https://cvca.cz/clenstvi/radni-clenove/)
+  - CVCA – přidružení členové (https://cvca.cz/clenstvi/pridruzeni-clenove/)
+  - CVCA – úvodní stránka (https://www.cvca.cz/)
+
+✻ Cooked for 6m 36s · done 7:33 PM
+
+※ recap: Budujeme spolehlivou databázi investorů a v kroku 1 jsem vytvořil docs/plan.md s pravidly, kdo je a kdo není investor. Teď potřebuji, abys plán zkontroloval a rozhodl otevřené body v kapitole 12, hlavně definici českého VC pro pilot. (disable recaps in /config)
+
+❯ Ještě bych zjednodušil aktivitu investorů. Nechci tam tři stavy, stačí active 
+  a inactive. Active bude investor s doloženou novou investicí za posledních    
+  24 měsíců (může to být i další investice do firmy, ve které už podíl má),     
+  inactive bude nad 24 měsíců (samozřejmě tím nechci tvrdit, že neinvestiuje,   
+  ale nemáme doloženou novější investici). Datum poslední investice bych v      
+  databázi zachoval, ale pokud nevíme rok, nesmíme si domýšlet přesné datum. Co 
+  se týče hranice 500 tis, zatím ponecháme jako orientační ukazatel i přes to,  
+  že vycházíme ze statistik EBAN a Business Angels Europe.                      
+
+● Web Search("Business Angels Europe BAE statistics average angel investment
+            ticket size report")
+  ⎿  Did 1 search in 7s
+
+● Update(docs/plan.md)
+  ⎿  Added 1 line, removed 1 line
+       96  
+       97  Typ popisuje **investiční chování**, ne velikost majetku. Osob
+           a je **Large Private Investor**, pokud splní **alespoň jedno**
+           :
+       98  
+       99 -1. její **typický ticket** (medián doložených vlastních invest
+          -ic) je **≥ 500 000 EUR**,                                     
+       99 +1. její **typický ticket** (medián doložených vlastních invest
+          +ic) dosahuje zhruba **500 000 EUR a více** (orientační ukazate
+          +l, viz níže),                                                 
+      100  2. kupuje **většinové nebo kontrolní podíly**, nebo investuje 
+           do **zavedených firem** (ne startupů),
+      101  3. investuje přes **vlastní investiční holding s týmem**, kter
+           ý ale nemá charakter FO (viz 4.1, krok 2).
+      102  
+
+● Update(docs/plan.md)
+  ⎿  Added 2 lines, removed 2 lines
+      115  
+      116  **Omezení:**
+      117  
+      118 -- EBAN pracuje jen s viditelnou částí trhu (visible market) a 
+          -sám uvádí, že data nejsou reprezentativní (s. 2–3).           
+      119 -- Hranice je proto **parametr**, který se po pilotu zkalibruje
+          - podle skutečně doložených ticketů.                           
+      118 +- Hranice 500 000 EUR je **orientační ukazatel (indicative thr
+          +eshold)**, ne pevné pravidlo. *(Rozhodnuto.)*                 
+      119 +- EBAN pracuje jen s viditelnou částí trhu (visible market) a 
+          +sám uvádí, že data nejsou reprezentativní (s. 2–3). Hranici lz
+          +e proto po pilotu upravit podle skutečně doložených ticketů.  
+      120  - Pokud ticket není známý, rozhodují kritéria 2 a 3. Když ani 
+           ta nepomohou, typ je Business Angel.
+      121  - Pro účel databáze je hranice méně důležitá, než se zdá. **Ti
+           cket size je samostatný údaj** a uživatel podle něj filtruje b
+           ez ohledu na typ.
+      122  
+
+● Update(docs/plan.md)
+  ⎿  Added 16 lines, removed 11 lines
+      220  
+      221  ## 7. Aktivita: investuje subjekt stále?
+      222  
+      223 -Aktivita **není podmínkou zařazení**, ale **stavovým atributem
+          -** záznamu. Investor, který delší dobu neinvestoval, zůstává s
+          -kutečným investorem. **Když chybí doklad o investici, ještě to
+          - neznamená, že subjekt přestal investovat.** Záznam se proto p
+          -o určité době automaticky **nemaže** a jen mění stav.         
+      223 +Aktivita **není podmínkou zařazení**, ale **stavovým atributem
+          +** záznamu. Investor, který delší dobu neinvestoval, zůstává v
+          + databázi. *(Rozhodnuto.)*                                    
+      224  
+      225  | Stav (`activity_status`) | Podmínka |
+      226  |---|---|
+      227 -| `active` | **Nová** investice (první investice do dané firmy
+          -) nebo uzavřený nový fond **≤ 24 měsíců** |                   
+      228 -| `unconfirmed` | Poslední nová investice před 24–60 měsíci, *
+          -*nebo** v posledních 24 měsících jen follow-on investice. Záro
+          -veň chybí doklad o ukončení činnosti. |                       
+      229 -| `inactive` | **Doložené ukončení činnosti** (likvidace, záni
+          -k, veřejné oznámení), **nebo** > 60 měsíců bez jakékoli dolože
+          -né investice |                                                
+      227 +| `active` | Doložená investice za **posledních 24 měsíců**. P
+          +očítá se i **follow-on**, tedy další investice do firmy, ve kt
+          +eré už investor podíl má. |                                   
+      228 +| `inactive` | Nejnovější doložená investice je **starší než 2
+          +4 měsíců**, nebo její datum neznáme |                         
+      229  
+      231 -- Stav se **počítá z dat** (`last_new_investment_date`, `last_
+          -investment_date`, `last_fund_close_date`), takže je vždy aktuá
+          -lní.                                                          
+      232 -- Záznamy ve stavu `inactive` se **nemažou**. Jen se ve výchoz
+          -ím vyhledávání zobrazují až na konci nebo se skryjí. Nový důka
+          -z je vrátí do stavu `active`.                                 
+      233 -- **Follow-on investice** ukazují, že investor nasazuje kapitá
+          -l. Pro účel databáze (nový projekt) jsou ale důležitější nové 
+          -investice, proto samy o sobě stav `active` nezakládají.       
+      234 -- **Proč 24 a 60 měsíců:**                                    
+      235 -  - Profesionální investor dělá obvykle několik dealů ročně. D
+          -va roky bez veřejného dealu jsou proto signál, že je třeba akt
+          -ivitu ověřit.                                                 
+      236 -  - Investiční období VC a PE fondu (investment period) bývá n
+          -ěkolik let. Pět let bez jediné investice a bez nového fondu zn
+          -amená, že investiční období posledního známého fondu skončilo.
+      237 -- Obě hranice jsou **parametry**. Zkalibrují se v pilotu podle
+          - toho, jak jsou rozložená data posledních dealů.              
+      230 +- **`inactive` neznamená, že investor přestal investovat.** Zn
+          +amená jen, že **nemáme doloženou novější investici**.         
+      231 +- Stav se **počítá z data poslední doložené investice** (`last
+          +_investment_date`) k aktuálnímu dni, takže je vždy aktuální. Z
+          +áznam se nikdy automaticky nemaže a nový důkaz ho vrátí do sta
+          +vu `active`.                                                  
+      232 +- Oznámení nového fondu stav nemění. Eviduje se jen jako infor
+          +mace o kapitálu (AUM).                                        
+      233  
+      234 +### 7.1 Datum investice a jeho přesnost                       
+      235 +                                                              
+      236 +- **Datum investice** je datum oznámení dealu (announcement) n
+          +ebo datum zápisu do rejstříku. Pokud jsou k dispozici obě, pou
+          +žije se dřívější.                                             
+      237 +- Datum se ukládá **jen s takovou přesností, jakou zdroj skute
+          +čně uvádí** (ISO 8601): `YYYY-MM-DD`, `YYYY-MM` nebo `YYYY`.  
+      238 +- **Neznámé části data se nedoplňují.** Například investice zn
+          +ámá jen rokem 2024 se uloží jako `2024`, nikdy ne jako `2024-0
+          +1-01`.                                                        
+      239 +- Pokud zdroj neuvádí ani rok, datum zůstane **prázdné**. Tako
+          +vá investice nemůže zakládat stav `active`.                   
+      240 +- Při porovnání neúplného data s hranicí 24 měsíců se postupuj
+          +e **konzervativně**: `active` vzniká jen tehdy, když investice
+          + **s jistotou** spadá do posledních 24 měsíců.                
+      241 +  - Rozhoduje nejstarší možný den, který z neúplného data plyn
+          +e.                                                            
+      242 +  - Příklad: k 2026-10-14 je hranice 2024-10-14. Investice s d
+          +atem `2024` proto stav `active` nezakládá, s datem `2025` ano.
+      243 +                                                              
+      244  ---
+      245  
+      246  ## 8. Pravidla vyřazení
+
+● Update(docs/plan.md)
+  ⎿  Added 1 line, removed 1 line
+      267  | Případ | Pravidlo |
+      268  |---|---|
+      269  | Kombinovaný fond dluh + equity (např. growth equity + ventur
+           e debt) | Typ se určí jen podle doložených **equity** investic
+           . Dluhové deally se jako důkaz nepočítají. |
+      270 -| Fond mezi dvěma generacemi (Fund I vyinvestovaný, Fund II ve
+          - fundraisingu) | Řeší ho stav aktivity (kapitola 7). Oznámený 
+          -nový fond zakládá stav `active`. |                            
+      270 +| Fond mezi dvěma generacemi (Fund I vyinvestovaný, Fund II ve
+          + fundraisingu) | Stav určuje jen doložená investice (kapitola 
+          +7). Oznámený nový fond se eviduje u AUM. |                    
+      271  | Investiční skupina bohatého jednotlivce | Má vlastní tým a s
+           pravuje majetek rodiny → FO. Jde o osobu s holdingem → Large P
+           rivate Investor. Provozní holding bez investic do cizích firem
+            → E6. |
+      272  | Partner VC fondu investující soukromě | Samostatný záznam ja
+           ko business angel, ale jen s vlastními doloženými investicemi.
+            |
+      273  | Sankcionované subjekty | Nevyřazovat automaticky. Označit př
+           íznakem podle sankčních seznamů EU a OFAC. |
+
+● Update(docs/plan.md)
+  ⎿  Added 4 lines, removed 2 lines
+      334  | Jednotka záznamu = investiční subjekt, ne jednotlivý fond | 
+           rozhodnuto |
+      335  | K zařazení stačí 1 kvalitní nezávislý důkaz, bez požadavku n
+           a počet investic | rozhodnuto |
+      336  | Úřední registr není povinný, úrovně identity I1/I2 | **návrh
+            k odsouhlasení** |
+      337 -| Aktivita jako stav (24 / 60 měsíců), bez automatického vyřaz
+          -ení | **návrh k odsouhlasení** |                              
+      338 -| Hranice Business Angel / Large Private Investor: 500 000 EUR
+          - + kvalitativní kritéria | **návrh, zkalibrovat v pilotu** |  
+      337 +| Aktivita jako stav `active` / `inactive` (24 měsíců, včetně 
+          +follow-on), bez automatického vyřazení | rozhodnuto |         
+      338 +| Datum investice jen se známou přesností, nic se nedomýšlí | 
+          +rozhodnuto |                                                  
+      339 +| Konzervativní vyhodnocení neúplného data vůči hranici 24 měs
+          +íců | **návrh k odsouhlasení** |                              
+      340 +| Hranice Business Angel / Large Private Investor: 500 000 EUR
+          + jako orientační ukazatel + kvalitativní kritéria | rozhodnuto
+          + (lze upravit po pilotu) |                                    
+      341  | Definice „českého VC“ pro pilot | **otevřené** |
+      342  
+      343  ---
+
+● Bash(grep -n -E "unconfirmed|last_new|last_fund|60 měs|24 /
+      60|zkalibr|parametr" docs/plan.md; git status --short)
+  ⎿  ?? 2026-10-14-181103-local-command-caveatthe-command-below-was-run-d.t
+     xt
+     ?? docs/plan.md
+
+● Úpravy jsou v docs/plan.md. Nic jsem necommitoval.
+
+  Aktivita (kapitola 7):
+  - Dva stavy:
+    - active: doložená investice za posledních 24 měsíců, včetně follow-on
+      investic do firmy, ve které už investor podíl má.
+    - inactive: novější investici nemáme doloženou. V plánu je výslovně uvedeno,
+      že to neznamená, že investor přestal investovat.
+  - Stav unconfirmed, hranici 60 měsíců a pravidlo, že oznámení nového fondu
+    dělá investora aktivním, jsem odstranil. Nový fond se eviduje jen jako údaj
+    o kapitálu (AUM).
+  - Datum poslední investice (last_investment_date) se ukládá jen s přesností,
+    kterou uvádí zdroj: celé datum, rok a měsíc, nebo jen rok. Neznámé části se
+    nedoplňují, takže rok 2024 zůstane jako 2024, nikdy 2024-01-01. Když zdroj
+    neuvádí ani rok, datum zůstane prázdné.
+
+  K odsouhlasení – jedno pravidlo jsem přidal sám: jak porovnat neúplné datum s
+  hranicí 24 měsíců. Navrhuji konzervativní přístup: active jen tehdy, když
+  investice do okna spadá s jistotou. Ke dnešku je hranice 14. 10. 2024, takže
+  investice s datem 2024 aktivitu nezakládá a s datem 2025 ano. Měkčí varianta
+  by pro rok 2024 vrátila active, ale tvrdila by aktivitu, kterou nemáme
+  doloženou.
+
+  Hranice 500 tis. EUR (kapitola 4.3): je teď v plánu jako orientační ukazatel,
+  ne pevné pravidlo, s poznámkou, že ji lze po pilotu upravit.
+
+  Business Angels Europe: plán zatím cituje jen statistiky EBAN. Pro BAE jsem
+  aktuální údaj o průměrné investici nenašel. Dohledal jsem jen starší studii
+  BAE (https://www.business-angels.de/wp-content/uploads/2015/12/BAE-The-Europea
+  n-Business-Angel-Market.pdf), která sama upozorňuje na nedostatek spolehlivých
+  dat o evropském angel trhu. Pokud máš konkrétní zdroj od BAE, doplním ho.
+  Jinak ho v plánu nebudu uvádět, abych necitoval něco neověřeného.
+
+  Zdroje:
+  - EBAN Statistics Compendium 2024
+    (https://www.eban.org/wp-content/uploads/2025/12/Stats-Compendium-2024.pdf)
+  - BAE – The European Business Angel Market (https://www.business-angels.de/wp-
+    content/uploads/2015/12/BAE-The-European-Business-Angel-Market.pdf)
+
+✻ Crunched for 1m 23s · done 8:05 PM
+
+❯ Díky, s úpravami souhlasím, včetně těch dvou stavů aktivity a pravidla pro    
+  neúplná data.                                                                 
+                                                                                
+  Našel jsem i zdroj od Business Angels Europe, kde uvádějí běžné investice     
+  10–250 tisíc EUR:                                                             
+  https://www.businessangelseurope.com/professionalstandards/a.-what-is-a-busin 
+  ess-angel%3F--                                                                
+                                                                                
+  Doplň ho prosím k hranici 500 tisíc EUR. Tu zatím necháme jen jako            
+  orientační, ne jako pevné pravidlo.                                           
+                                                                                
+  Ještě bych chtěl rozlišovat velikost jednotlivého fondu a celkové AUM         
+  investora. Nechci, abychom je automaticky zaměňovali.                         
+                                                                                
+  Pak prosím zkontroluj, že máme všechna naše rozhodnutí zapsaná v              
+  docs/plan.md. Ukaž mi stručně, co je hotové a co nám ještě zbývá. Zatím nic   
+  necommituj.                                                                   
+
+● Fetch(https://www.businessangelseurope.com/professionalstandards/a.-what-is-a-
+       business-angel%3F--)
+  ⎿  Received 683.8KB (200 OK)
+
+  Read 1 file (ctrl+o to expand)
+
+● Zdroj BAE jsem ověřil: stránka uvádí „Mostly they engage in investments of 
+  10.000 EUR to 250.000 EUR per company.“ Zapisuji změny do plánu.
+
+● Update(docs/plan.md)
+  ⎿  Added 1 line, removed 1 line
+      10  
+      11  1. že jde o **skutečného investora**,
+      12  2. **do čeho** investuje (sektory, fáze, typ investic, geografi
+          e),
+      13 -3. **kolik** investuje (ticket size) a jaký má **celkový invest
+         -iční kapitál** (AUM),                                          
+      13 +3. **kolik** investuje (ticket size) a jaký má **celkový invest
+         +iční kapitál** (AUM). Ten se nezaměňuje s velikostí jednotlivýc
+         +h fondů (viz 10.1),                                            
+      14  4. zda **stále investuje** (activity status),
+      15  5. **odkud** každá informace pochází (zdroj a datum).
+      16  
+
+● Update(docs/plan.md)  ⎿  Added 1 line, removed 1 line
+      21  | Krok | Obsah | Výstup | Stav |
+      22  |---|---|---|---|
+      23  | 0 | Struktura repozitáře a konvence | README, `.gitignore`, a
+          dresáře | hotovo |
+      24 -| 1 | Kdo je a kdo není investor | kapitoly 3–10 tohoto dokumen
+         -tu | **návrh k odsouhlasení** |                                
+      24 +| 1 | Kdo je a kdo není investor | kapitoly 3–11 tohoto dokumen
+         +tu | **rozpracováno**, zbývají body v kapitole 12 |            
+      25  | 2 | Datový model s doložením původu každého údaje (data prove
+          nance) | schéma dat a validační skript | plánováno |
+      26  | 3 | Mapa veřejných zdrojů, odhad počtu investorů a spolehlivo
+          sti dat | kapitola plánu | plánováno |
+      27  | 4 | Ověřovací postup (verification protocol) | kapitola plánu
+           a checklist | plánováno |
+
+● Update(docs/plan.md)
+  ⎿  Added 1 line, removed 1 line
+      49  
+      50  Jeden záznam představuje **jeden investiční subjekt**, ne každý
+           jeho fond zvlášť. *(Rozhodnuto.)*
+      51  
+      52 -- Fondy (Fund I, II, SPV, feeder) jsou **atributy záznamu**. Sl
+         -ouží k výpočtu AUM a k doložení investic.                      
+      52 +- Fondy (Fund I, II, SPV, feeder) jsou **atributy záznamu**. Ev
+         +iduje se u nich jejich vlastní velikost (fund size) a slouží k 
+         +doložení investic. AUM investora se z nich automaticky nepočítá
+         + (viz 10.1).                                                   
+      53  - Přejmenované nebo sloučené subjekty mají jeden záznam se sezn
+          amem dřívějších názvů (aliasy).
+      54  - Osobní holding business angela je součástí záznamu této osoby
+          .
+      55  - Partner VC fondu, který investuje i soukromě, může mít vedle 
+          záznamu fondu ještě vlastní záznam jako business angel.
+
+● Update(docs/plan.md)
+  ⎿  Added 14 lines, removed 7 lines
+      102  
+      103  Jinak jde o **Business Angel**.
+      104  
+      105 -**Proč 500 000 EUR:** hranici jsem původně navrhl jako odhad ř
+          -ádu bez opory ve zdroji. Data EBAN ji ale podporují ([EBAN Sta
+          -tistics Compendium 2024](https://www.eban.org/wp-content/uploa
+          -ds/2025/12/Stats-Compendium-2024.pdf), přístup 2026-10-14):   
+      105 +**Proč 500 000 EUR:** hranice vznikla jako odhad řádu. Následn
+          +ě se porovnala s veřejnými statistikami evropských angel asoci
+          +ací:                                                          
+      106  
+      107 -| Ukazatel (evropský „visible market“, 2024) | Hodnota | Zdroj
+          - |                                                            
+      107 +| Ukazatel | Hodnota | Zdroj |                                
+      108  |---|---|---|
+      109 -| Průměrný ticket jednoho angela v jednom kole | 25 600 EUR | 
+          -s. 6 a 19 (Figure 11) |                                       
+      110 -| Průměrná investice angelů do jedné firmy (souhrnně za kolo) 
+          -| 204 900 EUR | s. 6 a 19 (Figure 11) |                       
+      111 -| Průměrné kolo v kategorii angel rounds do 1 mil. EUR | ~410 
+          -000 EUR | s. 10 |                                             
+      112 -| Česko: 3 angel networks, 340 angelů, 70 investic, 15 mil. EU
+          -R | – | s. 16 |                                               
+      109 +| Běžná investice business angela do jedné firmy | **10 000–25
+          +0 000 EUR** | [Business Angels Europe: A. What is a Business A
+          +ngel?](https://www.businessangelseurope.com/professionalstanda
+          +rds/a.-what-is-a-business-angel%3F--), část „Investment strate
+          +gy and Ticket size“ |                                         
+      110 +| Průměrný ticket jednoho angela v jednom kole (2024) | 25 600
+          + EUR | [EBAN Statistics Compendium 2024](https://www.eban.org/
+          +wp-content/uploads/2025/12/Stats-Compendium-2024.pdf), s. 6 a 
+          +19 (Figure 11) |                                              
+      111 +| Průměrná investice angelů do jedné firmy, souhrnně za kolo (
+          +2024) | 204 900 EUR | EBAN 2024, s. 6 a 19 (Figure 11) |      
+      112 +| Průměrné kolo v kategorii angel rounds do 1 mil. EUR (2024) 
+          +| ~410 000 EUR | EBAN 2024, s. 10 |                           
+      113 +| Česko: 3 angel networks, 340 angelů, 70 investic, 15 mil. EU
+          +R (2024) | – | EBAN 2024, s. 16 |                             
+      114  
+      114 -Ticket 500 000 EUR od **jediné osoby** je přibližně **20× prům
+          -ěrný ticket angela** a **2,4× víc, než všichni angelové v prům
+          -ěru dají do jedné firmy**. Taková osoba tedy sama pokryje celé
+          - typické angel kolo a chová se jako institucionální investor. 
+      115 +Ticket 500 000 EUR od **jediné osoby** je:                    
+      116  
+      117 +- **dvojnásobek horní hranice** běžného rozpětí podle BAE,    
+      118 +- přibližně **20× průměrný ticket angela** podle EBAN,        
+      119 +- **2,4× víc, než všichni angelové v průměru dají do jedné fir
+          +my** (EBAN).                                                  
+      120 +                                                              
+      121 +Taková osoba tedy sama pokryje celé typické angel kolo a chová
+          + se spíš jako institucionální investor.                       
+      122 +                                                              
+      123  **Omezení:**
+      124  
+      125  - Hranice 500 000 EUR je **orientační ukazatel (indicative thr
+           eshold)**, ne pevné pravidlo. *(Rozhodnuto.)*
+
+● Update(docs/plan.md)
+  ⎿  Added 1 line, removed 1 line
+      123  **Omezení:**
+      124  
+      125  - Hranice 500 000 EUR je **orientační ukazatel (indicative thr
+           eshold)**, ne pevné pravidlo. *(Rozhodnuto.)*
+      126 -- EBAN pracuje jen s viditelnou částí trhu (visible market) a 
+          -sám uvádí, že data nejsou reprezentativní (s. 2–3). Hranici lz
+          -e proto po pilotu upravit podle skutečně doložených ticketů.  
+      126 +- EBAN pracuje jen s viditelnou částí trhu (visible market) a 
+          +sám uvádí, že data nejsou reprezentativní (s. 2–3). Stránka BA
+          +E neuvádí datum aktualizace (v patičce je jen © 2013). Hranici
+          + lze proto po pilotu upravit podle skutečně doložených ticketů
+          +.                                                             
+      127  - Pokud ticket není známý, rozhodují kritéria 2 a 3. Když ani 
+           ta nepomohou, typ je Business Angel.
+      128  - Pro účel databáze je hranice méně důležitá, než se zdá. **Ti
+           cket size je samostatný údaj** a uživatel podle něj filtruje b
+           ez ohledu na typ.
+      129  
+
+● Update(docs/plan.md)
+  ⎿  Added 1 line, removed 1 line
+      236  
+      237  - **`inactive` neznamená, že investor přestal investovat.** Zn
+           amená jen, že **nemáme doloženou novější investici**.
+      238  - Stav se **počítá z data poslední doložené investice** (`last
+           _investment_date`) k aktuálnímu dni, takže je vždy aktuální. Z
+           áznam se nikdy automaticky nemaže a nový důkaz ho vrátí do sta
+           vu `active`.
+      239 -- Oznámení nového fondu stav nemění. Eviduje se jen jako infor
+          -mace o kapitálu (AUM).                                        
+      239 +- Oznámení nového fondu stav nemění. Eviduje se jen jako nový 
+          +fond s jeho velikostí (viz 10.1).                             
+      240  
+      241  ### 7.1 Datum investice a jeho přesnost
+      242  
+
+● Update(docs/plan.md)
+  ⎿  Added 1 line, removed 1 line
+      274  | Případ | Pravidlo |
+      275  |---|---|
+      276  | Kombinovaný fond dluh + equity (např. growth equity + ventur
+           e debt) | Typ se určí jen podle doložených **equity** investic
+           . Dluhové deally se jako důkaz nepočítají. |
+      277 -| Fond mezi dvěma generacemi (Fund I vyinvestovaný, Fund II ve
+          - fundraisingu) | Stav určuje jen doložená investice (kapitola 
+          -7). Oznámený nový fond se eviduje u AUM. |                    
+      277 +| Fond mezi dvěma generacemi (Fund I vyinvestovaný, Fund II ve
+          + fundraisingu) | Stav určuje jen doložená investice (kapitola 
+          +7). Oznámený nový fond se eviduje jako fond s cílovou nebo uza
+          +vřenou velikostí (viz 10.1). |                                
+      278  | Investiční skupina bohatého jednotlivce | Má vlastní tým a s
+           pravuje majetek rodiny → FO. Jde o osobu s holdingem → Large P
+           rivate Investor. Provozní holding bez investic do cizích firem
+            → E6. |
+      279  | Partner VC fondu investující soukromě | Samostatný záznam ja
+           ko business angel, ale jen s vlastními doloženými investicemi.
+            |
+      280  | Sankcionované subjekty | Nevyřazovat automaticky. Označit př
+           íznakem podle sankčních seznamů EU a OFAC. |
+
+● Update(docs/plan.md)
+  ⎿  Added 1 line, removed 1 line
+      290  | Skupina polí | Pole | Když chybí |
+      291  |---|---|---|
+      292  | **Pole nutná pro zařazení** (inclusion fields) | identita, p
+           rimary type, země HQ, ≥1 nezávislý důkaz investice | záznam **
+           se nezařadí** a zůstává v seznamu kandidátů |
+      293 -| **Popisná pole** (descriptive fields) | sektory, fáze a typ 
+          -investic, geografie, ticket size, AUM | záznam **zůstává**, ho
+          -dnota je `null` a v `missing_reason` je důvod: `not_public`, `
+          -conflicting` nebo `not_applicable` |                          
+      293 +| **Popisná pole** (descriptive fields) | sektory, fáze a typ 
+          +investic, geografie, ticket size, AUM, velikost fondů | záznam
+          + **zůstává**, hodnota je `null` a v `missing_reason` je důvod:
+          + `not_public`, `conflicting` nebo `not_applicable` |          
+      294  
+      295  **Původ hodnoty** (atribut `value_origin`, podle spolehlivosti
+           ):
+      296  
+
+● Update(docs/plan.md)
+  ⎿  Added 20 lines
+      300  
+      301  **Stárnutí:** každá hodnota má datum `as_of`. Údaj o AUM starš
+           í než 3 roky dostane příznak `stale`.
+      302  
+      303 +### 10.1 Velikost fondu vs. AUM investora                     
+      304 +                                                              
+      305 +Velikost jednotlivého fondu a celkové AUM investora jsou **dva
+          + samostatné údaje** a **automaticky se nezaměňují**. *(Rozhodn
+          +uto.)* „Celkový investiční kapitál“ ze zadání odpovídá **AUM i
+          +nvestora**.                                                   
+      306 +                                                              
+      307 +| Údaj | Úroveň | Význam |                                    
+      308 +|---|---|---|                                                 
+      309 +| **Velikost fondu** (`fund_size`) | jeden konkrétní fond | Ka
+          +pitál, který investoři do fondu upsali (committed capital). Ev
+          +iduje se s názvem fondu, vintage, měnou, datem a typem velikos
+          +ti: `target` (cílová), `first_close` (první uzavření) nebo `fi
+          +nal_close` (konečné uzavření). |                              
+      310 +| **AUM investora** (`aum`) | celý investiční subjekt | Celkov
+          +ý kapitál, který investor spravuje napříč všemi fondy a vehiku
+          +ly, **jak ho uvádí zdroj**, k datu `as_of`. Ukládá se i defini
+          +ce, kterou zdroj používá (např. regulatory AUM ve Form ADV, co
+          +mmitted capital). |                                           
+      311 +                                                              
+      312 +**Pravidla:**                                                 
+      313 +                                                              
+      314 +- Velikost jednoho fondu se **nikdy nezapisuje jako AUM** a na
+          +opak. Typická chyba médií je zaměnit „fond o velikosti X“ a „s
+          +pravuje X“, proto se vždy čte přesná formulace ve zdroji.     
+      315 +- **AUM se z velikostí fondů automaticky nedopočítává.** Souče
+          +t fondů se od AUM liší kvůli vráceným prostředkům, změnám hodn
+          +oty portfolia, neznámým fondům a co-investment vehiklům.      
+      316 +- Pokud AUM není zveřejněné, zůstane `null` s důvodem `not_pub
+          +lic`, **i když známe velikosti fondů**.                       
+      317 +- Cílová velikost (`target`) a první uzavření (`first_close`) 
+          +se nikdy neprezentují jako konečná velikost fondu.            
+      318 +- U fyzických osob a FO se **osobní majetek** (net worth, např
+          +. žebříčky bohatých) nezapisuje jako AUM ani jako investiční k
+          +apitál.                                                       
+      319 +- V měření přesnosti (krok 6) se velikost fondu a AUM ověřují 
+          +jako **dvě samostatná pole**.                                 
+      320 +                                                              
+      321 +**Návrh k odsouhlasení:** součet známých fondů lze uvést jako 
+          +**samostatný odvozený údaj** `known_funds_total` (`value_origi
+          +n = derived`). Byl by výslovně označený jako dolní odhad kapit
+          +álu a nikdy by se nezobrazoval jako AUM.                      
+      322 +                                                              
+      323  ---
+      324  
+      325  ## 11. Pilot: české VC a rozbor zdroje CVCA
+
+● Update(docs/plan.md)
+  ⎿  Added 19 lines, removed 12 lines
+      354  
+      355  | Téma | Stav |
+      356  |---|---|
+      357 -| Účel databáze: rychle najít skutečné a aktivní investory pro
+          - projekt | rozhodnuto |                                       
+      358 -| Definice investora: sám rozhoduje + veřejně doložená investi
+          -ce | rozhodnuto |                                             
+      359 -| Pět základních typů podle zadání, ostatní subjekty přes `sub
+          -type` | typy rozhodnuto, `subtype` návrh |                    
+      360 -| Corporate VC → VC / `corporate` | **návrh k odsouhlasení** |
+      361 -| Jednotka záznamu = investiční subjekt, ne jednotlivý fond | 
+          -rozhodnuto |                                                  
+      362 -| K zařazení stačí 1 kvalitní nezávislý důkaz, bez požadavku n
+          -a počet investic | rozhodnuto |                               
+      363 -| Úřední registr není povinný, úrovně identity I1/I2 | **návrh
+          - k odsouhlasení** |                                           
+      364 -| Aktivita jako stav `active` / `inactive` (24 měsíců, včetně 
+          -follow-on), bez automatického vyřazení | rozhodnuto |         
+      365 -| Datum investice jen se známou přesností, nic se nedomýšlí | 
+          -rozhodnuto |                                                  
+      366 -| Konzervativní vyhodnocení neúplného data vůči hranici 24 měs
+          -íců | **návrh k odsouhlasení** |                              
+      367 -| Hranice Business Angel / Large Private Investor: 500 000 EUR
+          - jako orientační ukazatel + kvalitativní kritéria | rozhodnuto
+          - (lze upravit po pilotu) |                                    
+      368 -| Definice „českého VC“ pro pilot | **otevřené** |            
+      357 +| Téma | Kapitola | Stav |                                    
+      358 +|---|---|---|                                                 
+      359 +| Účel databáze: rychle najít skutečné a aktivní investory pro
+          + projekt | 1 | rozhodnuto |                                   
+      360 +| Metodika použitelná celosvětově, pilot na českých VC, jen ve
+          +řejná data | 1 | rozhodnuto |                                 
+      361 +| Definice investora: sám rozhoduje + veřejně doložená investi
+          +ce | 3 | rozhodnuto |                                         
+      362 +| Jednotka záznamu = investiční subjekt, ne jednotlivý fond | 
+          +3.1 | rozhodnuto |                                            
+      363 +| Pět základních typů podle zadání | 4 | rozhodnuto |         
+      364 +| Ostatní subjekty přes `subtype` (accelerator, public, instit
+          +utional, angel fund, multi-family) | 4.2 | **návrh k odsouhlas
+          +ení** |                                                       
+      365 +| Corporate VC → VC / `corporate` | 4.2 | **návrh k odsouhlase
+          +ní** |                                                        
+      366 +| Hranice Business Angel / Large Private Investor: 500 000 EUR
+          + jako orientační ukazatel (EBAN + BAE) + kvalitativní kritéria
+          + | 4.3 | rozhodnuto (lze upravit po pilotu) |                 
+      367 +| Úřední registr není povinný, úrovně identity I1/I2/I3 | 5 (K
+          +1) | **návrh k odsouhlasení** |                               
+      368 +| K zařazení stačí 1 kvalitní nezávislý důkaz, bez požadavku n
+          +a počet investic | 5 (K3) | rozhodnuto |                      
+      369 +| Aktivita jako stav `active` / `inactive` (24 měsíců, včetně 
+          +follow-on), bez automatického vyřazení | 7 | rozhodnuto |     
+      370 +| Datum investice jen se známou přesností, nic se nedomýšlí | 
+          +7.1 | rozhodnuto |                                            
+      371 +| Konzervativní vyhodnocení neúplného data vůči hranici 24 měs
+          +íců | 7.1 | rozhodnuto |                                      
+      372 +| Velikost fondu a AUM investora jako dva samostatné údaje, be
+          +z automatické záměny | 10.1 | rozhodnuto |                    
+      373 +| Odvozený údaj `known_funds_total` (součet známých fondů, dol
+          +ní odhad) | 10.1 | **návrh k odsouhlasení** |                 
+      374 +| Úrovně zdrojů Tier 1–4, hodnocení A/B/C, pravidla vyřazení E
+          +1–E10, hraniční případy, chybějící údaje (`null` + důvod), GDP
+          +R | 6, 8, 9, 10 | **návrh bez připomínek, zatím výslovně nesch
+          +válený** |                                                    
+      375 +| Definice „českého VC“ pro pilot | 11.1 | **otevřené** |     
+      376  
+      377  ---
+      378  
+
+● Update(docs/plan.md)
+  ⎿  Added 1 line
+      381  | Zdroj | URL | Přístup |
+      382  |---|---|---|
+      383  | EBAN Statistics Compendium 2024 | https://www.eban.org/wp-co
+           ntent/uploads/2025/12/Stats-Compendium-2024.pdf | 2026-10-14 |
+      384 +| Business Angels Europe: A. What is a Business Angel? | https
+          +://www.businessangelseurope.com/professionalstandards/a.-what-
+          +is-a-business-angel%3F-- | 2026-10-14 |                       
+      385  | CVCA: řádní členové | https://cvca.cz/clenstvi/radni-clenove
+           / | 2026-10-14 |
+      386  | CVCA: přidružení členové | https://cvca.cz/clenstvi/pridruze
+           ni-clenove/ | 2026-10-14 |
+
+● Update(docs/plan.md)
+  ⎿  Removed 2 lines
+      352  
+      353  ## 12. Přehled rozhodnutí a otevřené otázky
+      354  
+      355 -| Téma | Stav |                                               
+      356 -|---|---|                                                     
+      355  | Téma | Kapitola | Stav |
+      356  |---|---|---|
+      357  | Účel databáze: rychle najít skutečné a aktivní investory pro
+            projekt | 1 | rozhodnuto |
+
+● Bash(grep -n -E "AUM" docs/plan.md | cut -c1-160; echo "---"; sed -n '/^##
+      12/,/^## Zdroje/p' docs/plan.md | head -8; echo "---"; git status --short)
+  ⎿  13:3. **kolik** investuje (ticket size) a jaký má **celkový investiční
+      kapitál** (AUM). Ten se nezaměňuje s velikostí jednotlivých fondů (vi
+     z 10.1),
+     … +41 lines (ctrl+o to expand)
+
+● Bash(sed -i 's/| \*\*důkaz investice\*\*, ticket, AUM |/| **důkaz investice**,
+      ticket, velikost fondů, AUM |/; s/| sektory, fáze, ticket, AUM
+      (doplňkově) |/| sektory…)
+  ⎿  197:| **Tier 2: nezávislé** | strana dealu jiná než investor, redakční
+      mé
+     198:| **Tier 3: vlastní tvrzení** | zdroje kontrolované investorem | w
+     eb, por
+  ⎿  Updated docs/plan.md (+2 -2)
+      194  | Tier | Druh zdroje | Příklady | Použití |
+      195  |---|---|---|---|
+      196  | **Tier 1: úřední** | rejstříky, regulátoři, úřední listiny |
+            obchodní rejstřík a sbírka listin (justice.cz), ARES, seznamy
+            ČNB, Companies House, Handelsregister, SEC Form ADV a Form D,
+            ESMA, GLEIF | identita, rozhodovací pravomoc, **důkaz investi
+           ce** |
+      197 -| **Tier 2: nezávislé** | strana dealu jiná než investor, reda
+          -kční média | tisková zpráva portfoliové firmy, oznámení co-inv
+          -estora nebo LP (např. EIF), CzechCrunch, Hospodářské noviny, F
+          -orbes, TechCrunch, FT | **důkaz investice**, ticket, AUM |    
+      198 -| **Tier 3: vlastní tvrzení** | zdroje kontrolované investorem
+          - | web, portfolio, investment thesis, výroční zpráva, rozhovor
+          - | sektory, fáze, ticket, AUM (doplňkově) |                   
+      197 +| **Tier 2: nezávislé** | strana dealu jiná než investor, reda
+          +kční média | tisková zpráva portfoliové firmy, oznámení co-inv
+          +estora nebo LP (např. EIF), CzechCrunch, Hospodářské noviny, F
+          +orbes, TechCrunch, FT | **důkaz investice**, ticket, velikost 
+          +fondů, AUM |                                                  
+      198 +| **Tier 3: vlastní tvrzení** | zdroje kontrolované investorem
+          + | web, portfolio, investment thesis, výroční zpráva, rozhovor
+          + | sektory, fáze, ticket, velikost fondů, AUM (doplňkově) |   
+      199  | **Tier 4: agregátory** | databáze a seznamy | Crunchbase, De
+           alroom, OpenVC, Wikipedia, **členské seznamy asociací (např. C
+           VCA)** | **jen pro hledání kandidátů**, nikdy jako důkaz |
+      200  
+      201  ### 6.2 Co se u každého důkazu zaznamenává
+
+● Doplnil jsem docs/plan.md a prošel v něm všechna dosavadní rozhodnutí. Nic
+  jsem necommitoval.
+
+  Změny v tomto kroku:
+  - Zdroj BAE (kapitola 4.3): ověřil jsem ho. Stránka uvádí „Mostly they engage 
+    in investments of 10.000 EUR to 250.000 EUR per company“. Hranice 500 tis.
+    EUR je tedy dvojnásobek horní meze tohoto rozpětí a v plánu je jen jako
+    orientační ukazatel. Stránka nemá datum aktualizace (v patičce je jen
+    © 2013), proto jsem to uvedl mezi omezeními.
+  - Velikost fondu vs. AUM (nová kapitola 10.1):
+    - Jsou to dva samostatné údaje: fund_size se vztahuje k jednomu fondu a
+      rozlišuje cílovou velikost, první a konečné uzavření. aum je za celého
+      investora.
+    - AUM se z fondů automaticky nedopočítává a osobní majetek se do AUM
+      nezapisuje.
+    - Opravil jsem tři místa (kapitoly 3.1, 7 a 9), kde plán ještě počítal s
+      tím, že se AUM skládá z fondů.
+  - Přehled rozhodnutí (kapitola 12): jsou v něm všechna rozhodnutí včetně čísla
+    kapitoly. Chyběla tam metodika „celosvětově + pilot na českých VC“,
+    rozlišení fond vs. AUM a pravidlo pro neúplná data, teď je tam označené jako
+    schválené.
+
+  Hotovo:
+  - Krok 0 (repozitář, README, .gitignore, git identita) je commitnutý a
+    pushnutý.
+  - Krok 1 obsahuje tato schválená rozhodnutí:
+    - účel databáze a definice investora,
+    - pět typů ze zadání,
+    - jeden záznam = jeden investiční subjekt,
+    - k zařazení stačí jeden kvalitní nezávislý důkaz,
+    - aktivita active / inactive s hranicí 24 měsíců,
+    - datum se ukládá jen s přesností, jakou uvádí zdroj, a neúplné datum se
+      vyhodnocuje konzervativně,
+    - hranice 500 tis. EUR jako orientační,
+    - rozlišení velikosti fondu a AUM.
+
+  Zbývá uzavřít krok 1:
+  1. Korporátní fondy zařadit jako VC / corporate.
+  2. Další druhy investorů přes subtype: akcelerátory, veřejní investoři,
+     instituce, angel fondy, multi-family office.
+  3. Úrovně identity I1/I2/I3, protože registr není povinný.
+  4. Odvozený údaj known_funds_total: součet známých fondů jako dolní odhad,
+     nikdy ne jako AUM. Tohle je nový návrh z dnešní úpravy.
+  5. Výslovně schválit zbytek metodiky, ke kterému jsi neměl připomínky: úrovně
+     zdrojů, hodnocení A/B/C, pravidla vyřazení E1–E10, hraniční případy,
+     chybějící údaje a GDPR.
+  6. Definovat „český VC“ pro pilot. Návrh: investiční tým sídlí v ČR, bez
+     ohledu na to, kde je fond založený.
+
+  Úklid v repozitáři:
+  - commit docs/plan.md (až řekneš),
+  - přesunout export konverzace z kořene repozitáře do ai-log/,
+  - zapsat rozhodnutí z kroku 1 do decision logu v README.
+
+  Další kroky: 2 datový model, 3 zdroje a odhad počtu investorů, 4 ověřovací
+  postup, 5 pilot, 6 měření přesnosti, 7 odhad nákladů, 8 finalizace.
+
+✻ Sautéed for 2m 10s · done 8:09 PM
+
+※ recap: Stavíme databázi investorů a dokončujeme krok 1 v docs/plan.md, kde metodika zařazení obsahuje schválená rozhodnutí. Dalším krokem je, abys rozhodl o zbývajících šesti bodech v kapitole 12, například o zařazení korporátních fondů a definici českého VC. (disable recaps in /config)
+
+❯ S body 1,3, a 6 souhlasím. U dalších typů investorů pozor, aby se automaticky 
+  nezařazovalo pod VC. U known_funds_total bych zatím zůstal pouze u velikostí  
+  jednotlivých fondů. Zkontroluj ještě, jestli nějaká pravidla se neodporují    
+  (např. aby se investor automaticky nevyřazoval kvůli neaktivitě). Pokud bude  
+  vše v pořádku, uděláme commit a push.                                         
+
+  Read 1 file (ctrl+o to expand)
+
+● Update(docs/plan.md)
+  ⎿  Added 1 line, removed 1 line
+      38  
+      39  Upřesnění:
+      40  
+      41 -- **Investice** znamená vložení kapitálu do firmy výměnou za eq
+         -uity nebo quasi-equity: obchodní podíl, akcie, convertible loan
+         - nebo SAFE. Smyslem je finanční výnos. Za investici se nepovažu
+         -je úvěr, grant, dotace, sponzoring ani služba.                 
+      41 +- **Investice** znamená vložení kapitálu do firmy výměnou za eq
+         +uity nebo quasi-equity: obchodní podíl, akcie, convertible loan
+         + nebo SAFE. Smyslem je finanční výnos. Za investici se nepovažu
+         +je úvěr bez možnosti konverze na podíl, grant, dotace, sponzori
+         +ng ani služba.                                                 
+      42  - **Firma** je obchodní společnost, zpravidla nekótovaná. Inves
+          tice do nemovitostí, infrastruktury nebo komodit se nepočítají.
+      43  - **„Sám rozhoduje“** znamená, že záznam patří subjektu, který 
+          má o investicích **rozhodovací pravomoc**. U fondů je to správc
+          e (management company, GP, investiční výbor), u člověka on sám.
+           Investorem tedy **nejsou**:
+      44    - samotná investiční vehikula (fond, SPV, feeder),
+
+● Update(docs/plan.md)
+  ⎿  Added 2 lines, removed 2 lines
+      51  
+      52  - Fondy (Fund I, II, SPV, feeder) jsou **atributy záznamu**. Ev
+          iduje se u nich jejich vlastní velikost (fund size) a slouží k 
+          doložení investic. AUM investora se z nich automaticky nepočítá
+           (viz 10.1).
+      53  - Přejmenované nebo sloučené subjekty mají jeden záznam se sezn
+          amem dřívějších názvů (aliasy).
+      54 -- Osobní holding business angela je součástí záznamu této osoby
+         -.                                                              
+      55 -- Partner VC fondu, který investuje i soukromě, může mít vedle 
+         -záznamu fondu ještě vlastní záznam jako business angel.        
+      54 +- Osobní holding fyzické osoby bez investičního týmu je součást
+         +í záznamu této osoby.                                          
+      55 +- Partner VC fondu, který investuje i soukromě, může mít vedle 
+         +záznamu fondu ještě vlastní záznam jako business angel nebo lar
+         +ge private investor (podle 4.3).                               
+      56  
+      57  ---
+      58  
+
+● Update(docs/plan.md)
+  ⎿  Added 1 line, removed 1 line
+      66  | **Private Equity (PE)** | Profesionální investiční subjekt. K
+          upuje převážně **většinové (kontrolní) nebo významné podíly v z
+          avedených firmách** (buyout, MBO/MBI, konsolidace, growth s kon
+          trolou). |
+      67  | **Family Office (FO)** | **Organizace s vlastním týmem**, kte
+          rá spravuje majetek jedné rodiny (single) nebo více rodin (mult
+          i) a investuje **přímo do firem**. |
+      68  | **Business Angel** | **Fyzická osoba**, která investuje vlast
+          ní peníze převážně do **startupů v rané fázi**, s menšími ticke
+          ty a minoritními podíly. |
+      69 -| **Large Private Investor** | **Fyzická osoba** (přímo nebo př
+         -es vlastní holding bez samostatné organizace typu FO), která in
+         -vestuje vlastní peníze ve **výrazně větším objemu** nebo do **z
+         -avedených firem**. |                                           
+      69 +| **Large Private Investor** | **Fyzická osoba** (přímo nebo př
+         +es vlastní holding bez investičního týmu), která investuje vlas
+         +tní peníze ve **výrazně větším objemu** nebo do **zavedených fi
+         +rem**. |                                                       
+      70  
+      71  ### 4.1 Jak určit typ investora
+      72  
+
+● Update(docs/plan.md)
+  ⎿  Added 7 lines, removed 2 lines
+      73  Kroky se procházejí v tomto pořadí. Rozhoduje první, který sedí
+          .
+      74  
+      75  1. **Je to fyzická osoba** (přímo, nebo přes vlastní holding be
+          z investičního týmu)? → Business Angel, nebo Large Private Inve
+          stor (viz 4.3).
+      76 -2. **Je to organizace, která spravuje majetek rodiny nebo rodin
+         -?** → Family Office. Rozhoduje, jak subjekt funguje, ne jak se 
+         -jmenuje.                                                       
+      77 -3. **Ostatní profesionální investiční subjekty** → VC, nebo PE 
+         -podle převažujícího charakteru doložených investic za posledníc
+         -h 36 měsíců. Pokud jich je málo, berou se v úvahu všechny. Při 
+         -nerozhodném výsledku rozhoduje, jak se subjekt sám prezentuje. 
+      76 +2. **Je to organizace s investičním týmem, která spravuje majet
+         +ek jedné osoby, rodiny nebo více rodin?** → Family Office. Rozh
+         +oduje, jak subjekt funguje, ne jak se jmenuje.                 
+      77 +3. **Ostatní profesionální investiční subjekty** → VC, nebo PE 
+         +podle charakteru **všech doložených investic** (definice v tabu
+         +lce výše):                                                     
+      78 +   - rozhoduje převažující charakter investic,                 
+      79 +   - při shodě rozhodují novější investice,                    
+      80 +   - pokud ani to nerozhodne, rozhoduje, jak se subjekt sám pre
+         +zentuje.                                                       
+      81  
+      82 +**Žádný typ se nepřiřazuje automaticky.** Pokud typ z doloženýc
+         +h podkladů určit nejde, záznam se nezařadí a zůstává v seznamu 
+         +kandidátů (candidate queue). Viz kapitola 10.                  
+      83 +                                                               
+      84  ### 4.2 Subjekty mimo pět základních typů (subtype)
+      85  
+      86  Subjekty, které nespadají přímo do žádného ze základních typů, 
+          dostanou jeden z nich a k tomu atribut `subtype`. Uživatel je t
+          ak může filtrovat a nevznikají nové základní typy.
+
+● Update(docs/plan.md)
+  ⎿  Added 13 lines, removed 11 lines
+       83  
+       84  ### 4.2 Subjekty mimo pět základních typů (subtype)
+       85  
+       86 -Subjekty, které nespadají přímo do žádného ze základních typů,
+          - dostanou jeden z nich a k tomu atribut `subtype`. Uživatel je
+          - tak může filtrovat a nevznikají nové základní typy.          
+       86 +Atribut `subtype` popisuje **formu subjektu** (korporátní, veř
+          +ejný, akcelerátor…). Uživatel podle něj může filtrovat a nevzn
+          +ikají nové základní typy.                                     
+       87  
+       88 -| Subjekt | Zařazení | Podmínka |                             
+       89 -|---|---|---|                                                 
+       90 -| **Corporate VC (CVC)**, korporátní fond velké firmy, např. I
+          -nven Capital ve skupině ČEZ | VC / `corporate` | Investuje fin
+          -ančně do **minoritních podílů ve firmách mimo vlastní skupinu*
+          -*, má samostatnou jednotku nebo deklarovaný investiční program
+          -. Akvizice firem do vlastní skupiny se nepočítají (E6). |     
+       91 -| Accelerator, venture studio | VC / `accelerator` | Investuje
+          - **vlastní kapitál** do equity, nejen služby a program. |     
+       92 -| Státní nebo veřejný investor (státní fondy, development bank
+          -s) | VC nebo PE / `public` | Investuje **přímo do firem**. Pok
+          -ud funguje jen jako LP ve fondech → E7. |                     
+       93 -| Instituce investující přímo (pension fund, pojišťovna, státn
+          -í investiční fond SWF, crossover fund) | VC nebo PE / `institu
+          -tional` | Má doložené přímé investice do firem. |             
+       94 -| Angel fund (fond s centrálním rozhodováním) | VC / `angel_fu
+          -nd` | O investicích rozhoduje manažer nebo výbor fondu. |     
+       95 -| Angel club, angel network | **není investor** | Členové rozh
+          -odují každý sám. Zařadit lze jednotlivé členy jako business an
+          -gels, pokud mají vlastní doložené investice. |                
+       96 -| Multi-family office, wealth manager | FO / `multi_family` | 
+          -Má doložené **přímé** investice do firem. Jinak E4 nebo E7. | 
+       88 +**Subtype nikdy neurčuje základní typ.** Ten se u všech subjek
+          +tů určuje stejnými pravidly podle 4.1, tedy podle doložených i
+          +nvestic. Žádná forma subjektu se tak automaticky nezařazuje po
+          +d VC. *(Rozhodnuto.)*                                         
+       89  
+       98 -**Doporučení ke korporátním fondům:** CVC se chovají jako VC. 
+          -Rozhodují o investicích do startupů a kupují minoritní podíly.
+          - Proto je zařazuji jako **VC se subtype `corporate`**. Hranici
+          - tvoří účel transakce: finanční investice ano, strategická akv
+          -izice do vlastní skupiny ne.                                  
+       90 +| Subjekt | `subtype` | Základní typ | Podmínka zařazení |    
+       91 +|---|---|---|---|                                             
+       92 +| **Corporate VC (CVC)**, korporátní fond velké firmy, např. I
+          +nven Capital ve skupině ČEZ | `corporate` | **VC** *(rozhodnut
+          +o)* | Investuje finančně do **minoritních podílů ve firmách mi
+          +mo vlastní skupinu**, má samostatnou jednotku nebo deklarovaný
+          + investiční program. Akvizice firem do vlastní skupiny se nepo
+          +čítají (E6). |                                                
+       93 +| Accelerator, venture studio | `accelerator` | podle 4.1, kro
+          +k 3 | Investuje **vlastní kapitál** do equity, nejen služby a 
+          +program. |                                                    
+       94 +| Státní nebo veřejný investor (státní fondy, development bank
+          +s) | `public` | podle 4.1, krok 3 | Investuje **přímo do firem
+          +**. Pokud funguje jen jako LP ve fondech → E7. |              
+       95 +| Instituce investující přímo (pension fund, pojišťovna, státn
+          +í investiční fond SWF, crossover fund) | `institutional` | pod
+          +le 4.1, krok 3 | Má doložené přímé investice do firem. |      
+       96 +| Angel fund (fond s centrálním rozhodováním) | `angel_fund` |
+          + podle 4.1, krok 3 | O investicích rozhoduje manažer nebo výbo
+          +r fondu. |                                                    
+       97 +| Multi-family office | `multi_family` | FO (4.1, krok 2) | Má
+          + doložené **přímé** investice do firem. Jinak E4 nebo E7. |   
+       98 +| Angel club, angel network | – | **není investor** | Členové 
+          +rozhodují každý sám. Zařadit lze jednotlivé členy jako busines
+          +s angels, pokud mají vlastní doložené investice. |            
+       99  
+      100 +**Korporátní fondy:** CVC se chovají jako VC. Rozhodují o inve
+          +sticích do startupů a kupují minoritní podíly. Hranici tvoří ú
+          +čel transakce: finanční investice ano, strategická akvizice do
+          + vlastní skupiny ne.                                          
+      101 +                                                              
+      102  ### 4.3 Hranice mezi Business Angel a Large Private Investor
+      103  
+      104  Typ popisuje **investiční chování**, ne velikost majetku. Osob
+           a je **Large Private Investor**, pokud splní **alespoň jedno**
+           :
+● Update(docs/plan.md)
+  ⎿  Added 3 lines, removed 2 lines
+      104  Typ popisuje **investiční chování**, ne velikost majetku. Osob
+           a je **Large Private Investor**, pokud splní **alespoň jedno**
+           :
+      105  
+      106  1. její **typický ticket** (medián doložených vlastních invest
+           ic) dosahuje zhruba **500 000 EUR a více** (orientační ukazate
+           l, viz níže),
+      107 -2. kupuje **většinové nebo kontrolní podíly**, nebo investuje 
+          -do **zavedených firem** (ne startupů),                        
+      108 -3. investuje přes **vlastní investiční holding s týmem**, kter
+          -ý ale nemá charakter FO (viz 4.1, krok 2).                    
+      107 +2. kupuje **většinové nebo kontrolní podíly**, nebo investuje 
+          +do **zavedených firem** (ne startupů).                        
+      108  
+      109 +Pokud osoba investuje přes holding s vlastním investičním týme
+          +m, nejde o fyzickou osobu, ale o Family Office (4.1, krok 2). 
+      110 +                                                              
+      111  Jinak jde o **Business Angel**.
+      112  
+      113  **Proč 500 000 EUR:** hranice vznikla jako odhad řádu. Následn
+           ě se porovnala s veřejnými statistikami evropských angel asoci
+           ací:
+
+● Update(docs/plan.md)
+  ⎿  Added 1 line, removed 1 line
+      132  
+      133  - Hranice 500 000 EUR je **orientační ukazatel (indicative thr
+           eshold)**, ne pevné pravidlo. *(Rozhodnuto.)*
+      134  - EBAN pracuje jen s viditelnou částí trhu (visible market) a 
+           sám uvádí, že data nejsou reprezentativní (s. 2–3). Stránka BA
+           E neuvádí datum aktualizace (v patičce je jen © 2013). Hranici
+            lze proto po pilotu upravit podle skutečně doložených ticketů
+           .
+      135 -- Pokud ticket není známý, rozhodují kritéria 2 a 3. Když ani 
+          -ta nepomohou, typ je Business Angel.                          
+      135 +- Pokud ticket není známý, rozhoduje kritérium 2.             
+      136  - Pro účel databáze je hranice méně důležitá, než se zdá. **Ti
+           cket size je samostatný údaj** a uživatel podle něj filtruje b
+           ez ohledu na typ.
+      137  
+      138  ---
+
+● Update(docs/plan.md)
+  ⎿  Added 1 line, removed 1 line
+      64  |---|---|
+      65  | **VC** | Profesionální investiční subjekt. Kupuje převážně **
+          minoritní podíly v mladých, rychle rostoucích firmách** (pre-se
+          ed až late stage, growth). |
+      66  | **Private Equity (PE)** | Profesionální investiční subjekt. K
+          upuje převážně **většinové (kontrolní) nebo významné podíly v z
+          avedených firmách** (buyout, MBO/MBI, konsolidace, growth s kon
+          trolou). |
+      67 -| **Family Office (FO)** | **Organizace s vlastním týmem**, kte
+         -rá spravuje majetek jedné rodiny (single) nebo více rodin (mult
+         -i) a investuje **přímo do firem**. |                           
+      67 +| **Family Office (FO)** | **Organizace s vlastním investičním 
+         +týmem**, která spravuje majetek jedné osoby či rodiny (single) 
+         +nebo více rodin (multi) a investuje **přímo do firem**. |      
+      68  | **Business Angel** | **Fyzická osoba**, která investuje vlast
+          ní peníze převážně do **startupů v rané fázi**, s menšími ticke
+          ty a minoritními podíly. |
+      69  | **Large Private Investor** | **Fyzická osoba** (přímo nebo př
+          es vlastní holding bez investičního týmu), která investuje vlas
+          tní peníze ve **výrazně větším objemu** nebo do **zavedených fi
+          rem**. |
+      70  
+
+  Read 1 file (ctrl+o to expand)
+
+● Update(docs/plan.md)
+  ⎿  Added 1 line, removed 1 line
+      204  | **Tier 1: úřední** | rejstříky, regulátoři, úřední listiny |
+            obchodní rejstřík a sbírka listin (justice.cz), ARES, seznamy
+            ČNB, Companies House, Handelsregister, SEC Form ADV a Form D,
+            ESMA, GLEIF | identita, rozhodovací pravomoc, **důkaz investi
+           ce** |
+      205  | **Tier 2: nezávislé** | strana dealu jiná než investor, reda
+           kční média | tisková zpráva portfoliové firmy, oznámení co-inv
+           estora nebo LP (např. EIF), CzechCrunch, Hospodářské noviny, F
+           orbes, TechCrunch, FT | **důkaz investice**, ticket, velikost 
+           fondů, AUM |
+      206  | **Tier 3: vlastní tvrzení** | zdroje kontrolované investorem
+            | web, portfolio, investment thesis, výroční zpráva, rozhovor
+            | sektory, fáze, ticket, velikost fondů, AUM (doplňkově) |
+      207 -| **Tier 4: agregátory** | databáze a seznamy | Crunchbase, De
+          -alroom, OpenVC, Wikipedia, **členské seznamy asociací (např. C
+          -VCA)** | **jen pro hledání kandidátů**, nikdy jako důkaz |    
+      207 +| **Tier 4: agregátory** | databáze a seznamy | Crunchbase, De
+          +alroom, OpenVC, Wikipedia, **členské seznamy asociací (např. C
+          +VCA)**. Samotné členství má váhu Tier 4, profil dodaný členem 
+          +má váhu Tier 3. | **jen pro hledání kandidátů**, nikdy jako dů
+          +kaz |                                                         
+      208  
+      209  ### 6.2 Co se u každého důkazu zaznamenává
+      210  
+
+● Update(docs/plan.md)
+  ⎿  Added 1 line, removed 1 line
+      216  |---|---|---|
+      217  | **A** | K1 + K2 + **≥2** kvalitní nezávislé důkazy investice
+            | zařazen |
+      218  | **B** | K1 + K2 + **1** kvalitní nezávislý důkaz | zařazen (
+           minimum) |
+      219 -| **C** | jen vlastní tvrzení nebo agregátory | **nezařazen**,
+          - zůstává v seznamu kandidátů (candidate queue) |              
+      219 +| **C** | nesplní některé z K1–K3, typicky existují jen vlastn
+          +í tvrzení nebo agregátory | **nezařazen**, zůstává v seznamu k
+          +andidátů (candidate queue) |                                  
+      220  
+      221  ### 6.4 Specifika zemí
+      222  
+
+● Update(docs/plan.md)
+  ⎿  Added 2 lines, removed 1 line
+      251  - **Datum investice** je datum oznámení dealu (announcement) n
+           ebo datum zápisu do rejstříku. Pokud jsou k dispozici obě, pou
+           žije se dřívější.
+      252  - Datum se ukládá **jen s takovou přesností, jakou zdroj skute
+           čně uvádí** (ISO 8601): `YYYY-MM-DD`, `YYYY-MM` nebo `YYYY`.
+      253  - **Neznámé části data se nedoplňují.** Například investice zn
+           ámá jen rokem 2024 se uloží jako `2024`, nikdy ne jako `2024-0
+           1-01`.
+      254 -- Pokud zdroj neuvádí ani rok, datum zůstane **prázdné**. Tako
+          -vá investice nemůže zakládat stav `active`.                   
+      254 +- Datum publikace zdroje, který se o investici zmiňuje jen zpě
+          +tně (např. rozhovor nebo přehled portfolia), **není datem inve
+          +stice**.                                                      
+      255 +- Pokud zdroj neuvádí ani rok, datum zůstane **prázdné**. Tako
+          +vá investice nemůže zakládat stav `active`, ale jako důkaz pro
+          + K3 platí, pokud má datum publikace.                          
+      256  - Při porovnání neúplného data s hranicí 24 měsíců se postupuj
+           e **konzervativně**: `active` vzniká jen tehdy, když investice
+            **s jistotou** spadá do posledních 24 měsíců.
+      257    - Rozhoduje nejstarší možný den, který z neúplného data plyn
+           e.
+      258    - Příklad: k 2026-10-14 je hranice 2024-10-14. Investice s d
+           atem `2024` proto stav `active` nezakládá, s datem `2025` ano.
+
+● Update(docs/plan.md)
+  ⎿  Added 6 lines, removed 1 line
+      271  | E6 | Strategické a vnitroskupinové transakce | Firma kupuje 
+           podíly kvůli začlenění do vlastní skupiny nebo investuje do vl
+           astních dceřiných společností. |
+      272  | E7 | Jen LP / fund of funds | Investuje jen do fondů a o inv
+           esticích do firem nerozhoduje. Lze ho ale použít jako zdroj př
+           i hledání kandidátů. |
+      273  | E8 | Nefinanční podpora | Granty, dotační agentury, soutěže,
+            inkubátory bez vlastního kapitálu. |
+      274 -| E9 | Neověřitelné nebo podezřelé | Nesplní K1 nebo K3, přípa
+          -dně má varovné signály: požaduje poplatky od zakladatelů, nemá
+          - dohledatelné portfolio, tým je anonymní. |                   
+      274 +| E9 | Podezřelé subjekty | Varovné signály: požaduje poplatky
+          + od zakladatelů, tvrdí investice, které zdroje vyvracejí, tým 
+          +je anonymní. |                                                
+      275  | E10 | Investiční vehikula a duplicity | Fondy, SPV, feedery 
+           a přejmenované subjekty se **sloučí** pod nadřazený záznam, ne
+           jsou samostatné. |
+      276  
+      277 +Pravidla vyřazení se týkají jen toho, **čím subjekt je** (E1–E
+          +8, E10), nebo **varovných signálů** (E9). **Neaktivita ani chy
+          +bějící údaje nejsou důvodem k vyřazení:**                     
+      278 +                                                              
+      279 +- subjekt bez novější investice zůstává se stavem `inactive` (
+          +kapitola 7),                                                  
+      280 +- subjekt, který zatím nesplňuje K1–K3, zůstává v seznamu kand
+          +idátů (kapitola 10).                                          
+      281 +                                                              
+      282  Každé vyřazení se **zapíše do logu** (kód důvodu + zdroj), aby
+            šlo v kroku 6 změřit i chybně vyřazené subjekty (false negati
+           ves).
+      283  
+      284  ---
+
+● Update(docs/plan.md)
+  ⎿  Added 2 lines, removed 2 lines
+      289  |---|---|
+      290  | Kombinovaný fond dluh + equity (např. growth equity + ventur
+           e debt) | Typ se určí jen podle doložených **equity** investic
+           . Dluhové deally se jako důkaz nepočítají. |
+      291  | Fond mezi dvěma generacemi (Fund I vyinvestovaný, Fund II ve
+            fundraisingu) | Stav určuje jen doložená investice (kapitola 
+           7). Oznámený nový fond se eviduje jako fond s cílovou nebo uza
+           vřenou velikostí (viz 10.1). |
+      292 -| Investiční skupina bohatého jednotlivce | Má vlastní tým a s
+          -pravuje majetek rodiny → FO. Jde o osobu s holdingem → Large P
+          -rivate Investor. Provozní holding bez investic do cizích firem
+          - → E6. |                                                      
+      293 -| Partner VC fondu investující soukromě | Samostatný záznam ja
+          -ko business angel, ale jen s vlastními doloženými investicemi.
+          - |                                                            
+      292 +| Investiční skupina bohatého jednotlivce | Má vlastní investi
+          +ční tým → FO (4.1, krok 2). Osoba s holdingem bez investičního
+          + týmu → Business Angel nebo Large Private Investor (4.3). Prov
+          +ozní holding bez investic do cizích firem → E6. |             
+      293 +| Partner VC fondu investující soukromě | Samostatný záznam ja
+          +ko business angel nebo large private investor (4.3), ale jen s
+          + vlastními doloženými investicemi. |                          
+      294  | Sankcionované subjekty | Nevyřazovat automaticky. Označit př
+           íznakem podle sankčních seznamů EU a OFAC. |
+      295  | Země investora | Země **HQ** = sídlo investičního týmu nebo 
+           správce. Domicil fondu (Lucembursko, SK, NL…) se eviduje zvláš
+           ť. |
+      296  | Rozpor mezi zdroji | Tier 1 má přednost před Tier 2 a Tier 2
+            před Tier 3. Při stejné úrovni platí novější zdroj. Každý roz
+           por se zapíše do logu. |
+
+● Update(docs/plan.md)
+  ⎿  Added 1 line, removed 1 line
+      303  
+      304  | Skupina polí | Pole | Když chybí |
+      305  |---|---|---|
+      306 -| **Pole nutná pro zařazení** (inclusion fields) | identita, p
+          -rimary type, země HQ, ≥1 nezávislý důkaz investice | záznam **
+          -se nezařadí** a zůstává v seznamu kandidátů |                 
+      306 +| **Pole nutná pro zařazení** (inclusion fields) | identita, p
+          +rimary type, země (u subjektů sídlo HQ, u fyzických osob země 
+          +působení), ≥1 nezávislý důkaz investice | záznam **se nezařadí
+          +** a zůstává v seznamu kandidátů |                            
+      307  | **Popisná pole** (descriptive fields) | sektory, fáze a typ 
+           investic, geografie, ticket size, AUM, velikost fondů | záznam
+            **zůstává**, hodnota je `null` a v `missing_reason` je důvod:
+            `not_public`, `conflicting` nebo `not_applicable` |
+      308  
+      309  **Původ hodnoty** (atribut `value_origin`, podle spolehlivosti
+           ):
+
+● Update(docs/plan.md)
+  ⎿  Added 1 line, removed 2 lines
+      330  - Pokud AUM není zveřejněné, zůstane `null` s důvodem `not_pub
+           lic`, **i když známe velikosti fondů**.
+      331  - Cílová velikost (`target`) a první uzavření (`first_close`) 
+           se nikdy neprezentují jako konečná velikost fondu.
+      332  - U fyzických osob a FO se **osobní majetek** (net worth, např
+           . žebříčky bohatých) nezapisuje jako AUM ani jako investiční k
+           apitál.
+      333 +- Součet velikostí fondů se **nepočítá ani jako samostatný odv
+          +ozený údaj**. Evidují se jen velikosti jednotlivých fondů. *(R
+          +ozhodnuto.)*                                                  
+      334  - V měření přesnosti (krok 6) se velikost fondu a AUM ověřují 
+           jako **dvě samostatná pole**.
+      335  
+      335 -**Návrh k odsouhlasení:** součet známých fondů lze uvést jako 
+          -**samostatný odvozený údaj** `known_funds_total` (`value_origi
+          -n = derived`). Byl by výslovně označený jako dolní odhad kapit
+          -álu a nikdy by se nezobrazoval jako AUM.                      
+      336 -                                                              
+      336  ---
+      337  
+      338  ## 11. Pilot: české VC a rozbor zdroje CVCA
+
+● Update(docs/plan.md)
+  ⎿  Added 2 lines, removed 2 lines
+      337  
+      338  ## 11. Pilot: české VC a rozbor zdroje CVCA
+      339  
+      340 -### 11.1 Kdo je pro pilot „český VC investor“ *(otevřené)*    
+      340 +### 11.1 Kdo je pro pilot „český VC investor“                 
+      341  
+      342 -Návrh: investiční tým nebo správce **doložitelně sídlí v ČR**,
+          - bez ohledu na domicil fondu. Zahraniční VC s pobočkou v ČR se
+          - zapíše do logu, ale do pilotu nespadá.                       
+      342 +Investiční tým nebo správce **doložitelně sídlí v ČR**, bez oh
+          +ledu na domicil fondu. *(Rozhodnuto.)* Zahraniční VC s pobočko
+          +u v ČR se zapíše do logu, ale do pilotu nespadá.              
+      343  
+      344  ### 11.2 Rozbor zdroje: CVCA
+      345  
+
+● Update(docs/plan.md)
+  ⎿  Added 3 lines, removed 2 lines
+      372  | Definice investora: sám rozhoduje + veřejně doložená investi
+           ce | 3 | rozhodnuto |
+      373  | Jednotka záznamu = investiční subjekt, ne jednotlivý fond | 
+           3.1 | rozhodnuto |
+      374  | Pět základních typů podle zadání | 4 | rozhodnuto |
+      375 -| Ostatní subjekty přes `subtype` (accelerator, public, instit
+          -utional, angel fund, multi-family) | 4.2 | **návrh k odsouhlas
+          -ení** |                                                       
+      376 -| Corporate VC → VC / `corporate` | 4.2 | **návrh k odsouhlase
+          -ní** |                                                        
+      375 +| Základní typ se nikdy nepřiřazuje automaticky. Když ho nejde
+          + doložit, záznam zůstává v seznamu kandidátů. | 4.1 | rozhodnu
+          +to |                                                          
+      376 +| Ostatní subjekty přes `subtype` (accelerator, public, instit
+          +utional, angel fund, multi-family). Subtype neurčuje základní 
+          +typ, ten se určuje podle 4.1. | 4.2 | rozhodnuto |            
+      377 +| Corporate VC → VC / `corporate` | 4.2 | rozhodnuto |        
+      378  | Hranice Business Angel / Large Private Investor: 500 000 EUR
+            jako orientační ukazatel (EBAN + BAE) + kvalitativní kritéria
+            | 4.3 | rozhodnuto (lze upravit po pilotu) |
+      379  | Úřední registr není povinný, úrovně identity I1/I2/I3 | 5 (K
+           1) | **návrh k odsouhlasení** |
+      380  | K zařazení stačí 1 kvalitní nezávislý důkaz, bez požadavku n
+           a počet investic | 5 (K3) | rozhodnuto |
+
+● Update(docs/plan.md)
+  ⎿  Added 1 line, removed 1 line
+      376  | Ostatní subjekty přes `subtype` (accelerator, public, instit
+           utional, angel fund, multi-family). Subtype neurčuje základní 
+           typ, ten se určuje podle 4.1. | 4.2 | rozhodnuto |
+      377  | Corporate VC → VC / `corporate` | 4.2 | rozhodnuto |
+      378  | Hranice Business Angel / Large Private Investor: 500 000 EUR
+            jako orientační ukazatel (EBAN + BAE) + kvalitativní kritéria
+            | 4.3 | rozhodnuto (lze upravit po pilotu) |
+      379 -| Úřední registr není povinný, úrovně identity I1/I2/I3 | 5 (K
+          -1) | **návrh k odsouhlasení** |                               
+      379 +| Úřední registr není povinný, úrovně identity I1/I2/I3 | 5 (K
+          +1) | rozhodnuto |                                             
+      380  | K zařazení stačí 1 kvalitní nezávislý důkaz, bez požadavku n
+           a počet investic | 5 (K3) | rozhodnuto |
+      381  | Aktivita jako stav `active` / `inactive` (24 měsíců, včetně 
+           follow-on), bez automatického vyřazení | 7 | rozhodnuto |
+      382  | Datum investice jen se známou přesností, nic se nedomýšlí | 
+           7.1 | rozhodnuto |
+
+● Update(docs/plan.md)
+  ⎿  Added 3 lines, removed 2 lines
+      382  | Datum investice jen se známou přesností, nic se nedomýšlí | 
+           7.1 | rozhodnuto |
+      383  | Konzervativní vyhodnocení neúplného data vůči hranici 24 měs
+           íců | 7.1 | rozhodnuto |
+      384  | Velikost fondu a AUM investora jako dva samostatné údaje, be
+           z automatické záměny | 10.1 | rozhodnuto |
+      385 -| Odvozený údaj `known_funds_total` (součet známých fondů, dol
+          -ní odhad) | 10.1 | **návrh k odsouhlasení** |                 
+      385 +| Součet velikostí fondů se nepočítá, evidují se jen jednotliv
+          +é fondy | 10.1 | rozhodnuto |                                 
+      386 +| Neaktivita ani chybějící údaje nejsou důvodem k vyřazení | 7
+          +, 8, 10 | rozhodnuto |                                        
+      387 +| Definice „českého VC“ pro pilot: investiční tým nebo správce
+          + sídlí v ČR | 11.1 | rozhodnuto |                             
+      388  | Úrovně zdrojů Tier 1–4, hodnocení A/B/C, pravidla vyřazení E
+           1–E10, hraniční případy, chybějící údaje (`null` + důvod), GDP
+           R | 6, 8, 9, 10 | **návrh bez připomínek, zatím výslovně nesch
+           válený** |
+      387 -| Definice „českého VC“ pro pilot | 11.1 | **otevřené** |     
+      389  
+      390  ---
+      391  
+
+  Searched for 1 pattern (ctrl+o to expand)
+
+● Rozpory v plánu jsem opravil a znovu ho prošel, nic dalšího jsem nenašel. Teď
+  commitnu a pushnu jen docs/plan.md.
+
+● Bash(git add docs/plan.md && git status --short && git commit -q -F - <<'EOF'
+      Plán: pravidla zařazení a vyřazení investorů (krok 1)…)
+  ⎿  A  docs/plan.md
+     ?? 2026-10-14-181103-local-command-caveatthe-command-below-was-run-d.t
+     xt
+     … +10 lines (ctrl+o to expand)
+
+● Plán jsem upravil podle tvých rozhodnutí, opravil v něm rozpory a commitnul a
+  pushnul ho. Commit 07a8201 „Plán: pravidla zařazení a vyřazení investorů (krok
+  1)“ je na origin/main a lokální větev je s ním shodná. Commit obsahuje jen
+  docs/plan.md.
+
+  Tvoje rozhodnutí v plánu:
+  - Korporátní fondy se zařazují jako VC / corporate.
+  - Úrovně identity jsou I1/I2/I3 a registr není povinný.
+  - Český VC pro pilot je ten, jehož investiční tým nebo správce sídlí v ČR.
+  - Ostatní druhy investorů (akcelerátory, veřejní investoři, instituce, angel
+    fondy) nejsou automaticky VC. Jejich základní typ se určuje podle doložených
+    investic stejně jako u ostatních. Když ho doložit nejde, záznam se nezařadí
+    a zůstane mezi kandidáty. Plán teď výslovně říká, že žádný typ se
+    nepřiřazuje automaticky.
+  - Součet fondů se nepočítá, evidují se jen velikosti jednotlivých fondů.
+
+  Rozpory, které jsem našel a opravil:
+  1. Pravidlo E9 by vyřazovalo subjekty s nedoloženou investicí, přestože jinde
+     v plánu zůstávají mezi kandidáty. E9 teď vyřazuje jen podezřelé subjekty.
+     Do kapitoly 8 jsem přidal větu, že neaktivita ani chybějící údaje nejsou 
+     důvodem k vyřazení.
+  2. Při určování VC/PE zůstalo staré okno 36 měsíců. Nahradil jsem ho pravidlem
+     podle všech doložených investic, při shodě podle novějších.
+  3. Holding bohatého jednotlivce s vlastním týmem byl podle jednoho pravidla
+     Large Private Investor a podle druhého Family Office. Teď je to Family
+     Office a hranice 500 tis. EUR se týká jen fyzických osob.
+  4. Partner VC fondu, který investuje soukromě, mohl být jen business angel.
+     Teď může být i Large Private Investor.
+  5. Convertible loan se počítal jako investice, ale „úvěr“ ne. Upřesnil jsem,
+     že se nepočítá jen úvěr bez možnosti převodu na podíl.
+  6. Datum publikace u zpětné zmínky o investici (např. v rozhovoru) se mohlo
+     omylem vzít jako datum investice. Upřesnil jsem, že to datem investice
+     není.
+  7. Dvě drobnosti: členství v CVCA má váhu jen pro hledání kandidátů, kdežto
+     profil, který dodal sám člen, platí jako vlastní tvrzení investora. U
+     fyzických osob se místo sídla eviduje země působení.
+
+  Zbývá:
+  - Výslovně schválit zbytek metodiky: úrovně zdrojů, hodnocení A/B/C, pravidla
+    vyřazení E1–E10, hraniční případy, chybějící údaje a GDPR. Jediná věcná
+    změna v nich je oprava E9 popsaná výše.
+  - Rozhodnout o zaniklém subjektu (výmaz z rejstříku). Podle současných
+    pravidel zůstane v databázi jako inactive. Pokud ho chceš viditelně odlišit,
+    navrhuji příznak dissolved.
+  - Úklid v repozitáři: export konverzace leží pořád v kořeni repozitáře, mimo
+    commit, a decision log v README ještě neobsahuje rozhodnutí z kroku 1.
+  - Další krok: krok 2, datový model.
+
+✻ Crunched for 2m 51s · done 8:23 PM
+
+※ recap: Stavíme spolehlivou databázi investorů. Plán kroku 1, tedy pravidla zařazení a vyřazení, je commitnutý a pushnutý na GitHub. Teď potřebuji, abys výslovně schválil zbytek metodiky, a pak můžeme začít krokem 2, datovým modelem.
