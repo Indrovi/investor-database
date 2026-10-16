@@ -4,6 +4,75 @@ Spolehlivá databáze investorů do soukromých firem: VC fondů, PE fondů, fam
 
 Projekt vychází ze [zadání](docs/zadani.md) a pracuje výhradně s veřejně dostupnými daty.
 
+## Zkušenosti autora s prací s AI
+
+Osobní postřehy autora projektu. Podrobný záznam kontrol, chyb a rozhodnutí je v části [Práce s AI](#práce-s-ai).
+
+### Jak jsem pracoval
+
+- **Moje role:** projekt jsem řídil a o metodice, rozsahu i výsledcích jsem rozhodoval já.
+  - Implementaci a práci s agenty zajišťoval Claude Code v CLI (Claude Opus 5.5).
+  - Jako druhý názor jsem používal GPT-6 v režimu vysokého reasoning effort (xhigh). Analyzoval jsem s ním výsledky a společně jsme připravovali další pokyny pro Claude Code. Pomáhal hlavně tam, kde nemám hluboké odborné znalosti.
+  - Pro dohledávání informací jsem používal i Google.
+- **Postup po krocích:** plán, diskuse, schválení a teprve potom implementace. Commit vznikl jen na můj pokyn.
+- **Pokyny agentům:**
+  - role a pravidla jsou v definicích agentů v [`.claude/agents/`](.claude/agents/),
+  - šablony zadání jsou v [data/sample/README.md](data/sample/README.md#šablona-zadání-průzkumník),
+  - skutečně použitá zadání jsou v [`scripts/pilot/zadani/`](scripts/pilot/zadani/),
+  - architektura a testy agentů jsou v [docs/agenti.md](docs/agenti.md).
+
+### Jak jsem kontroloval výstupy AI
+
+Slovní potvrzení modelu jsem nebral jako důkaz. Rozhodovaly soubory, výstupy skriptů a původní zdroje:
+
+- **Validátor dat** (`scripts/validate.py`, 60 kontrolních kódů) hlídá pravidla K1–K3, stavy údajů, číselníky a duplicity. Pilotní data mají 0 chyb.
+- **Testy:** 105 testů (`unittest`). U nových pravidel se ověřilo i to, že testy při vypnutí pravidla opravdu selžou.
+- **Doslovnost citací** kontroluje skript jinou cestou než agenti: nejdřív přímým stažením stránky, a až když to nejde, proti uložené kopii z Firecrawlu (v auditu kroku 6 u 26 ze 142 citací). Všech 143 citací v datech je doslovně ve zdroji.
+- **Reprodukovatelnost:** data se sestavují z uložených výstupů agentů a rozhodnutí koordinátora bajtově shodně. Vzorek byl vybraný podle seedu zapsaného předem.
+- **Audit a ruční kontrola (krok 6):**
+  - AI zkontrolovala 122 údajů, já osobně 10 vybraných údajů přímo na zdrojové stránce.
+  - Správných bylo 8 z 10. Obě chyby předtím našla i kontrola AI.
+  - Podrobně v [results/README.md](results/README.md).
+- **Opravy z auditu:** šest chyb jsem nechal opravit v kroku 8. Měření přesnosti zůstalo vázané na původní data, aby se neztratil skutečný výsledek kontroly.
+
+### Kde se modely mýlily
+
+Celý seznam je v tabulce [Nalezené chyby](#nalezené-chyby). Nejčastěji šlo o tyto vzorce:
+
+- **Nekonzistence v jedné odpovědi:** například počet testů uvedený jako 18 a hned potom jako 21.
+- **Příliš ochotné potvrzení:** u Claude Opus i GPT-6 jsem pozoroval, že někdy potvrdily navržené řešení bez dostatečné opory. Auditor například potvrdil jako doslovnou citaci, která se od stránky lišila.
+- **Chyby v úsudku nad zdroji, ne v citacích:**
+  - přiřazení investice k fondu bez zdroje,
+  - starší zdroj použitý místo novějšího,
+  - dvě publikace téhož prohlášení počítané jako dva důkazy,
+  - nejistá investice vedená mezi doloženými (všiml jsem si toho až v přehledu).
+- **Nadsazené závěry:** první verze celosvětového odhadu měla příliš optimistické předpoklady a chybné zdůvodnění u Firecrawlu. Opravila je až revize, o kterou jsem požádal ([plan.md, kap. 13.9](docs/plan.md#139-revize-odhadu-2026-10-16)).
+
+### Poučení
+
+- **Orchestrace více agentů:** v tomto malém pilotu jsem neměl pocit výrazné výhody oproti jednomu schopnému modelu, například Claude Opus 5.5. Neznamená to, že je orchestrace zbytečná, její přínos jsme ale samostatně neměřili. Do budoucna by stálo za to porovnat z hlediska ceny, rychlosti a správnosti:
+  - jeden silný model,
+  - více agentů,
+  - levnější model řady Haiku nebo Sonnet.
+- **Ověřovat výsledky, ne slova:** kontrolovat skutečné soubory, testy a zdroje. Opakovaně se doptávat, hledat protiargumenty a vracet se k původním důkazům.
+- **Subagenty** bylo potřeba výslovně omezit na tento projekt (`.claude/agents/` v repozitáři), aby nevznikla globální konfigurace Claude Code.
+- **Firecrawl** jsem zvolil podle předchozí zkušenosti a pro text a doslovné citace se osvědčil.
+  - WebFetch vrací text zpracovaný jazykovým modelem. V testu přeformuloval adresu a větu z citace nevrátil celou ([docs/agenti.md, kap. 5.2](docs/agenti.md#52-porovnání-webfetch-a-firecrawl-na-zdrojích-z-testu-credo)).
+  - Oba agenti ale čtou stránky stejným nástrojem, takže jejich kontroly nejsou zcela nezávislé. Částečnou nezávislost dává až kontrola citací přímým stažením.
+  - Objektivní srovnání s přímým stahováním nebo jiným poskytovatelem API zatím chybí.
+- **Veřejný neznamená volně použitelný:** ne každá veřejně dostupná stránka dovoluje automatizovaný scraping. Například u Dealroomu je nutné respektovat licenční a smluvní podmínky.
+  - Proto rozlišujeme zdroje pro hledání kandidátů od zdrojů, které lze použít k ověřování a zpracování ([docs/zdroje-cr.md](docs/zdroje-cr.md)).
+  - Průzkumník takové podmínky jednou porušil (viz Nalezené chyby).
+- **Datum investice:** často známe jen datum článku, který investici oznamuje, ne den uskutečnění transakce.
+  - Data proto rozlišují datum oznámení a skutečné datum (`date_basis`).
+  - Přehled pro čtení to zatím neuvádí ([plan.md, kap. 14](docs/plan.md#14-stav-k-odevzdání-a-omezení-krok-8)).
+
+### Možnosti dalšího rozvoje
+
+- **Interaktivní mapa investorů** podle sídla (pole `city`) nebo investičního geografického zaměření.
+- **Napojení databáze na Supabase** pro ukládání dat, vyhledávání a další rozšiřování.
+- **Srovnávací testy AI modelů a scrapingových nástrojů** z hlediska kvality, ceny a rychlosti.
+
 ## Výstupy (deliverables)
 
 | Výstup | Umístění | Stav |
@@ -20,7 +89,8 @@ Projekt vychází ze [zadání](docs/zadani.md) a pracuje výhradně s veřejně
 ## Struktura repozitáře
 
 ```
-.claude/         projektoví subagenti Claude Code (agents/), hook pro Firecrawl (hooks/), oprávnění (settings.json)
+.claude/         projektoví subagenti Claude Code (agents/), skill overeni-investora (skills/), hook pro Firecrawl (hooks/),
+                 oprávnění (settings.json)
 docs/            zadání, plán, datový model, agenti
 data/sample/     data z pilotního vzorku včetně zdrojů
 data/examples/   fiktivní ukázková data pro datový model a testy
@@ -46,15 +116,28 @@ python3 -m unittest discover -s tests -v
 
 ## Práce s AI
 
-Projekt vzniká ve spolupráci s AI asistentem. Tato část dokumentuje, k čemu se AI používala, jak se kontrolovaly její výstupy, jaké chyby se našly a jaká padla rozhodnutí.
+Projekt vznikl ve spolupráci s AI. Tato část dokumentuje, k čemu se AI používala, jak se kontrolovaly její výstupy, jaké chyby se našly a jaká padla rozhodnutí. Osobní reflexe autora je výše v části [Zkušenosti autora s prací s AI](#zkušenosti-autora-s-prací-s-ai).
 
-- **Nástroj:** Claude Code (model Claude Opus 5.5)
+- **Nástroje:** Claude Code (model Claude Opus 5.5) pro implementaci a agenty; autor navíc GPT-6 (xhigh) jako druhý názor a Google pro dohledávání.
 - **Workflow:** postupuje se po krocích. Každý krok se nejdřív naplánuje a prodiskutuje, implementuje se až po odsouhlasení.
 - **Agenti:** hlavní relace Claude Code je koordinátor. Práci rozděluje mezi dva projektové subagenty:
   - `investor-source-scout` (průzkumník) hledá kandidáty, investice a zdroje a vytahuje z nich údaje s citacemi,
   - `investor-evidence-auditor` (kritický kontrolor) se tvrzení snaží vyvrátit, hledá další nezávislé důkazy a rozpory a posuzuje K1–K3.
 
   Oba čtou stránky přes Firecrawl a nic nezapisují. Tvrzení si předávají souborem (`scripts/agents.py`). Parametry Firecrawlu hlídá hook. Doslovnost a úplnost citací ověřuje koordinátor skriptem. Podrobnosti jsou v [docs/agenti.md](docs/agenti.md).
+- **Pokyny agentům:**
+  - definice rolí a pravidel v `.claude/agents/*.md`,
+  - šablony zadání v [data/sample/README.md](data/sample/README.md),
+  - skutečně použitá zadání v `scripts/pilot/zadani/`.
+- **Skill `overeni-investora`** ([`.claude/skills/overeni-investora/SKILL.md`](.claude/skills/overeni-investora/SKILL.md)) ověří jednoho zadaného investora stávajícím postupem.
+  - **Co dělá:** spustí průzkumníka a auditora (`run_one.sh`), vyhodnotí K1–K3, typ, aktivitu a údaje podle checklistu a zapíše návrh záznamu mimo `data/sample/`. Návrh pak zkontroluje validátorem a kontrolou citací.
+  - **Jak se spouští:** v Claude Code `/overeni-investora "Název investora" [stopy]`. Bez interakce `claude -p '/overeni-investora "Název"'` s povolenými nástroji z hlavičky skillu (`--allowedTools`).
+  - **Praktický test na Tensor Ventures (2026-10-16):**
+    - vznikl **návrh** investora (VC, hodnocení A, 6 doložených investic), ne automaticky schválený záznam,
+    - validátor hlásil 0 chyb, citace prošly 39/39, cena byla asi 10 USD a 19 kreditů,
+    - výsledek obsahoval otevřené otázky pro autora k právnické struktuře (kterou osobu evidovat, sloučení E10, GP v Lucembursku),
+    - do dat zadání A se nepřidal.
+  - **Úprava po testu:** pravidla nástrojů ve skillu se drobně upravila (jen nástroje Read, Grep a Glob a skripty projektu). Test se potom už neopakoval.
 - **Exporty konverzací:** textové soubory z příkazu `/export` v Claude Code, název začíná datem a časem exportu. Ukládají se do adresáře `ai-log/`, ale do veřejného repozitáře se zatím nepřidávají (rozhodnutí autora).
 
 ### Kontroly výstupů
@@ -99,6 +182,9 @@ Jak se ověřovaly výstupy AI (ruční kontrola, validační skripty, kontrola 
 | 2026-10-16 | Přehled: doložené investice a deklarovaný ticket | `export_overview.py data/sample --today 2026-10-16`, `validate.py`, `python3 -m unittest discover -s tests` | 5 řádků; u každého investora firmy s doloženými investicemi; ticket označen jako deklarovaný, u Orbitu pro growth equity; 0 chyb; 105/105 testů OK |
 | 2026-10-16 | Reprodukovatelnost dat pilotu | `scripts/pilot/build_candidates.py`, `build_sample.py`, `export_overview.py` z uložených výstupů agentů; porovnání s daty v repozitáři | všechny soubory v `data/sample/` bajt po bajtu shodné; výběr shodný |
 | 2026-10-16 | Python testy po pilotu (`select_sample.py`) | `python3 -m unittest discover -s tests` | 96/96 OK |
+| 2026-10-16 | Audit pilotu (krok 6) | kontrola AI 122 údajů pěti investorů, rozhodnutí sporů podle metodiky, vzorek 5 kandidátů vyřazených při triáži | 6 chyb a 1 nejistota; vyřazení 5/5 správně (jen AI); [results/README.md](results/README.md) |
+| 2026-10-16 | Ruční kontrola autorem (krok 6) | 10 údajů vybraných předem stanoveným pravidlem, otázky ANO / NE / NEDOKÁŽU URČIT přímo nad zdrojovou stránkou | 8/10 správně (95% interval 49–94 %), verdikt AI se shoduje 10/10 |
+| 2026-10-16 | Celosvětový odhad (krok 7) | vstupy ověřené přímým stažením nebo z textu PDF, nezávislý přepočet metrik kroku 6, revize odhadu proti zadání | metriky sedí; revize opravila 1 věcnou chybu a zpřísnila předpoklady ([plan.md 13.9](docs/plan.md#139-revize-odhadu-2026-10-16)) |
 | 2026-10-16 | Data pilotu po opravách z auditu (krok 8) | `build_sample.py` (dvakrát, bajtově shodně), `validate.py data/sample --today 2026-10-16`, `verify_quotes.py --data data/sample`, `export_overview.py`, `python3 -m unittest discover -s tests` | 0 chyb (74× `MISSING_ARCHIVE`, 1× `INVESTMENT_NOT_EXPLICIT` záměrně u Vistagu); citace 143/143 doslovně (CIT-0021: Unquote napoprvé vrátil 429, při opakování přímo OK); 105/105 testů OK |
 
 ### Nalezené chyby
@@ -136,6 +222,10 @@ Chyby ve výstupech AI nebo v datech a způsob jejich opravy.
 | 2026-10-16 | Agenti (AI) 20× volali Firecrawl s nepovoleným parametrem `objective` | Zbytečné kroky (kredity ne, hook volání zablokoval) | Bez zásahu; hook funguje |
 | 2026-10-16 | Koordinátor (AI) v prvním vyhodnocení pilotu vyžadoval u K1 konkrétní právnickou osobu s IČO, ačkoli metodika připouští I2 | Všichni 4 investoři zůstali kandidáty | Přehodnoceno: investiční subjekt je tým a značka (I2), právnické osoby jako E10 |
 | 2026-10-16 | Koordinátor (AI) zapsal u NRI do typické investice (`ticket_max`) limit programu 80 mil. Kč | Záměna typické investice s limitem programu | Opraveno: ticket `not_public`, limit jen v citaci a poznámce |
+| 2026-10-16 | Koordinátor (AI) přiřadil Mews a Preply k fondu bez zdroje, u Orbitu použil starší profil místo novějšího zdroje, u StartupYardu zapsal jeden ze dvou rozporných zdrojů, Spotawheel vedl příliš opatrně jako `unclear` a u NRI počítal dvě publikace téhož prohlášení jako dva důkazy (audit kroku 6) | 6 chybných údajů, 2 z nich potvrdila ruční kontrola | Opraveno v kroku 8, pravidlo nezávislosti publikací doplněno do plan.md 6.3 |
+| 2026-10-16 | Koordinátor (AI) v kroku 6 nejdřív předložil autorovi odborné otázky a pravidlo výběru pro ruční kontrolu vybíralo i údaje bez zdroje; v souhrnu pak kontrolu označil za kontrolu naslepo, ačkoli autor u dvou údajů znal závěr AI | Ruční kontrola hůř proveditelná, nadsazené tvrzení o nezávislosti | Před ruční kontrolou jen faktické otázky a údaje se zdrojem; tvrzení o nezávislosti opraveno v results/README.md |
+| 2026-10-16 | Koordinátor (AI) v kroku 7 zdůvodnil potřebu Firecrawlu ochranou proti robotům, záznam kontroly ale ukazoval přímý přístup (HTTP 200); předpoklady odhadu byly příliš optimistické | Chybné zdůvodnění, nadsazený odhad | Opraveno revizí odhadu na žádost autora (plan.md 13.9) |
+| 2026-10-16 | Koordinátor (AI) v kroku 8 označil Vistag za nejistý, ale nechal ho mezi doloženými investicemi (přehled uváděl 3); zjistil autor | Nejistá investice vydávaná za doloženou | Vistag se nepočítá (K3, bod 2), záznam zůstává s poznámkou |
 
 ### Rozhodnutí (decision log)
 
@@ -169,3 +259,7 @@ Chyby ve výstupech AI nebo v datech a způsob jejich opravy.
 | D-024 | 2026-10-16 | Nové pole `city` (město sídla investičního týmu, jen s citací). Přehled zařazených investorů pro čtení se generuje z dat skriptem, druhá databáze nevzniká. | Požadavek autora na prakticky použitelný výstup |
 | D-025 | 2026-10-16 | Duplicita ve výběru se opravuje novým snímkem kandidátů a opakovaným výběrem se stejným seedem; původní výběr zůstává pro audit. Nejde o náhradu neúspěšného investora. | Požadavek autora na 5 unikátních investorů |
 | D-026 | 2026-10-16 | Nové pole `ticket_scope` (ke které strategii se deklarovaný ticket vztahuje). Přehled vypisuje všechny doložené investice a ticket jako deklarovanou hodnotu. Hraniční rozhodnutí (hodnocení A u NRI, K2 Rockaway) jsou body pro ruční audit v kroku 6. | Pokyn autora k uzavření kroku 5 |
+| D-027 | 2026-10-16 | Krok 6: odborné otázky (právní struktury, K2, hodnocení) rozhoduje AI podle metodiky a nejistoty zapisuje. Autor ručně kontroluje jen fakta na zdrojové stránce, 5 + 5 údajů vybraných předem stanoveným pravidlem. | Pokyn autora: ruční kontrola má ověřit spolehlivost systému, ne suplovat odborníka |
+| D-028 | 2026-10-16 | Opravy dat až po měření přesnosti; měření se vztahuje k datům před opravami (commit `c96c21e`) | Zachovat skutečný výsledek kontroly |
+| D-029 | 2026-10-16 | Celosvětový odhad pro každý typ zvlášť, rozlišit celkový počet a počet ověřitelný z veřejných zdrojů; vstupy rozlišené na zdroje, měření pilotu a předpoklady | Pokyn autora, revize na žádost autora |
+| D-030 | 2026-10-16 | Krok 8 jen jako stručné dokončení: jednoznačné opravy do dat, nejasné případy označené jako nejisté a nepočítané mezi doložené, rozsáhlejší problémy jako omezení (plan.md, kap. 14) | Pokyn autora |
