@@ -94,6 +94,12 @@ class InputTest(unittest.TestCase):
         self.assertEqual(reasons["?"], ["chybí ID"])
         self.assertIn("chybí úplná URL", reasons["C05"][0])   # adresa bez https://
 
+    def test_escaped_pipe_is_part_of_the_quote(self):
+        text = ("| claim | url | doslovná citace | text z |\n|---|---|---|---|\n"
+                "| E1 | https://a.example/x.pdf | Fund name \\| Fund manager \\| Strategy | firecrawl |\n")
+        self.assertEqual(cq.claims_from_markdown(text),
+                         [cq.Claim("E1", "https://a.example/x.pdf", "Fund name | Fund manager | Strategy")])
+
     def test_claims_from_example_data(self):
         claims = cq.claims_from_data(ROOT / "data" / "examples" / "valid")
         self.assertEqual(len(claims), 18)
@@ -121,6 +127,24 @@ class CheckTest(unittest.TestCase):
         self.assertEqual(fetched, [])
         self.assertEqual(sum("NEÚPLNÝ" in line for line in lines), 5)
         self.assertIn("problém: 5", lines[-1])
+
+    def test_pdf_or_script_rendered_page_is_not_used_directly(self):
+        long_text = cq.normalize("Text článku. " * 50)
+        self.assertTrue(cq.direct_is_usable(cq.Page(200, long_text, "přímo")))
+        self.assertFalse(cq.direct_is_usable(cq.Page(200, "", "přímo", "formát application/pdf")))
+        self.assertFalse(cq.direct_is_usable(cq.Page(200, "ARES", "přímo")))  # kostra stránky ze skriptu
+
+    def test_quote_missing_in_direct_page_is_checked_in_rendered_page(self):
+        claim = cq.Claim("C1", "https://a.example/spa", "Služby může využívat každý.")
+        direct = cq.Page(200, cq.normalize("Menu " * 60), "přímo")
+        rendered = cq.Page(200, cq.normalize("Úvod. Služby může využívat každý. Konec."), "firecrawl")
+        calls, lines = [], []
+        code = cq.check_claims([claim], lambda url: direct, lines.append,
+                               rerender=lambda url: calls.append(url) or rendered)
+        self.assertEqual((code, calls), (0, ["https://a.example/spa"]))
+        self.assertTrue(any(line.startswith("C1     DOSLOVNĚ    (firecrawl") for line in lines))
+        # Bez vykreslené verze zůstane neshoda.
+        self.assertEqual(cq.check_claims([claim], lambda url: direct, silent), 1)
 
     def test_blocked_page_is_not_checked(self):
         challenge = cq.Page(403, "Just a moment...", "přímo", "HTTP 403")

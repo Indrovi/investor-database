@@ -115,7 +115,9 @@ python3 scripts/check_quotes.py --data data/sample             # citations.csv +
 ```
 
 - Stránku stáhne přímo a citaci hledá v jejím textu. Sjednocuje jen bílé znaky, typografické uvozovky a pomlčky a mezeru před interpunkcí vzniklou spojením prvků HTML.
-- Když stránka vrátí chybu nebo ochranu proti robotům, zkusí Firecrawl a každé takové volání vypíše.
+- Firecrawl zkusí, když stránka vrátí chybu nebo ochranu proti robotům, když jde o PDF nebo XLSX, nebo když přímo stažený text je jen kostra stránky vykreslované skriptem. Zkusí ho i tehdy, když citace v přímo stažené stránce není. Každé takové volání vypíše.
+- Mezi voláními Firecrawlu dodržuje odstup (tarif Free povoluje zhruba 10 požadavků za minutu).
+- Escapovaná svislá čára (`\|`) v buňce tabulky je text citace, ne oddělovač.
 - Záznam bez ID, bez úplné URL (`https://…`) nebo bez citace **odmítne** jako `NEÚPLNÝ`, nepřeskočí ho. Odkazy typu „stejná jako A1“ nebo `src` místo URL neprojdou.
 - Návratový kód je `1`, pokud některý záznam neprojde.
 
@@ -152,7 +154,8 @@ Klíč se nikdy nevkládá do konverzace ani do repozitáře.
 - **Převod do markdownu mění mezery.** Firecrawl například vrací IČO z obchodního rejstříku bez mezer („11678704“), na stránce je „116 78 704“. Citace pak neprojde skriptem, i když ji agent opsal správně. Koordinátor ji opraví podle stránky.
 - **Proměnlivé a omezované stránky.** Seznam Zprávy vracely při opakovaném stažení různé verze stránky a Unquote dočasně odpovídal 429. Pro zpětnou kontrolu je proto důležitá archivní kopie (krok 4).
 - **Stránky za paywallem nebo přihlášením** nenačte ani Firecrawl. Vrátí jen volně dostupnou část (např. titulek a autora), takže výsledkem má být `CANNOT_VERIFY`, ne odhad.
-- **Stránky vykreslované JavaScriptem a PDF** zatím nebyly vyzkoušené.
+- **PDF jsou drahá.** Firecrawl účtuje 1 kredit za každou stranu. V kroku 3 stálo jedno 81stránkové PDF, které četli tři (průzkumník, auditor i skript), zhruba polovinu všech kreditů. Velká PDF číst jednou a agenty pouštět za sebou.
+- **Text PDF** Firecrawl občas přečte zkomoleně. Citaci pak lze dověřit proti stránce uložené v záznamu běhu (kap. 5 a docs/zdroje-cr.md, kap. 6).
 - **Nezávislost auditora je omezená.** Používá stejný model jako průzkumník (kap. 1.1).
 - **Archivní kopie** (Wayback Machine) agenti nevytvářejí. Uložení stránky je zápis do externí služby, řeší se v ověřovacím postupu (krok 4).
 - **Náklady:** každé kolo spouští dva agenty s webovým vyhledáváním. Počet kroků omezuje `maxTurns: 40`.

@@ -8,9 +8,10 @@ Projekt vychází ze [zadání](docs/zadani.md) a pracuje výhradně s veřejně
 
 | Výstup | Umístění | Stav |
 |---|---|---|
-| Výsledný plán: inclusion/exclusion criteria, verification, odhad rozsahu a spolehlivosti, odhad nákladů | [docs/plan.md](docs/plan.md) | rozpracováno: krok 2 hotový, u kroku 1 zbývá potvrdit hraniční případy a GDPR |
+| Výsledný plán: inclusion/exclusion criteria, verification, odhad rozsahu a spolehlivosti, odhad nákladů | [docs/plan.md](docs/plan.md) | rozpracováno: kroky 2–3 hotové, u kroku 1 zbývá potvrdit hraniční případy a GDPR |
 | Datový model a validátor | [docs/datovy-model.md](docs/datovy-model.md), `scripts/validate.py` | hotovo |
 | Agenti pro hledání a ověřování zdrojů | [docs/agenti.md](docs/agenti.md), `.claude/`, `scripts/agents.py`, `scripts/check_quotes.py` | hotovo: vyzkoušeno na testech Credo a Presto Ventures, opravy ověřené; API klíč Firecrawl doplní autor do `.env` |
+| Mapa veřejných zdrojů pro české VC (krok 3) | [docs/zdroje-cr.md](docs/zdroje-cr.md), [data/sources/](data/sources/) | hotovo: 20 zdrojů a 5 typů zdrojů, 289 doložených zjištění |
 | Data ze vzorku (sample) se zdrojem u každého údaje | `data/sample/` | připravuje se (krok 5) |
 | Výsledky měření přesnosti (accuracy) | `results/` | připravuje se (krok 6) |
 
@@ -21,6 +22,7 @@ Projekt vychází ze [zadání](docs/zadani.md) a pracuje výhradně s veřejně
 docs/            zadání, plán, datový model, agenti
 data/sample/     data z pilotního vzorku včetně zdrojů
 data/examples/   fiktivní ukázková data pro datový model a testy
+data/sources/    katalog veřejných zdrojů: zdroje, použití se spolehlivostí, důkazy
 results/         měření přesnosti, odhad nákladů
 scripts/         skripty: validate.py (validace dat), check_quotes.py (kontrola citací),
                  agents.py (spouštění agentů a předání souborem), firecrawl_mcp.py (Firecrawl s klíčem z .env)
@@ -75,6 +77,11 @@ Jak se ověřovaly výstupy AI (ruční kontrola, validační skripty, kontrola 
 | 2026-10-15 | Opravy před uzavřením architektury | cílené technické běhy agentů přes `scripts/agents.py`, bez testu investora | předání souborem beze změny znaků; neúplné záznamy odmítnuty (6/6); hook zablokoval 2 volání se špatnými parametry; čtení `.env` zablokováno |
 | 2026-10-15 | Python testy po opravách | `python3 -m unittest discover -s tests` | 77/77 OK na Pythonu 3.12.13 a 3.14.4 |
 | 2026-10-15 | Test agentů na Presto Ventures | scout → auditor (předání skriptem) → `check_quotes.py`; výpis všech 43 volání Firecrawlu | auditor odhalil záměnu investorů (investice odděleného fondu), 22 nových důkazů; citace 19/20 a 21/22 doslovně; podrobně v [docs/agenti.md](docs/agenti.md#54-test-presto-ventures-2026-10-15-nové-instrukce-firecrawl) |
+| 2026-10-16 | Mapa zdrojů ČR (krok 3) | průzkumník (4 skupiny) → auditor → `check_quotes.py`; tvrzení o zdrojích s URL a citací | 193 tvrzení: 153 potvrzeno, 23 opraveno, 1 nedoloženo, 9 neověřitelných; 83 nových důkazů auditora |
+| 2026-10-16 | Doslovnost citací v katalogu | `check_quotes.py`, dověření proti stránkám uloženým v záznamech běhů (bez nových kreditů) | 284 z 289 doslovně, 5 označeno jako nejisté |
+| 2026-10-16 | Konzistence katalogu a dokumentace | skript: existence důkazů u každého použití, odkazy v dokumentu, počty, přehled vs. `uses.csv`, sloupce vs. README | vše sedí; jediné hodnocení bez důkazu plyne z metodiky a je tak označené |
+| 2026-10-16 | Spotřeba kreditů Firecrawlu | `creditsUsed` ze záznamů běhů a zůstatek účtu | 491 kreditů, z toho asi 243 jedno 81stránkové PDF čtené třikrát |
+| 2026-10-16 | Python testy | `python3 -m unittest discover -s tests` | 80/80 OK |
 
 ### Nalezené chyby
 
@@ -99,6 +106,11 @@ Chyby ve výstupech AI nebo v datech a způsob jejich opravy.
 | 2026-10-15 | Průzkumník (AI) přiřadil Presto Ventures investice fondu, který byl od skupiny Presto oddělen v dubnu 2025. Auditor záměnu odhalil. | Do dat by šly investice jiného investora | Tvrzení `NOT_SUPPORTED`, K3 doloženo jinými doklady |
 | 2026-10-15 | Auditor (AI) převzal do dvou citací citlivé údaje o fyzické osobě | Rozpor s plan.md, kap. 6.5 | Do dat ani dokumentace se nepřebírají; navrženo doplnit pravidlo do instrukcí auditora |
 | 2026-10-15 | AI v souhrnu kroku 2 uvedla jako zbývající ke schválení jen tiers, A/B/C a E1–E10. Vynechala hraniční případy (kap. 9) a GDPR (kap. 6.5), které plán vedl jako neschválené. | Neúplná informace o stavu schválení | Doplněno do plánu (kap. 12) a do souhrnu pro autora |
+| 2026-10-16 | Kontrolní skript koordinátora (AI) neuměl stránky vykreslované JavaScriptem, PDF ani XLSX a escapovanou svislou čáru v tabulce bral jako oddělovač | 48 falešných neshod citací | Záloha přes Firecrawl pro tyto případy, druhý pokus nad vykreslenou stránkou, odstup volání, 3 nové testy |
+| 2026-10-16 | Průzkumník (AI) u 11 citací porušil pravidla doslovnosti (výpustky, markdown, metadata, adresa odkazu místo textu) | Citace neprošly kontrolou | 7 dověřeno proti uloženým stránkám, 4 označeny jako nejisté (pátá nejistá citace je auditorova) |
+| 2026-10-16 | Koordinátor (AI) v souhrnu kroku 3 uvedl chybná čísla (19 místo 13 blokací hookem, 42 místo 48 falešných neshod), spotřebu kreditů přisoudil PDF bez měření a dvě hodnocení ČNB odkázal na důkazy jiného zdroje | Nepřesná dokumentace | Čísla opravena a kredity změřeny ze záznamů běhů; odkazy opraveny, konzistence ověřena skriptem |
+| 2026-10-16 | Souběžné běhy agentů překročily limit Firecrawlu a jedno 81stránkové PDF se četlo třikrát | Zhruba polovina kreditů tarifu Free za měsíc | Doporučení v docs/agenti.md: velká PDF číst jednou, agenty pouštět za sebou |
+| 2026-10-16 | Průzkumník (AI) při mapování četl přes Firecrawl veřejné stránky Czechia Dealroom, jehož podmínky automatický přístup zakazují | Riziko porušení podmínek zdroje | Zdroje s omezujícími podmínkami jen ručně a interně (D-019) |
 
 ### Rozhodnutí (decision log)
 
@@ -124,3 +136,4 @@ Chyby ve výstupech AI nebo v datech a způsob jejich opravy.
 | D-016 | 2026-10-15 | Role: průzkumník vyhledává a vytěžuje, auditor je kritický kontrolor (kontext, vlastní nezávislé důkazy, rozpory, K1–K3). Oba používají Firecrawl bez klíče, definovaný jen v hlavičce agentů. Finální kontrola citací skriptem zůstává. Pravidla zařazení beze změny. | Agenti se mají doplňovat, ne opakovat stejnou práci; WebFetch přeformulovával citace |
 | D-017 | 2026-10-15 | Ostatní nástroje Firecrawlu zakázané v `disallowedTools`. Auditor dává verdikt ke každému klíčovému tvrzení a uvádí všechny rozpory. Kontrola citací je skript `scripts/check_quotes.py` se zálohou přes Firecrawl. | Opravy po testu Credo, schválené autorem |
 | D-018 | 2026-10-15 | Uzavření architektury agentů. Tvrzení se předávají souborem JSON (`scripts/agents.py`). Neúplný záznam bez úplné URL se odmítne. Parametry Firecrawlu vynucuje hook `PreToolUse`. API klíč je v `.env`, čte ho jen `headersHelper` a agenti mají čtení `.env` zakázané. | Požadavek autora: žádné změny znaků v citacích, žádné tiché přeskočení, kontrola mimo prompt, klíč mimo repozitář a konverzaci |
+| D-019 | 2026-10-16 | Krok 3 jen pro ČR, celosvětový odhad až v závěrečné analýze. Katalog zdrojů ve třech tabulkách (zdroje, použití se spolehlivostí, důkazy). Zdroje s omezujícími podmínkami jen ručně a interně. Evidence původu kandidátů v pilotu. | Schválení mapy zdrojů autorem |

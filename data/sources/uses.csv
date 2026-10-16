@@ -1,0 +1,64 @@
+source_key,use,tier,reliability,conditions,evidence_ids
+ZDR-01,kandidati,1,stredni,"úplný seznam regulovaných subjektů včetně správců podle § 15, ale bez rozlišení VC, PE a realitních fondů (filtr E4/E5); jen ručně kvůli CAPTCHA",G1-C01;G1-C13;G1-C30;G1-A7
+ZDR-01,identity,1,vysoka,"název, IČO a historie subjektu",G1-C01;G1-C12
+ZDR-01,decision_authority,1,vysoka,investiční společnost nebo obhospodařovatel s licencí ČNB,G1-C01;G1-C11;G1-C30
+ZDR-01,decision_authority,1,stredni,"správce podle § 15: doložen jen fakt registrace, údaje a strategii ČNB neověřuje; zda se strategie v JERRS zveřejňuje, neověřeno (CAPTCHA)",G1-A3;G1-C33
+ZDR-01,fund,1,vysoka,existence fondu a vazba na správce (podklad i pro E10),G1-C11;G1-C31
+ZDR-02,kandidati,1,nizka,"hromadně investiční společnosti a fondy, správci podle § 15 zřejmě chybí; jen po žádosti s certifikátem",G1-A4;G1-C21;G1-C22
+ZDR-02,identity,1,vysoka,"po získání přístupu; odpovědi nejsou pečetěné, archivovat web",G1-C24;G1-C25;G1-C27
+ZDR-03,kandidati,1,stredni,seznam fondů k dohledání správců; fondy s podfondy chybí; obsah souboru neověřen,G1-A11;G1-A12
+ZDR-04,identity,1,vysoka,"IČO a název; údaje jen informativní, při rozporu má přednost obchodní rejstřík",G1-C34;G1-C40;G1-C48
+ZDR-04,country,1,vysoka,sídlo subjektu,G1-C42
+ZDR-04,kandidati,1,nizka,jen dohledání známých subjektů; náhodné propátrávání zakazují podmínky,G1-C39
+ZDR-05,identity,1,vysoka,původní úřední zdroj,G1-C59
+ZDR-05,registry_entry_date,1,vysoka,"datum zápisu společníka, nikdy ne datum investice (plan.md 7.1)",G1-C59
+ZDR-05,registry_contribution,1,vysoka,"zapsaný vklad, nikdy ne výše investice; samotný zápis nesplní K3",G1-C59
+ZDR-05,kandidati,1,stredni,"osoby a společníci s.r.o.; akcionáři a.s. neveřejní; nejvýš 500 výsledků, 50 dotazů za minutu",G1-C63;G1-C54
+ZDR-06,deal,1,vysoka,"jen listina, která transakci výslovně uvádí (zvýšení ZK, převod podílu); ne každá je digitalizovaná",G1-C60;G1-C61;G1-A15
+ZDR-06,investor_amount,1,stredni,jen pokud listina uvádí částku vč. ážia; vklad sám nestačí,G1-C60
+ZDR-06,size,3,nizka,výroční zprávy jsou vlastní tvrzení; uvádějí spíš NAV než upsaný kapitál (neověřeno na konkrétní listině),G1-C60
+ZDR-07,kandidati,1,stredni,"hromadné hledání právnických osob s podíly v mnoha s.r.o.; komerční užití nejasné, GDPR",G1-A8;G1-C67;G1-C68;G1-C69
+ZDR-07,registry_entry_date,1,vysoka,"datum zápisu (zapisDatum), ne datum investice",G1-C75
+ZDR-07,registry_contribution,1,vysoka,"podíl společníka s.r.o., ne výše investice",G1-A8;G1-C77
+ZDR-08,kandidati,4,stredni,jen ručně a interně; investoři bez rozlišení sídla a typu; podmínky zakazují automatický přístup a převzetí dat,G2-A2;G2-A5;G2-A6;G2-A13;G2-D1
+ZDR-09,kandidati,4,nizka,"hlavně PE, nízké pokrytí VC; přidružení členové převážně E1/E3",G2-C1;G2-A23
+ZDR-09,sectors,3,stredni,"profil dodaný členem, bez data (platí i pro stages, geographies, ticket)",G2-C3
+ZDR-09,aum,3,nizka,"pole „Objem prostředků ve správě“ míchá velikost fondu, součty, cíle a rozpětí, obvykle ambiguous",G2-A19;G2-A20;G2-A21;G2-A22
+ZDR-10,kandidati,2,stredni,"jen 7 aktuálních fondů; míchá VC, PE a dluh (E3)",G2-E1;G2-E2
+ZDR-10,fund,2,vysoka,"existence fondu, správce a vazba na EIF jako LP; sloupec webu nepoužívat (chyby)",G2-E1;G2-E4;G2-A24;G2-A25
+ZDR-10,decision_authority,2,stredni,"jen po ověření, že uvedená společnost je správce, ne poradce (E1)",G2-A26
+ZDR-11,kontext,n/a,nizka,"jen agregáty programu, bez jmen investorů a investic",G2-Z4;G2-A27
+ZDR-12,kandidati,2,stredni,"správci VC, kterým NRI svěřila kapitál (oznámení LP)",G3-C2;G3-A1
+ZDR-12,fund,2,stredni,existence fondu vybraného správce; vklad NRI není velikost fondu ani AUM,G3-C3;G3-A1;G3-A2
+ZDR-12,deal,3,nizka,"vlastní investice NRI jen na vlastním webu, bez dat, převážně IPO firem",G3-C5;G3-C6;G3-C10
+ZDR-13,kandidati,2,vysoka,měsíční přehled všech oznámených českých investic,G3-A8;G3-C15
+ZDR-13,deal,2,vysoka,redakční oznámení dealu; u portfolia CC Ventures není nezávislé,T2-C20;G3-A10
+ZDR-13,round_amount,2,stredni,"obvykle celé kolo, částky často přibližné; přepočet měny neukládat",T2-C21
+ZDR-13,size,2,stredni,oznámení fondů; typ velikosti (target/final) často chybí,T2-C26
+ZDR-14,kandidati,4,stredni,jen ručně s předplatným; nesplňuje bod 5 K3,G3-A3;G3-A7;G3-C16
+ZDR-15,kandidati,4,stredni,nízké české pokrytí; odkaz na zdroj dealu jen u části kol; licence CC BY 4.0,G3-C21;G3-C27;G3-C29
+ZDR-16,kandidati,4,nizka,business angels; registrace bez ověření; seznam se strojově nenačte,G3-C35;G3-C37;G3-C39
+ZDR-16,ticket,3,nizka,jen profil plného (placeného) člena,G3-C35;G3-A21
+ZDR-17,kandidati,3,nizka,absolventi a jejich investoři; Credo a Rockaway jsou spřízněné strany; o follow-on rozhoduje DEPO,G3-C43;G3-A18
+ZDR-17,ticket,3,stredni,€25 000 v hotovosti přes konvertibilku; €45 000 in-kind není kapitál,G3-C42;G3-A17
+ZDR-18,nepouzivat,1,,"jen banky, směnárny a spotřebitelský úvěr",G1-C16
+ZDR-19,kandidati,4,nizka,"deklarovaně jen aktivní fondy, ale metodika neprůhledná a jiná než plan.md 7; provozovatel je investor; pokrytí ČR neověřeno",G4-C1;G4-C2;G4-C3;G4-A3;G4-A14
+ZDR-20,kandidati,4,nizka,"jen ruční vyhledání jmen; podmínky zakazují scraping, odvozené databáze a redistribuci",G4-C11;G4-C14;G4-A6;G4-A7
+TYP-01,kandidati,3,stredni,portfolio na webu je seznam firem k dohledání nezávislých dokladů,T2-C37;T3-C13
+TYP-01,sectors,3,stredni,"vlastní zaměření investora (platí i pro stages, geographies, ticket); může být zastaralé",T3-C13
+TYP-01,size,3,nizka,vlastní oznámení fondu bez typu velikosti; „investováno X“ není AUM,T3-C13
+TYP-01,decision_authority,3,stredni,"tým, partneři, investiční výbor (vlastní prezentace podle plan.md K2)",T2-C37;T3-C9
+TYP-01,deal,3,nizka,"vlastní tvrzení K3 nesplní; hodnocení plyne přímo z metodiky (plan.md 5, K3), bez samostatného důkazu",
+TYP-02,kandidati,2,stredni,jmenují investory kola,T2-A1
+TYP-02,deal,2,vysoka,strana dealu jiná než investor (plan.md 6.1),T2-A1;T2-A2
+TYP-02,investment_date,2,vysoka,datum oznámení uvedené v textu,T2-A2
+TYP-02,round_amount,2,vysoka,"velikost kola, pokud je uvedena",T2-A2
+TYP-03,kandidati,2,vysoka,nejčerstvější zdroj kandidátů; pozor na záměnu investorů,T2-C17;T3-C15
+TYP-03,deal,2,vysoka,redakční médium (plan.md 6.1),T2-C17;T2-A8
+TYP-03,round_amount,2,stredni,"většinou celé kolo, částka investora zřídka",T2-A8
+TYP-03,investment_date,2,stredni,"datum článku je datum oznámení, ne vždy datum dealu",T2-C17
+TYP-04,kandidati,2,stredni,správci a investoři jmenovaní v oznámení,T3-A21
+TYP-04,deal,2,stredni,společná zpráva s investorem je spíš vlastní tvrzení,T3-A21
+TYP-04,fund,2,vysoka,oznámení LP o závazku do fondu,G2-E1;G3-C3
+TYP-05,kandidati,2,stredni,jmenují investory transakce,T2-A5
+TYP-05,deal,2,stredni,"často bez slova „investice“, u investment_unspecified samo nestačí",T2-A5

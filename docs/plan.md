@@ -1,6 +1,6 @@
 # Plán: Spolehlivá databáze investorů
 
-> **Stav:** pracovní verze. Krok 2 ([datový model](datovy-model.md)) je hotový. U kroku 1 (pravidla zařazení a vyřazení) zbývá potvrdit hraniční případy (kap. 9) a GDPR (kap. 6.5).
+> **Stav:** pracovní verze. Krok 2 ([datový model](datovy-model.md)) a krok 3 ([mapa zdrojů ČR](zdroje-cr.md)) jsou hotové. U kroku 1 (pravidla zařazení a vyřazení) zbývá potvrdit hraniční případy (kap. 9) a GDPR (kap. 6.5).
 > **Poslední úprava:** 2026-10-15
 > **Zadání:** [docs/zadani.md](zadani.md)
 
@@ -23,11 +23,11 @@ Metodika je navržená tak, aby šla použít **celosvětově**. Pilotně se ov�
 | 0 | Struktura repozitáře a konvence | README, `.gitignore`, adresáře | hotovo |
 | 1 | Kdo je a kdo není investor | kapitoly 3–11 tohoto dokumentu | **téměř hotovo**, zbývá potvrdit kap. 9 a 6.5 (viz kap. 12) |
 | 2 | Datový model s doložením původu každého údaje (data provenance) | [datovy-model.md](datovy-model.md), `scripts/validate.py`, testy a fiktivní příklady | **hotovo** |
-| 3 | Mapa veřejných zdrojů, odhad počtu investorů a spolehlivosti dat | kapitola plánu | plánováno |
+| 3 | Mapa veřejných zdrojů a spolehlivosti dat (pro ČR) | [zdroje-cr.md](zdroje-cr.md), katalog `data/sources/` | **hotovo** (celosvětový odhad počtu investorů přesunut do kroku 7) |
 | 4 | Ověřovací postup (verification protocol) | kapitola plánu a checklist | plánováno |
 | 5 | Pilot: české VC | `data/sample/` | plánováno |
 | 6 | Ruční ověření a měření přesnosti | `results/` | plánováno |
-| 7 | Odhad nákladů na rozšíření na celý svět | kapitola plánu a `results/` | plánováno |
+| 7 | Závěrečná analýza: odhad počtu investorů a nákladů na rozšíření na celý svět | kapitola plánu a `results/` | plánováno |
 | 8 | Revize plánu podle pilotu a finalizace | finální `docs/plan.md` | plánováno |
 
 ---
@@ -383,7 +383,7 @@ Investiční tým nebo správce **doložitelně sídlí v ČR**, bez ohledu na d
 | **Aktuálnost** | Stránka řádných členů byla podle metadat naposledy upravena 2024-05-22. Kritéria členství nejsou zveřejněná. |
 | **Kvalita údajů** | Popisy a případné údaje o AUM dodávají členové sami, jde tedy o Tier 3. Ze seznamu nejde vyčíst, kdy subjekt naposledy investoval. |
 
-**Závěr:** CVCA je **užitečný zdroj kandidátů**, hlavně pro PE, a doplňkový zdroj vlastních tvrzení (Tier 3). **Pro VC je výrazně neúplný** a **členství není důkazem investice** ani typu subjektu. V pilotu ho proto použijeme jako jeden z více zdrojů kandidátů. Úplnost bude zajištěna kombinací zdrojů, které se rozeberou v kroku 3:
+**Závěr:** CVCA je **užitečný zdroj kandidátů**, hlavně pro PE, a doplňkový zdroj vlastních tvrzení (Tier 3). **Pro VC je výrazně neúplný** a **členství není důkazem investice** ani typu subjektu. V pilotu ho proto použijeme jako jeden z více zdrojů kandidátů. Úplnost bude zajištěna kombinací zdrojů, které rozebírá [mapa zdrojů](zdroje-cr.md) (krok 3):
 
 - seznamy ČNB, včetně podlimitních správců podle § 15 ZISIF, ale s filtrem E5,
 - obchodní rejstřík,
@@ -434,6 +434,11 @@ Investiční tým nebo správce **doložitelně sídlí v ČR**, bez ohledu na d
 | E9 jen po prověření, samotné varovné signály nevyřazují | 8 | rozhodnuto |
 | Chybějící údaje: prázdná hodnota + důvod | 10 | rozhodnuto (s datovým modelem) |
 | Hraniční případy, GDPR | 9, 6.5 | **návrh bez připomínek, zatím výslovně neschválený** |
+| Krok 3 jen pro ČR, celosvětový odhad počtu investorů až v závěrečné analýze (krok 7) | 2 | rozhodnuto |
+| Katalog zdrojů ve třech tabulkách: zdroje, použití se spolehlivostí, důkazy | [zdroje-cr.md](zdroje-cr.md) | rozhodnuto |
+| Zdroje s omezujícími podmínkami (Dealroom, OpenVC, CEE Funding Map, CC+) jen ručně a interně, data se nepřebírají v rozporu s podmínkami | [zdroje-cr.md](zdroje-cr.md) | rozhodnuto |
+| Evidence původu kandidátů (`candidates.csv`) se zavede v pilotu (krok 5) | [data/sources/README.md](../data/sources/README.md) | rozhodnuto |
+| Pokrytí ČR v CEE Funding Map; komerční užití dat obchodního rejstříku; seznam správců podle § 15 ve WS JERRS | [zdroje-cr.md](zdroje-cr.md), kap. 8 | otevřené |
 
 ---
 

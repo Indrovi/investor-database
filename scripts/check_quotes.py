@@ -36,6 +36,7 @@ import html
 import json
 import re
 import sys
+import time
 import urllib.error
 import urllib.request
 from dataclasses import dataclass
@@ -55,6 +56,13 @@ QUOTE_COLUMNS = ("doslovná citace", "citace", "quote")
 ID_COLUMNS = ("claim", "id", "citation_id")
 EMPTY_VALUES = {"", "-", "–", "—"}
 TIMEOUT = 60
+# Přímo stažený text kratší než tento počet znaků je nejspíš jen kostra stránky
+# vykreslované skriptem (JavaScript); pak se stránka načte přes Firecrawl.
+MIN_DIRECT_TEXT = 200
+TEXT_TYPES = ("html", "json", "text/plain", "xml")
+# Tarif Free u Firecrawlu povoluje zhruba 10 požadavků za minutu.
+FIRECRAWL_MIN_INTERVAL = 6.5
+_last_firecrawl_call = 0.0
 
 
 @dataclass(frozen=True)
@@ -148,7 +156,13 @@ def find_quote(page_text: str, quote: str) -> tuple[bool, float, str]:
 # --- Vstupy ---
 
 def _cells(line: str) -> list[str]:
-    return [cell.strip() for cell in line.strip().strip("|").split("|")]
+    """Buňky řádku markdownové tabulky. Escapovaná svislá čára („\\|“) je text buňky."""
+    line = line.strip()
+    if line.startswith("|"):
+        line = line[1:]
+    if line.endswith("|") and not line.endswith("\\|"):
+        line = line[:-1]
+    return [cell.replace("\\|", "|").strip() for cell in re.split(r"(?<!\\)\|", line)]
 
 
 def _clean(value: str) -> str:
@@ -211,6 +225,9 @@ def fetch_direct(url: str) -> Page:
         return Page(err.code, err.read().decode("utf-8", "replace"), "přímo", f"HTTP {err.code}")
     except (urllib.error.URLError, TimeoutError, OSError) as err:
         return Page(None, "", "přímo", str(getattr(err, "reason", err)))
+    if content_type and not any(kind in content_type for kind in TEXT_TYPES):
+        # PDF, XLSX a podobné soubory text přímo nedají, přečte je Firecrawl.
+        return Page(status, "", "přímo", f"formát {content_type.split(';')[0]}")
     raw = body.decode(charset, "replace")
     text = normalize(raw) if "json" in content_type else html_to_text(raw)
     return Page(status, text, "přímo")
@@ -218,6 +235,11 @@ def fetch_direct(url: str) -> Page:
 
 def fetch_firecrawl(url: str) -> Page:
     """Jedno volání firecrawl_scrape se schválenými parametry (firecrawl_mcp.SCRAPE_ARGUMENTS)."""
+    global _last_firecrawl_call
+    wait = FIRECRAWL_MIN_INTERVAL - (time.monotonic() - _last_firecrawl_call)
+    if wait > 0:
+        time.sleep(wait)
+    _last_firecrawl_call = time.monotonic()
     try:
         text = firecrawl_mcp.scrape(url)
     except (urllib.error.URLError, OSError, KeyError, IndexError, ValueError) as err:
@@ -234,9 +256,14 @@ def fetch_firecrawl(url: str) -> Page:
     return Page(status, markdown_to_text(document.get("markdown") or ""), "firecrawl")
 
 
+def direct_is_usable(page: Page) -> bool:
+    """Přímo stažená stránka má čitelný text (ne blokaci, PDF ani kostru stránky ze skriptu)."""
+    return page.status == 200 and not looks_blocked(page.status, page.text) and len(page.text) >= MIN_DIRECT_TEXT
+
+
 def fetch(url: str, use_firecrawl: bool = True, log: Callable[[str], None] = print) -> Page:
     page = fetch_direct(url)
-    if not use_firecrawl or (page.status == 200 and not looks_blocked(page.status, page.text)):
+    if not use_firecrawl or direct_is_usable(page):
         return page
     fallback = fetch_firecrawl(url)
     log(f"  firecrawl_scrape {url} -> statusCode {fallback.status} {fallback.error}".rstrip())
@@ -246,8 +273,12 @@ def fetch(url: str, use_firecrawl: bool = True, log: Callable[[str], None] = pri
 # --- Vyhodnocení ---
 
 def check_claims(claims: list[Claim], fetcher: Callable[[str], Page],
-                 log: Callable[[str], None] = print) -> int:
+                 log: Callable[[str], None] = print,
+                 rerender: Callable[[str], Page] | None = None) -> int:
+    """Ověří záznamy. Když citace v přímo stažené stránce není, zkusí `rerender`
+    (stránka vykreslená Firecrawlem, např. obsah načítaný skriptem)."""
     pages: dict[str, Page] = {}
+    rendered: dict[str, Page] = {}
     problems = 0
     for claim in claims:
         label = claim.claim_id or "?"
@@ -265,6 +296,17 @@ def check_claims(claims: list[Claim], fetcher: Callable[[str], Page],
             log(f"{label:6} NESTAŽENO   ({where}) {page.error} {claim.url}")
             continue
         found, ratio, window = find_quote(page.text, claim.quote)
+        if not found and rerender is not None and page.method == "přímo":
+            if claim.url not in rendered:
+                rendered[claim.url] = rerender(claim.url)
+                log(f"  firecrawl_scrape {claim.url} -> statusCode {rendered[claim.url].status} "
+                    f"{rendered[claim.url].error}".rstrip())
+            second = rendered[claim.url]
+            if second.status == 200:
+                found2, ratio2, window2 = find_quote(second.text, claim.quote)
+                if found2 or ratio2 > ratio:
+                    page, found, ratio, window = second, found2, ratio2, window2
+                    where = f"{page.method}, HTTP {page.status}"
         if found:
             log(f"{label:6} DOSLOVNĚ    ({where}) {claim.quote[:70]}")
         else:
@@ -289,7 +331,9 @@ def main(argv: list[str] | None = None) -> int:
     if not claims:
         print("Nenalezen žádný záznam s citací.", file=sys.stderr)
         return 2
-    return check_claims(claims, lambda url: fetch(url, not args.no_firecrawl))
+    use_firecrawl = not args.no_firecrawl
+    return check_claims(claims, lambda url: fetch(url, use_firecrawl),
+                        rerender=fetch_firecrawl if use_firecrawl else None)
 
 
 if __name__ == "__main__":
