@@ -15,6 +15,7 @@
 | [rucni_kontrola.csv](rucni_kontrola.csv) | ruční kontrola 10 údajů (2 kola): odkaz, co najít na stránce, otázka, odpověď a poznámka autora (ANO / NE / NEDOKÁŽU URČIT) |
 | [presnost.csv](presnost.csv) | počty a podíly s 95% intervaly |
 | [kontrola_citaci.txt](kontrola_citaci.txt) | záznam automatické kontroly doslovnosti všech citací |
+| [odhad_svet.csv](odhad_svet.csv) | **krok 7:** vstupy odhadu pro celý svět (zdroje s citacemi, měření pilotu, předpoklady), výsledek v [plan.md, kap. 13](../docs/plan.md#13-odhad-pro-celý-svět-krok-7) |
 
 Vše generuje `python3 scripts/pilot/audit.py --online`. Už vyplněné odpovědi autora se při opakovaném spuštění zachovají. Data v `data/sample/` se **nemění**: přesnost se měří na původním výstupu pilotu a opravy se zapracují při závěrečné revizi (krok 8).
 

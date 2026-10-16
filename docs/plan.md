@@ -1,6 +1,6 @@
 # Plán: Spolehlivá databáze investorů
 
-> **Stav:** pracovní verze. Krok 2 ([datový model](datovy-model.md)), krok 3 ([mapa zdrojů ČR](zdroje-cr.md)) a krok 4 ([ověřovací postup](overovaci-postup.md)) jsou hotové. U kroku 1 (pravidla zařazení a vyřazení) zbývá potvrdit hraniční případy (kap. 9) a GDPR (kap. 6.5).
+> **Stav:** pracovní verze. Krok 2 ([datový model](datovy-model.md)), krok 3 ([mapa zdrojů ČR](zdroje-cr.md)) a krok 4 ([ověřovací postup](overovaci-postup.md)) jsou hotové, stejně jako pilot (krok 5), měření přesnosti (krok 6) a odhad pro celý svět (krok 7, kap. 13). U kroku 1 (pravidla zařazení a vyřazení) zbývá potvrdit hraniční případy (kap. 9) a GDPR (kap. 6.5).
 > **Poslední úprava:** 2026-10-16
 > **Zadání:** [docs/zadani.md](zadani.md)
 
@@ -27,7 +27,7 @@ Metodika je navržená tak, aby šla použít **celosvětově**. Pilotně se ov�
 | 4 | Ověřovací postup (verification protocol) | kap. 6.6 a [checklist](overovaci-postup.md) | **hotovo** |
 | 5 | Pilot: české VC | `data/sample/`, přehled `investori_prehled.csv`, skripty `scripts/pilot/` | **hotovo**: 5 unikátních investorů, všichni zařazení; otevřené otázky pro krok 6 v [data/sample/README.md](../data/sample/README.md) |
 | 6 | Ruční ověření a měření přesnosti | [results/](../results/README.md) | **hotovo**: autor ručně zkontroloval 10 údajů (8/10 správně, kontrola AI se shoduje 10/10); 6 chyb a 1 nejistota, opravy dat odložené do kroku 8 |
-| 7 | Závěrečná analýza: odhad počtu investorů a nákladů na rozšíření na celý svět | kapitola plánu a `results/` | plánováno |
+| 7 | Závěrečná analýza: odhad počtu investorů a nákladů na rozšíření na celý svět | kap. 13 a [results/odhad_svet.csv](../results/odhad_svet.csv) | **hotovo** (revidováno): ověřitelných asi 14 600 organizací (8 600–20 500) a 29 500 fyzických osob (velmi nejisté); prvotní ověření asi 0,41 mil. USD za organizace, 1,7 mil. USD za vše |
 | 8 | Revize plánu podle pilotu a finalizace | finální `docs/plan.md` | plánováno; zapracovat opravy dat a podněty z auditu ([results/](../results/README.md#souhrn-chyby-nejistoty-a-doporučené-opravy)) |
 
 ---
@@ -452,6 +452,265 @@ Investiční tým nebo správce **doložitelně sídlí v ČR**, bez ohledu na d
 | Město sídla investičního týmu jako samostatný doložený údaj; přehled zařazených investorů pro čtení generovaný z dat | [datovy-model.md](datovy-model.md), kap. 3.1 a 9.1 | rozhodnuto |
 | Pilot nejdřív na 5 různorodých českých VC, rozšíření až po osvědčení postupu. Kandidáti jen ze zmapovaných zdrojů, zdroje s omezeným přístupem vynechány, současný tarif Firecrawl. | 11, [data/sample/README.md](../data/sample/README.md) | rozhodnuto |
 | Původ kandidátů v `candidates.csv`, `investor_id` až po ověření | [datovy-model.md](datovy-model.md), kap. 3.6 | rozhodnuto |
+| Odhad počtu investorů a nákladů pro celý svět: rozlišit celkový počet a počet ověřitelný z veřejných zdrojů, každý typ zvlášť | 13 | odhad hotový (krok 7) |
+| Před rozšířením na PE, FO, angely a LPI a na další jazyky malý pilot (5 investorů), který změří úspěšnost ověření, náklady a přesnost | 13.8 | doporučeno, otevřené |
+
+---
+
+## 13. Odhad pro celý svět (krok 7)
+
+> **Stav:** hotovo 2026-10-16, revidováno týž den (kap. 13.9). Jde o **podložený odhad**, ne o databázi. Žádná data o investorech se pro něj nesbírala.
+> **Vstupy:** každé číslo má zdroj s doslovnou citací (Z), měření z pilotu (M), nebo je výslovně označené jako předpoklad (P): [results/odhad_svet.csv](../results/odhad_svet.csv).
+
+Zadání chce vědět čtyři věci: jaké typy investorů lze z veřejných zdrojů získat, kolik jich bude, jak spolehlivá budou data a kolik bude stát rozšíření na celý svět.
+
+### 13.1 Výsledek v kostce
+
+| Typ | Celkem ve světě | Reálně najdeme a ověříme (střed) | Jistota odhadu | Prvotní ověření, střed (rozpětí) |
+|---|---|---|---|---|
+| **VC** (včetně korporátních) | 9 800–13 600 | 4 900–9 700 (**~7 300**) | střední: pilot + oborové ročenky | 150 000 USD (59 000–326 000) |
+| **PE** | 8 600–14 500 | 3 000–8 500 (**~5 800**) | nízká až střední | 125 000 USD (40 000–287 000) |
+| **Family offices** s přímými investicemi | 4 500–6 600 | 700–2 300 (**~1 500**) | nízká | 53 000 USD (13 000–151 000) |
+| **Organizace celkem** | **23 000–35 000** | **8 600–20 500 (~14 600)** | | **328 000 USD** (113 000–763 000) |
+| **Business angels** | 0,6–1,2 milionu | 5 900–47 000 (**~26 500**) | velmi nízká | 1,18 mil. USD (0,14–4,5 mil.) |
+| **Large private investors** | 26 000–77 000 | 800–5 400 (**~3 100**) | velmi nízká | 137 000 USD (18 000–510 000) |
+| **Fyzické osoby celkem** | **0,6–1,25 milionu** | **6 700–52 400 (~29 500)** | | **1,32 mil. USD** (0,16–5,0 mil.) |
+
+**Jaké typy lze získat:**
+- **Organizace (VC, PE, family offices) ano.** Mají weby, jejich investice se oznamují a dají se doložit nezávislým zdrojem. U VC a PE v USA a Evropě lze najít a ověřit většinu, ve zbytku světa menšinu. U family offices jen menšinu, protože se veřejnosti vyhýbají.
+- **Fyzické osoby (angelové, LPI) jen v malé, viditelné části**, asi 1–7 %. Ostatní nejsou veřejně doložitelní.
+
+**Kolik to bude stát:**
+
+| Položka | Organizace | Všechny typy |
+|---|---|---|
+| Prvotní ověření: AI, nástroje a ruční kontrola | ~0,33 mil. USD | ~1,65 mil. USD (0,27–5,7 mil.) |
+| Lidská práce (řízení, vývoj, právní posouzení) | ~0,08 mil. USD | ~0,08 mil. USD (0,04–0,14 mil.) |
+| **Prvotní ověření celkem** | **~0,41 mil. USD** | **~1,7 mil. USD** |
+| Aktualizace ročně (AI, nástroje, ruční kontrola) | ~66 000 USD | ~200 000 USD (46 000–440 000) |
+| Lidská práce ročně | ~27 000 USD | ~27 000 USD (12 000–48 000) |
+
+- **Spolehlivost dat** je změřená jen u VC: ručně 8 z 10 údajů správně, podle kontroly AI 94 % údajů bez chyby (kap. 13.5).
+- **Aktivní je jen část ověřených investorů:** v pilotu 2 z 5, viz kap. 13.5.
+
+### 13.2 Jak jsem k odhadu došel
+
+Každý typ investora jsem počítal zvlášť ve třech krocích:
+
+1. **Celkový počet** z veřejných studií. Kde studie pokrývá jen region, sečetl jsem regiony. Mezery bez zdroje jsem doplnil předpokladem a označil ho.
+2. **Podíl, který lze najít a ověřit.** Ptal jsem se, zda u typického subjektu existuje veřejný nezávislý doklad konkrétní investice (K3), doložitelná rozhodovací pravomoc (K2) a identita (K1).
+   - U VC to kalibruje pilot.
+   - U ostatních typů je to úvaha podle povahy veřejných zdrojů, ne měření.
+3. **Náklady** z měření v pilotu, přepočtené úspěšností ověření. Typy, kde neprojde každý kandidát, platí i za ověřování těch, kdo neprojdou.
+
+**Jak číst rozpětí:**
+- „nízko–vysoko“ kombinuje všechny nízké nebo všechny vysoké vstupy, a je proto záměrně široké,
+- střed počítá se středy všech vstupů,
+- výpočet je prosté násobení vstupů z CSV (celkem × podíl, kandidáti = ověření ÷ úspěšnost).
+
+**Co z pilotu platí a co ne** (pilot ověřil jen 5 českých VC):
+
+| Zjištění z pilotu | VC jinde | PE | FO | Angelové a LPI |
+|---|---|---|---|---|
+| Cena jednoho ověření (průzkumník + auditor) | platí, mimo angličtinu a češtinu může být vyšší | pravděpodobně podobná, struktury bývají složitější | podobná nebo vyšší | jiná: méně údajů, ale těžší identita |
+| 5/5 vylosovaných kandidátů splnilo K1–K3 | jen v zemích s dobrými médii a rejstříky | **nevyzkoušeno** | **nevyzkoušeno** | **nevyzkoušeno** |
+| Přesnost údajů (ručně 8/10, AI 115/122) | přibližně | **nevyzkoušeno** | **nevyzkoušeno** | **nevyzkoušeno** |
+| Kandidáti ze seznamů asociací, LP a médií za 0,04 USD | platí | platí (asociace, oznámení akvizic) | ne, veřejné seznamy nejsou | ne, kandidáti jen z oznámení investic |
+
+### 13.3 Celkový počet podle typu
+
+ID v závorce odkazuje na řádek v [results/odhad_svet.csv](../results/odhad_svet.csv).
+
+- **VC: 9 800–13 600.**
+  - **USA:** 2 984 VC firem, které za posledních 8 let uzavřely fond (Z01).
+  - **Evropa:** 3 095 aktivních firem PE a VC dohromady (Z03, řád potvrzuje i druhý zdroj), VC z nich 40–60 % (P01).
+  - **Korporátní VC:** 2 344 korporací aktivních v kolech v roce 2024 (Z04). Dříve aktivní nejsou započtené.
+  - **Čína:** 11 523 registrovaných správců PE a VC (Z05), aktivních VC z nich 15–30 % (P02).
+  - **Zbytek světa:** 1 500–3 000, předpoklad (P03).
+- **PE: 8 600–14 500.**
+  - **USA:** 3 000–5 000. Ověřitelný veřejný údaj se nenašel, je to předpoklad (P04).
+  - **Evropa:** zbytek z 3 095 firem.
+  - **Čína:** 25–40 % registrovaných správců (P02).
+  - **Zbytek světa:** 1 500–3 000 (P03).
+- **Kontrola řádu:** Preqin v roce 2018 evidoval 15 986 firem PE včetně VC (Z06). Náš součet VC + PE je 18 400–28 100, tedy 1,2–1,8× víc. Rozdíl odpovídá růstu od roku 2018, čínským registracím a korporátním VC. Vyšší konec rozpětí je spíš nadsazený.
+- **Family offices: 4 500–6 600 v rozsahu databáze.**
+  - Deloitte odhaduje 8 030 single family offices (Z07). Jde o modelový odhad, ne o seznam.
+  - Do databáze patří jen ty, které investují přímo do firem (plan.md 4). Podle průzkumu Citi se přímým investicím věnuje 70 % dotázaných (Z08). Respondenti jsou ale klienti velké banky a „direct investments“ může zahrnovat i nemovitosti, proto počítám s 50–70 %.
+  - Počet multi-family offices se ověřit nepodařilo, započteno 500–1 000 s přímými investicemi (P05).
+- **Business angels: 0,6–1,2 milionu.**
+  - **USA:** 445 535 aktivních angelů v roce 2024 (Z09). Je to odhad výzkumného centra UNH, metodika ve zprávě uvedená není.
+  - **Evropa:** 47 600 jen v sítích a asociacích (Z10). EBAN sám uvádí, že jde jen o viditelný trh. Horní mez 330 000 je předpoklad odvozený z dřívějšího násobku 10, který EBAN už nepoužívá (P06).
+  - **Zbytek světa:** 100 000–400 000, předpoklad (P07).
+- **Large private investors: 26 000–77 000.**
+  - Na světě je 510 810 lidí s majetkem nad 30 mil. USD (Altrata, Z12). To je zásoba bohatých lidí, ne investorů.
+  - Do databáze patří jen ti, kdo **sami jako jednotlivci** investují do cizích firem ve velkém (plan.md 4.3). Ti, kdo investují přes family office s vlastním týmem, se počítají jako FO.
+  - Takových je podle předpokladu 5–15 % (P09). Studie, která by to měřila, se nenašla.
+
+### 13.4 Kolik dokážeme najít a ověřit
+
+Rozhoduje, zda pro subjekt existuje **veřejný nezávislý doklad konkrétní investice** (K3) a zda lze doložit, kdo rozhoduje (K2).
+
+| Typ | Podíl (P08) | Proč |
+|---|---|---|
+| **VC** v USA, Evropě a korporátní | 65–90 % | Kola se veřejně oznamují a fondy mají weby a portfolia. Pilot: 5/5, ale 95% interval je 57–100 %. Zbytek tvoří malé nebo neaktivní fondy bez nezávislého dokladu. |
+| **VC** v Číně a zbytku světa | 20–50 % | Jiné jazyky, méně médií a mnoho registrovaných, ale neaktivních správců. Samotný zápis v rejstříku K3 nesplní (6.4). Postup v těchto jazycích není vyzkoušený. |
+| **PE** v USA a Evropě | 50–80 % | Akvizice se obvykle oznamují a firmy mají weby s portfoliem. Menší PE a holdingy ale často mlčí. **V pilotu nevyzkoušeno.** |
+| **PE** v Číně a zbytku světa | 20–40 % | Stejné důvody jako u VC. |
+| **Family offices** | 15–35 % | Mnohé se veřejnosti záměrně vyhýbají, investují bez uvedení jména nebo přes holdingy. Obtížné je i odlišit FO od správce majetku (K2, typ). |
+| **Business angels** | 1–4 % | K3 vyžaduje, aby nezávislý zdroj jmenoval konkrétního člověka u konkrétní investice. To se stává hlavně u známých angelů a ve větších kolech. V pilotu zdroje jmenovaly u investic jen 7 fyzických osob. Hrají roli i GDPR a minimalizace dat (6.5). |
+| **Large private investors** | 3–7 % | Velké přímé investice známých lidí se v médiích objevují. U většiny bohatých lidí ale veřejně doložené nejsou, nebo jdou přes FO. |
+
+**Úspěšnost ověření kandidáta (P10):**
+
+| Typ | Úspěšnost | Odkud |
+|---|---|---|
+| VC | 60–100 % | pilot 5/5, dolní mez podle intervalu spolehlivosti |
+| PE | 60–90 % | předpoklad |
+| FO | 30–60 % | předpoklad |
+| Angelové, LPI | 20–50 % | předpoklad |
+
+Úspěšnost ovlivňuje jen náklady (kap. 13.6), ne počet.
+
+### 13.5 Jak spolehlivá budou data
+
+**Změřeno v pilotu** (5 českých VC, kroky 5 a 6, [results/README.md](../results/README.md)):
+
+| Ukazatel | Výsledek |
+|---|---|
+| Údaje podle ruční kontroly | 8/10 správně (95% interval 49–94 %) |
+| Údaje podle kontroly AI | 115/122 bez chyby a nejistoty (89–97 %) |
+| Citace doslovně ve zdroji | 142/142 |
+| Zařazení (K1–K3, typ) | 5/5 podle AI, člověk K1–K3 neověřoval |
+| Hodnocení A/B | 4/5 správně |
+
+- **Chyby vznikají při vyvozování ze zdrojů:** přiřazení k fondu bez zdroje, výběr mezi rozpornými zdroji, počítání důkazů.
+- **Vyplněnost údajů** (M10):
+  - geografie 5/5,
+  - fáze 5/5, z toho 2 odvozené,
+  - sektory 4/5, po opravě 3/5,
+  - ticket 3/5,
+  - **AUM 0/5**, celkový kapitál se veřejně uvádí jen výjimečně.
+- **Aktivita:** investici za posledních 24 měsíců mají doloženou jen 2 z 5 (95% interval 12–77 %). Ročenka NVCA uvádí, že téměř polovina investorů aktivních v roce 2021 z trhu odešla (Z02).
+  - Počty v kap. 13.1 zahrnují i neaktivní investory, protože K3 nemá časový limit.
+  - Aktivních bude zhruba polovina, ale tato hodnota je nejistá.
+
+**Očekávání u dalších typů** (neměřeno):
+
+| Typ | Identita a investice | Ticket a AUM | Hlavní riziko |
+|---|---|---|---|
+| VC | spolehlivé (měřeno) | ticket asi u poloviny, AUM výjimečně | přiřazení k fondu, zastaralé profily |
+| PE | spolehlivé, akvizice se oznamují | velikost fondů se často uvádí, ticket jako rozpětí hodnoty firmy | složité struktury (GP, AIFM), záměna s věřiteli |
+| FO | méně spolehlivé, část investic bez jména | téměř nikdy | záměna s poradcem nebo správcem majetku |
+| Angelové | jen u jmenovaných osob | téměř nikdy | záměna osob se stejným jménem |
+| LPI | jen u známých osob | majetek ze žebříčků není investiční kapitál | investice přes holdingy, hranice mezi LPI a FO |
+
+### 13.6 Náklady
+
+**Co pilot změřil** (5 českých VC, agenti na modelu Opus):
+
+| Položka | Hodnota | Vstup |
+|---|---|---|
+| Agenti na jednoho investora (průzkumník + auditor) | 7,53 USD; 8,57 USD včetně doplňujícího ověření | M01 |
+| Audit AI (krok 6) na jednoho investora | asi 2,45 USD | M04 |
+| Práce koordinátora v kroku 5 | asi 35,6 USD, z velké části jednorázová stavba skriptů | M04 |
+| Firecrawl | 23–26 kreditů na investora (0,02–0,03 USD při placeném tarifu) | M02, Z13 |
+| Hledání kandidátů | 0,04 USD na kandidáta | M03 |
+| Doba běhu agentů | asi 22 minut na investora | M08 |
+
+**Cena za jednoho zařazeného investora:**
+- **Ověření jednoho kandidáta:** 11–18 USD (P11), vyděleno úspěšností ověření (P10).
+- **Ruční kontrola, hledání a Firecrawl (P12):**
+  - VC a PE 1,1–3,6 USD,
+  - FO a fyzické osoby 1,5–5 USD, protože pro ně nejsou veřejné seznamy kandidátů.
+
+| Typ | USD na zařazeného investora |
+|---|---|
+| VC | 12–34 |
+| PE | 13–34 |
+| FO | 20–65 |
+| Angelové, LPI | 24–95 |
+
+**Celkem:**
+- **Prvotní ověření (AI, nástroje, ruční kontrola):** asi 1,65 mil. USD (0,27–5,7 mil.).
+  - **Angelové tvoří 72 %**, protože jich je hodně a většina kandidátů neprojde.
+  - Organizace stojí asi 0,33 mil. USD, tedy pětinu nákladů, a dávají třetinu výsledku.
+- **Lidská práce** (P14), předpoklad 6 000–12 000 USD za člověkoměsíc:
+  - prvotně 6–12 člověkoměsíců, asi 81 000 USD (36 000–144 000),
+  - ročně 2–4 člověkoměsíce, asi 27 000 USD.
+- **Aktualizace:** 3–6 USD na investora za rok (P13), tedy asi 200 000 USD ročně (46 000–440 000). Organizace z toho asi 66 000 USD.
+  - Aktivní investoři se kontrolují ročně, neaktivní jednou za dva roky.
+  - Odhad vychází z doplňujícího ověření K2 v pilotu (5,19 USD).
+- **Kapacita:** asi 105 000 kandidátů a 38 000 hodin běhu agentů. Při 50 souběžných bězích je to asi 32 dní.
+- **Firecrawl:** asi 2,8 milionu kreditů, tedy 3 měsíce tarifu Scale (1 milion kreditů měsíčně za 599–749 USD). Je to **asi 2 000 USD, zhruba 0,1 % nákladů**.
+- **Nezapočteno:** externí právní stanovisko ke GDPR a infrastruktura (úložiště, servery).
+
+**Co nejvíc rozhoduje o ceně:**
+- cena jazykového modelu (agenti běželi na nejdražším modelu),
+- úspěšnost ověření,
+- rozsah ruční kontroly.
+
+Levnější model by mohl cenu výrazně snížit, ale jeho přesnost je potřeba nejdřív změřit stejně jako v kroku 6.
+
+### 13.7 Osvědčil se Firecrawl?
+
+**Ano, jako nástroj pro čtení stránek agenty.** Hlavní náklad to není.
+
+**Hlavní přínos:** agentům vrací skutečný text stránky bez přeformulování jazykovým modelem. WebFetch text přepisuje (docs/agenti.md, kap. 4). Díky tomu jsou citace doslovné: 142 ze 142.
+
+**Co ukázal pilot:**
+- **116 citací** šlo ověřit i proti přímo stažené stránce.
+- **26 citací šlo ověřit jen proti kopii Firecrawlu**, přestože všechny ty stránky šly stáhnout i přímo. Citace pocházely z textu, který Firecrawl převedl z PDF, tabulek nebo obchodního rejstříku (například IČO bez mezer). Přímo stažený text ho doslovně neobsahoval (M07).
+- **Ochrana proti robotům** se v pilotu projevila jen jednou: Unquote vracel chybu 429.
+- **Hook vynutil bezpečné parametry:** 20 nepovolených volání zablokoval bez spotřeby kreditů.
+- **Cena** je proti jazykovému modelu zanedbatelná.
+
+**Co je potřeba hlídat:**
+- **PDF stojí kredit za každou stranu.** V kroku 3 jedno PDF spotřebovalo 81 kreditů na jedno přečtení.
+- **Tarif Free** (1 000 kreditů měsíčně) stačí asi na 38 investorů. Pro celý svět je potřeba placený tarif.
+- **Kopie stránek je potřeba uchovávat** (`.cache/pages`), jinak část citací nepůjde později ověřit.
+- **Omezený přístup** Firecrawl nevyřeší: databáze s omezujícími podmínkami ani obsah za paywallem.
+
+**Doporučení:**
+- Firecrawl ponechat pro agenty a uchovávat jeho kopie.
+- Pro kontrolu citací nejdřív přímé stažení, kopie Firecrawlu až potom.
+- Tarif volit podle objemu: Standard pro tisíce investorů, Scale pro desítky tisíc.
+
+### 13.8 Omezení odhadu a doporučený postup
+
+**Omezení:**
+
+- **Nejjistější je VC:** počty pro USA a Evropu jsou z oborových ročenek a pilot ověřil celý postup. I tak jen na 5 českých investorech.
+- **PE, FO, angelové a LPI nejsou vyzkoušené.** Podíly v kap. 13.4 jsou úvaha, ne měření, a mohou se lišit i několikanásobně.
+- **Největší nejistota jsou angelové.** Celkový počet mimo USA ani podíl veřejně doložených angelů žádná studie nemá. Přitom tvoří 60 % odhadovaného výsledku a 72 % nákladů.
+- **Počty pro Čínu a zbytek světa** stojí na předpokladech. Kontrola řádu proti Preqin 2018 naznačuje, že vyšší konec je nadsazený.
+- **PE v USA** nemá ověřitelný veřejný zdroj počtu (P04).
+- **Náklady stojí na ceně modelu Opus v říjnu 2026** a na pilotu v češtině a angličtině.
+
+**Doporučený postup:**
+
+1. **Organizace dřív než fyzické osoby:** VC v USA a Evropě, potom PE, potom FO. Je to třetina odhadovaného výsledku za pětinu nákladů a s nejlépe změřenou spolehlivostí.
+2. **Před každým novým typem a jazykem malý pilot** (5 investorů, jako kroky 5 a 6). Změří úspěšnost ověření, cenu a přesnost a nahradí předpoklady z kap. 13.4 a 13.6.
+3. **Vyzkoušet levnější model agentů** na stejném vzorku a porovnat přesnost s Opusem.
+4. **Angely a LPI hledat jako vedlejší produkt** ověřování firem a fondů, tedy v oznámeních kol, kde jsou jmenovaní. Nejdřív ale vyřešit GDPR (informační povinnost, 6.5).
+
+### 13.9 Revize odhadu (2026-10-16)
+
+Při kontrole proti zadání a zdrojům jsem opravil:
+
+| Co | Původně | Opraveno | Proč |
+|---|---|---|---|
+| Důvod, proč 26 citací ověřuje jen Firecrawl | ochrana proti robotům, chyba 429, JavaScript | převod PDF, tabulek a rejstříku; 429 jen jednou | záznam kontroly ukazuje u všech HTTP 200 |
+| Korporátní VC | 2 344–4 000 | 2 344 | horní mez neměla zdroj |
+| Aktivní správci v Číně | VC 20–40 %, PE 30–50 % | VC 15–30 %, PE 25–40 % | registrace zahrnují fondy fondů a neaktivní správce |
+| Zbytek světa | VC 2 500–5 000, PE 2 000–4 000 | VC i PE 1 500–3 000 | součet VC + PE byl až 2,2× nad Preqin 2018 |
+| Ověřitelný podíl | VC 75–90 % a 30–60 %; PE 60–85 % a 25–50 %; LPI 5–10 % | VC 65–90 % a 20–50 %; PE 50–80 % a 20–40 %; LPI 3–7 % | příliš optimistické vůči intervalu pilotu a nevyzkoušeným jazykům |
+| Úspěšnost ověření VC | 70–100 % | 60–100 % | interval spolehlivosti pilotu 57–100 % |
+| Hledání kandidátů FO a osob | jako u VC | 0,5–2 USD na zařazeného | pro FO a osoby neexistují veřejné seznamy |
+| Lidská práce | nezapočtena | 6–12 člověkoměsíců prvotně, 2–4 ročně | bez ní byl odhad nákladů neúplný |
+| Spolehlivost dat | jen jedna věta | samostatná kap. 13.5 | zadání ji výslovně požaduje |
+| Hlavní výsledek | jedno číslo za všechny typy (~50 000) | organizace a fyzické osoby zvlášť | angelové mají velmi nízkou jistotu a přebíjeli součet |
+
+Ověřený výsledek se tím snížil z asi 50 000 na asi 44 000 investorů, z toho organizace z 19 000 na 14 600. Náklady na AI a nástroje klesly z 1,76 na 1,65 mil. USD, ale přibyla lidská práce.
 
 ---
 
@@ -463,3 +722,4 @@ Investiční tým nebo správce **doložitelně sídlí v ČR**, bez ohledu na d
 | Business Angels Europe: A. What is a Business Angel? | https://www.businessangelseurope.com/professionalstandards/a.-what-is-a-business-angel%3F-- | 2026-10-14 |
 | CVCA: řádní členové | https://cvca.cz/clenstvi/radni-clenove/ | 2026-10-14 |
 | CVCA: přidružení členové | https://cvca.cz/clenstvi/pridruzeni-clenove/ | 2026-10-14 |
+| Zdroje odhadu pro celý svět (kap. 13), s doslovnými citacemi | [results/odhad_svet.csv](../results/odhad_svet.csv) | 2026-10-16 |

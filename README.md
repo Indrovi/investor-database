@@ -8,7 +8,7 @@ Projekt vychází ze [zadání](docs/zadani.md) a pracuje výhradně s veřejně
 
 | Výstup | Umístění | Stav |
 |---|---|---|
-| Výsledný plán: inclusion/exclusion criteria, verification, odhad rozsahu a spolehlivosti, odhad nákladů | [docs/plan.md](docs/plan.md) | rozpracováno: kroky 2–3 hotové, u kroku 1 zbývá potvrdit hraniční případy a GDPR |
+| Výsledný plán: inclusion/exclusion criteria, verification, odhad rozsahu a spolehlivosti, odhad nákladů | [docs/plan.md](docs/plan.md) | rozpracováno: kroky 2–7 hotové, odhad pro celý svět v kap. 13; u kroku 1 zbývá potvrdit hraniční případy a GDPR |
 | Datový model a validátor | [docs/datovy-model.md](docs/datovy-model.md), `scripts/validate.py` | hotovo |
 | Agenti pro hledání a ověřování zdrojů | [docs/agenti.md](docs/agenti.md), `.claude/`, `scripts/agents.py`, `scripts/check_quotes.py` | hotovo: vyzkoušeno na testech Credo a Presto Ventures, opravy ověřené; API klíč Firecrawl doplní autor do `.env` |
 | Mapa veřejných zdrojů pro české VC (krok 3) | [docs/zdroje-cr.md](docs/zdroje-cr.md), [data/sources/](data/sources/) | hotovo: 20 zdrojů a 5 typů zdrojů, 289 doložených zjištění |
