@@ -152,12 +152,12 @@ Klíč se nikdy nevkládá do konverzace ani do repozitáře.
 **Omezení:**
 
 - **Převod do markdownu mění mezery.** Firecrawl například vrací IČO z obchodního rejstříku bez mezer („11678704“), na stránce je „116 78 704“. Citace pak neprojde skriptem, i když ji agent opsal správně. Koordinátor ji opraví podle stránky.
-- **Proměnlivé a omezované stránky.** Seznam Zprávy vracely při opakovaném stažení různé verze stránky a Unquote dočasně odpovídal 429. Pro zpětnou kontrolu je proto důležitá archivní kopie (krok 4).
+- **Proměnlivé a omezované stránky.** Seznam Zprávy vracely při opakovaném stažení různé verze stránky a Unquote dočasně odpovídal 429. Pro zpětnou kontrolu je proto důležitá archivní kopie (archivace je odložena do dokončení pilotu).
 - **Stránky za paywallem nebo přihlášením** nenačte ani Firecrawl. Vrátí jen volně dostupnou část (např. titulek a autora), takže výsledkem má být `CANNOT_VERIFY`, ne odhad.
 - **PDF jsou drahá.** Firecrawl účtuje 1 kredit za každou stranu. V kroku 3 stálo jedno 81stránkové PDF, které četli tři (průzkumník, auditor i skript), zhruba polovinu všech kreditů. Velká PDF číst jednou a agenty pouštět za sebou.
 - **Text PDF** Firecrawl občas přečte zkomoleně. Citaci pak lze dověřit proti stránce uložené v záznamu běhu (kap. 5 a docs/zdroje-cr.md, kap. 6).
 - **Nezávislost auditora je omezená.** Používá stejný model jako průzkumník (kap. 1.1).
-- **Archivní kopie** (Wayback Machine) agenti nevytvářejí. Uložení stránky je zápis do externí služby, řeší se v ověřovacím postupu (krok 4).
+- **Archivní kopie** (Wayback Machine) agenti nevytvářejí. Uložení stránky je zápis do externí služby, archivace je proto odložena do dokončení pilotu ([ověřovací postup](overovaci-postup.md)).
 - **Náklady:** každé kolo spouští dva agenty s webovým vyhledáváním. Počet kroků omezuje `maxTurns: 40`.
 - **Obsah webů je data, ne instrukce.** Agenti mají pokyny na stránkách ignorovat. Riziko ovlivnění textem stránky (prompt injection) ale úplně vyloučit nejde, i proto agenti nemají zápisové nástroje.
 

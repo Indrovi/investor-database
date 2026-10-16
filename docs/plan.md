@@ -1,7 +1,7 @@
 # Plán: Spolehlivá databáze investorů
 
-> **Stav:** pracovní verze. Krok 2 ([datový model](datovy-model.md)) a krok 3 ([mapa zdrojů ČR](zdroje-cr.md)) jsou hotové. U kroku 1 (pravidla zařazení a vyřazení) zbývá potvrdit hraniční případy (kap. 9) a GDPR (kap. 6.5).
-> **Poslední úprava:** 2026-10-15
+> **Stav:** pracovní verze. Krok 2 ([datový model](datovy-model.md)), krok 3 ([mapa zdrojů ČR](zdroje-cr.md)) a krok 4 ([ověřovací postup](overovaci-postup.md)) jsou hotové. U kroku 1 (pravidla zařazení a vyřazení) zbývá potvrdit hraniční případy (kap. 9) a GDPR (kap. 6.5).
+> **Poslední úprava:** 2026-10-16
 > **Zadání:** [docs/zadani.md](zadani.md)
 
 ## 1. Účel databáze
@@ -24,7 +24,7 @@ Metodika je navržená tak, aby šla použít **celosvětově**. Pilotně se ov�
 | 1 | Kdo je a kdo není investor | kapitoly 3–11 tohoto dokumentu | **téměř hotovo**, zbývá potvrdit kap. 9 a 6.5 (viz kap. 12) |
 | 2 | Datový model s doložením původu každého údaje (data provenance) | [datovy-model.md](datovy-model.md), `scripts/validate.py`, testy a fiktivní příklady | **hotovo** |
 | 3 | Mapa veřejných zdrojů a spolehlivosti dat (pro ČR) | [zdroje-cr.md](zdroje-cr.md), katalog `data/sources/` | **hotovo** (celosvětový odhad počtu investorů přesunut do kroku 7) |
-| 4 | Ověřovací postup (verification protocol) | kapitola plánu a checklist | plánováno |
+| 4 | Ověřovací postup (verification protocol) | kap. 6.6 a [checklist](overovaci-postup.md) | **hotovo** |
 | 5 | Pilot: české VC | `data/sample/` | plánováno |
 | 6 | Ruční ověření a měření přesnosti | `results/` | plánováno |
 | 7 | Závěrečná analýza: odhad počtu investorů a nákladů na rozšíření na celý svět | kapitola plánu a `results/` | plánováno |
@@ -222,7 +222,7 @@ Počet doložených investic se ukládá do atributu `documented_deals_count`. U
 
 URL, vydavatel, tier, datum publikace, datum dealu (pokud se liší), datum přístupu, doslovná citace podporující údaj a archivní kopie (Wayback Machine). Podrobné schéma je v [datovy-model.md](datovy-model.md).
 
-Zda citace na uvedené stránce opravdu je, se zatím automaticky neověřuje. Řeší se v dalších krocích (ověřovací postup, krok 4).
+Že citace na uvedené stránce opravdu je, ověřuje skript `scripts/check_quotes.py` ([agenti.md](agenti.md), kap. 3). Archivní kopie zatím nevznikají: archivace je odložena do dokončení pilotu a validátor na chybějící kopii upozorňuje.
 
 ### 6.3 Hodnocení spolehlivosti záznamu (confidence grade)
 
@@ -247,6 +247,12 @@ Zda citace na uvedené stránce opravdu je, se zatím automaticky neověřuje. �
 ### 6.5 Fyzické osoby a GDPR
 
 U business angels a large private investors se ukládají **jen profesní údaje**: jméno, role, investiční aktivita. **Žádná data narození, adresy ani soukromé kontakty**, a to ani tehdy, když jsou viditelné v obchodním rejstříku. Právním základem je oprávněný zájem (legitimate interest, čl. 6 odst. 1 písm. f GDPR) s minimalizací dat. Pro ostrý provoz je třeba vyřešit informační povinnost podle čl. 14 GDPR.
+
+---
+
+### 6.6 Ověřovací postup
+
+Jak se u každého kandidáta postupuje od nálezu po zápis do dat, popisuje [checklist ověřovacího postupu](overovaci-postup.md). Propojuje pravidla tohoto plánu, datový model, agenty a skripty. Nová pravidla nezavádí.
 
 ---
 
@@ -427,7 +433,7 @@ Investiční tým nebo správce **doložitelně sídlí v ČR**, bez ohledu na d
 | Celkový upsaný kapitál fondů není AUM | 10.1 | rozhodnuto |
 | Fáze a regiony podle návrhu v datovém modelu | [datovy-model.md](datovy-model.md), kap. 7 | rozhodnuto |
 | Přepočet měn se zatím neřeší | [datovy-model.md](datovy-model.md), kap. 5 | rozhodnuto (zatím) |
-| Automatická kontrola, že citace na uvedeném webu opravdu je | 6.2 | odloženo do dalších kroků (krok 4) |
+| Kontrola, že citace na uvedeném webu opravdu je: skript `scripts/check_quotes.py` | 6.2 | rozhodnuto (hotovo) |
 | Úrovně zdrojů Tier 1–4 | 6.1 | rozhodnuto |
 | Hodnocení spolehlivosti A/B/C | 6.3 | rozhodnuto |
 | Pravidla vyřazení E1–E8 a E10 | 8 | rozhodnuto |
@@ -439,6 +445,9 @@ Investiční tým nebo správce **doložitelně sídlí v ČR**, bez ohledu na d
 | Zdroje s omezujícími podmínkami (Dealroom, OpenVC, CEE Funding Map, CC+) jen ručně a interně, data se nepřebírají v rozporu s podmínkami | [zdroje-cr.md](zdroje-cr.md) | rozhodnuto |
 | Evidence původu kandidátů (`candidates.csv`) se zavede v pilotu (krok 5) | [data/sources/README.md](../data/sources/README.md) | rozhodnuto |
 | Pokrytí ČR v CEE Funding Map; komerční užití dat obchodního rejstříku; seznam správců podle § 15 ve WS JERRS | [zdroje-cr.md](zdroje-cr.md), kap. 8 | otevřené |
+| Archivace zdrojů (např. Wayback Machine) odložena do dokončení pilotu; do té doby URL, citace, datum přístupu a varování validátoru | 6.2, [ověřovací postup](overovaci-postup.md) | odloženo |
+| Stejné IČO = stejný subjekt (žádný nový záznam). U značky s více právnickými osobami rozhoduje skutečná investiční pravomoc: jako E10 se slučují jen osoby bez ní (vehikula, feedery, SPV, GP). Automatické párování v pilotu. | 3.1, K1, 8 (E10), [ověřovací postup](overovaci-postup.md) | rozhodnuto (automatizace v pilotu) |
+| Sankční seznamy EU a OFAC | 9 | otevřené |
 
 ---
 

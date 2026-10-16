@@ -1,7 +1,7 @@
 # Datový model
 
 > **Stav:** krok 2 hotový
-> **Poslední úprava:** 2026-10-15
+> **Poslední úprava:** 2026-10-16
 > **Navazuje na:** [plan.md](plan.md) · **Validátor:** [scripts/validate.py](../scripts/validate.py) · **Testy:** [tests/test_validate.py](../tests/test_validate.py) · **Fiktivní příklady:** [data/examples/](../data/examples/)
 
 ## 1. Principy
@@ -136,7 +136,7 @@ Seznamy se zapisují do jedné buňky a oddělují středníkem (`software_saas;
 - obsahuje výraz pro investici nebo vlastnictví (`invest…`, `podíl`, `akcie`, `akcionář`, `společník`, `stake`, `shares`, `shareholder`),
 - a zároveň neobsahuje výraz pro půjčku (`úvěr`, `půjč…`, `dluh…`, `loan`, `debt`). Například „investiční úvěr“ je půjčka.
 
-Pokud tomu žádná nezávislá citace nevyhoví, validátor vydá varování `INVESTMENT_NOT_EXPLICIT` a investici nepočítá. Řešení: citovat větu, která investici výslovně uvádí, nebo změnit nástroj na `unclear`. Jde o hrubou kontrolu textu pro pilot (čeština a angličtina). Smysl citace nakonec posuzuje člověk při ověřování (krok 4).
+Pokud tomu žádná nezávislá citace nevyhoví, validátor vydá varování `INVESTMENT_NOT_EXPLICIT` a investici nepočítá. Řešení: citovat větu, která investici výslovně uvádí, nebo změnit nástroj na `unclear`. Jde o hrubou kontrolu textu pro pilot (čeština a angličtina). Smysl citace nakonec posuzuje člověk při ověřování ([ověřovací postup](overovaci-postup.md)).
 
 ### 3.4 `sources.csv`
 
@@ -331,11 +331,13 @@ python3 -m unittest discover -s tests -v
 
 **Co validátor neověří:**
 
-- že citace na uvedené URL opravdu je (odloženo do kroku 4),
 - že je zdroj správně zařazený do tier a že výpis z rejstříku je citovaný pro pole `registry_*`,
 - zda citace `decision_authority` rozhodovací pravomoc opravdu dokládá (kontroluje se jen, že existuje),
 - význam citace u `investment_unspecified` (jen hrubá kontrola výrazů),
-- typ investora podle ticketu: hranice 500 tis. EUR je jen orientační (plan.md, kap. 4.3).
+- typ investora podle ticketu: hranice 500 tis. EUR je jen orientační (plan.md, kap. 4.3),
+- zda stejné IČO nemá víc nevyřazených záznamů (párování řeší [ověřovací postup](overovaci-postup.md), automaticky až v pilotu).
+
+Že citace na uvedené URL opravdu je, ověřuje samostatný skript `python3 scripts/check_quotes.py --data DATA_DIR` ([agenti.md](agenti.md), kap. 3).
 
 **Pozor na Excel s českým nastavením:** ukládá CSV se středníkem jako oddělovačem. Validátor to pozná (`WRONG_DELIMITER`).
 
@@ -384,5 +386,5 @@ Sady jsou dvě:
 
 **Otevřené:**
 
-- **Automatická kontrola, že citace na uvedené stránce opravdu je**, je odložená do dalších kroků (krok 4).
+- **Archivní kopie zdrojů:** archivace je odložena do dokončení pilotu, validátor na chybějící `archive_url` upozorňuje (`MISSING_ARCHIVE`).
 - V pilotu sledovat, jak často u českých VC chybí k zápisu v rejstříku další doklad transakce, a jestli výrazy pro `investment_unspecified` nevedou k zbytečným varováním.

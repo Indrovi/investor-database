@@ -96,7 +96,7 @@ Tyto zdroje nejsou jeden web, ale skupina. Tier a roli jim dává plan.md 6.1, p
 2. **K2 u správců podle § 15** dokládá ČNB jen fakt registrace. Strategie je deklarace správce, kterou ČNB neověřuje [G1-A3].
 3. **K3 dokládají hlavně volně dostupná média a tiskové zprávy startupů.** Databáze investic (CC+, Dealroom, OpenVC) jsou placené nebo licenčně nepoužitelné pro automatické čtení.
 4. **AUM českých VC veřejně spolehlivě není.** Pole „AUM“ v CVCA míchá různé údaje [G2-A19–A22], takže půjde většinou o `ambiguous` nebo `not_public`.
-5. **Archivace citací je nutná.** Obchodní rejstřík přejde na nový portál [G1-A1], CzechCrunch dočítá další články a Dealroom má v metadatech `noarchive` [G2-A9, nejisté].
+5. **Archivace citací je nutná.** Obchodní rejstřík přejde na nový portál [G1-A1], CzechCrunch dočítá další články a Dealroom má v metadatech `noarchive` [G2-A9, nejisté]. Archivace je zatím odložena do dokončení pilotu ([ověřovací postup](overovaci-postup.md)).
 6. **Původ kandidátů:** v kroku 5 vznikne tabulka `candidates.csv`, kde bude u každého nálezu kandidáta zdroj z katalogu, URL, datum a způsob nalezení (data/sources/README.md). Návrh je schválený, zavede se s pilotem jako doplnění datového modelu.
 
 ## 6. Revize dosavadních výsledků

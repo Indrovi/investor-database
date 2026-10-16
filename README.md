@@ -12,6 +12,7 @@ Projekt vychází ze [zadání](docs/zadani.md) a pracuje výhradně s veřejně
 | Datový model a validátor | [docs/datovy-model.md](docs/datovy-model.md), `scripts/validate.py` | hotovo |
 | Agenti pro hledání a ověřování zdrojů | [docs/agenti.md](docs/agenti.md), `.claude/`, `scripts/agents.py`, `scripts/check_quotes.py` | hotovo: vyzkoušeno na testech Credo a Presto Ventures, opravy ověřené; API klíč Firecrawl doplní autor do `.env` |
 | Mapa veřejných zdrojů pro české VC (krok 3) | [docs/zdroje-cr.md](docs/zdroje-cr.md), [data/sources/](data/sources/) | hotovo: 20 zdrojů a 5 typů zdrojů, 289 doložených zjištění |
+| Ověřovací postup (krok 4) | [docs/overovaci-postup.md](docs/overovaci-postup.md) | hotovo: checklist pro pilot nad existujícími postupy |
 | Data ze vzorku (sample) se zdrojem u každého údaje | `data/sample/` | připravuje se (krok 5) |
 | Výsledky měření přesnosti (accuracy) | `results/` | připravuje se (krok 6) |
 
@@ -111,6 +112,7 @@ Chyby ve výstupech AI nebo v datech a způsob jejich opravy.
 | 2026-10-16 | Koordinátor (AI) v souhrnu kroku 3 uvedl chybná čísla (19 místo 13 blokací hookem, 42 místo 48 falešných neshod), spotřebu kreditů přisoudil PDF bez měření a dvě hodnocení ČNB odkázal na důkazy jiného zdroje | Nepřesná dokumentace | Čísla opravena a kredity změřeny ze záznamů běhů; odkazy opraveny, konzistence ověřena skriptem |
 | 2026-10-16 | Souběžné běhy agentů překročily limit Firecrawlu a jedno 81stránkové PDF se četlo třikrát | Zhruba polovina kreditů tarifu Free za měsíc | Doporučení v docs/agenti.md: velká PDF číst jednou, agenty pouštět za sebou |
 | 2026-10-16 | Průzkumník (AI) při mapování četl přes Firecrawl veřejné stránky Czechia Dealroom, jehož podmínky automatický přístup zakazují | Riziko porušení podmínek zdroje | Zdroje s omezujícími podmínkami jen ručně a interně (D-019) |
+| 2026-10-16 | Koordinátor (AI) po vytvoření `check_quotes.py` neopravil plan.md a datovy-model.md, které dál uváděly kontrolu citací na webu jako odloženou do kroku 4 | Dokumentace neodpovídala nástrojům | Opraveno při kroku 4, odkazy na `check_quotes.py` |
 
 ### Rozhodnutí (decision log)
 
@@ -137,3 +139,4 @@ Chyby ve výstupech AI nebo v datech a způsob jejich opravy.
 | D-017 | 2026-10-15 | Ostatní nástroje Firecrawlu zakázané v `disallowedTools`. Auditor dává verdikt ke každému klíčovému tvrzení a uvádí všechny rozpory. Kontrola citací je skript `scripts/check_quotes.py` se zálohou přes Firecrawl. | Opravy po testu Credo, schválené autorem |
 | D-018 | 2026-10-15 | Uzavření architektury agentů. Tvrzení se předávají souborem JSON (`scripts/agents.py`). Neúplný záznam bez úplné URL se odmítne. Parametry Firecrawlu vynucuje hook `PreToolUse`. API klíč je v `.env`, čte ho jen `headersHelper` a agenti mají čtení `.env` zakázané. | Požadavek autora: žádné změny znaků v citacích, žádné tiché přeskočení, kontrola mimo prompt, klíč mimo repozitář a konverzaci |
 | D-019 | 2026-10-16 | Krok 3 jen pro ČR, celosvětový odhad až v závěrečné analýze. Katalog zdrojů ve třech tabulkách (zdroje, použití se spolehlivostí, důkazy). Zdroje s omezujícími podmínkami jen ručně a interně. Evidence původu kandidátů v pilotu. | Schválení mapy zdrojů autorem |
+| D-020 | 2026-10-16 | Ověřovací postup jako checklist nad existujícími postupy. Archivace odložena do dokončení pilotu. Stejné IČO = stejný subjekt. U značky s více právnickými osobami rozhoduje investiční pravomoc, jako E10 se slučují jen osoby bez ní. Automatické párování v pilotu. Pro K3 se hledají i starší investice, 24 měsíců určuje jen aktivitu. Citace zůstávají doslovné, osobní údaje se chrání výběrem úryvku. Sankční seznamy zatím otevřené. | Schválení checklistu autorem: využít hotové postupy, metodiku ani architekturu agentů neměnit |
